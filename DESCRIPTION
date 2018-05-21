@@ -1,0 +1,23 @@
+Package: primo
+Type: Package
+Title: Package in R for Integrating Multi-Omics data
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Kevin J.", "Gleason", email = "kevin.j.gleason@gmail.com", role=c("aut","cre")),
+    person("Fan", "Yang", email = "FAN.3.YANG@ucdenver.edu", role="aut"),
+    person("Lin S.", "Chen", email = "lchen@health.bsd.uchicago.edu", role="aut"))
+Maintainer: Kevin J. Gleason <kevin.j.gleason@gmail.com>
+Description: Implements methods to integrate multi-omics data.
+    It includes functions to integrate omics data from more than 2 data types or sources.
+    May be used to calculate the posterior probability for configurations of sharing
+    the null and alternative densities. Incorporates functions to estimate densities using 
+    framework proposed by Smyth (2004) and implemented in the limma package (2015).
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+    limma (>= 3.34.9),
+    matrixStats (>= 0.53.1),
+    metRology (>= 0.9.26.2),
+    parallel (>= 3.4.3)
+RoxygenNote: 6.0.1
