@@ -19,5 +19,6 @@ Imports:
     limma (>= 3.34.9),
     matrixStats (>= 0.53.1),
     metRology (>= 0.9.26.2),
-    parallel (>= 3.4.3)
+    parallel (>= 3.4.3),
+    Rmpfr (>= 0.7.0)
 RoxygenNote: 6.0.1

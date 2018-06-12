@@ -45,8 +45,23 @@ e_step<-function(old_pi, n_obs, n_pattern, q, density_0, density_1, cl=NULL){
 
   # subtract minimum, then e^(B)/rowSums(B)
   Bmatrix<-Bmatrix-matrixStats::rowMins(Bmatrix)
-  Bmatrix<-exp(Bmatrix)
-  Bmatrix<-Bmatrix/rowSums(Bmatrix)
+
+  # may need to account for infinite resulting from precision problems
+  if(any(Bmatrix)>709){
+    Bmatrix <- Rmpfr::mpfr(Bmatrix,precBits=106)
+    class(Bmatrix) <- 'mpfrArray'
+    Bmatrix<-exp(Bmatrix)
+    # can use rowSums directly since columns are recycled
+    Bmatrix<-Bmatrix/Rmpfr::rowSums(Bmatrix)
+    # convert back to base matrix
+    matRows <- nrow(Bmatrix)
+    matCols <- ncol(Bmatrix)
+    Bmatrix <- matrix(as.numeric(Bmatrix),nrow=matRows,ncol=matCols)
+  } else{
+    Bmatrix<-exp(Bmatrix)
+    # can use rowSums directly since columns are recycled
+    Bmatrix<-Bmatrix/rowSums(Bmatrix)
+  }
 
   return(Bmatrix)
 }
