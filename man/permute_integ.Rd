@@ -4,8 +4,8 @@
 \alias{permute_integ}
 \title{Estimate Posterior Probabilities for Permuted Datasets}
 \usage{
-permute_integ(betas, sds, mafs, dfs, priors, tol = 0.001, par_size = 0,
-  perm_par_size = 0)
+permute_integ(betas, sds, mafs, dfs, alt_proportions, tol = 0.001,
+  par_size = 0, perm_par_size = 0)
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}
@@ -16,7 +16,8 @@ permute_integ(betas, sds, mafs, dfs, priors, tol = 0.001, par_size = 0,
 
 \item{dfs}{vector of degrees of freedom.}
 
-\item{priors}{vector of prior (marginal) probabilities.}
+\item{alt_proportions}{vector of the proportions of test-statistics used in estimating
+alternative densities.}
 
 \item{tol}{numerical value; specifies tolerance threshold for convergence.}
 

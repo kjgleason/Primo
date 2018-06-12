@@ -4,7 +4,8 @@
 \alias{estimate_config}
 \title{Estimate Posterior Probabilities of Configurations}
 \usage{
-estimate_config(betas, sds, mafs, dfs, priors, tol = 0.001, par_size = 0)
+estimate_config(betas, sds, mafs, dfs, alt_proportions, tol = 0.001,
+  par_size = 0)
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}
@@ -15,7 +16,8 @@ estimate_config(betas, sds, mafs, dfs, priors, tol = 0.001, par_size = 0)
 
 \item{dfs}{vector of degrees of freedom.}
 
-\item{priors}{vector of prior (marginal) probabilities.}
+\item{alt_proportions}{vector of the proportions of test-statistics used in estimating
+alternative densities.}
 
 \item{tol}{numerical value; specifies tolerance threshold for convergence.}
 
@@ -33,7 +35,8 @@ belonging to each configuration\cr
 \code{Tstat_m} \tab matrix of moderated t-statistics\cr
 \code{D0} \tab matrix of densities calculated under the null distribution\cr
 \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
-\code{priors} \tab vector of prior probabilities used in the estimation\cr
+\code{alt_proportions} \tab vector of the proportions of test-statistics used in
+estimating alternative densities\cr
 \code{tol} \tab numerical value; the tolerance threshold used in determining convergence
 }
 }
@@ -53,7 +56,7 @@ the number of SNPs/Loci\cr
  \tab (same order as rows in \code{betas} and \code{sds}).\cr
 \code{dfs} \tab vector containing number of subjects in each dataset\cr
  \tab (same order as columns in \code{betas} and \code{sds})\cr
-\code{priors} \tab marginal (prior) probability that a test-statistic comes from
+\code{alt_proportions} \tab proportion of test-statistics used to estimate
 the alternative distribution for each data source\cr
  \tab (same order as columns in \code{betas} and \code{sds})
 }

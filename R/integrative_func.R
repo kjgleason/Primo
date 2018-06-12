@@ -7,7 +7,8 @@
 #' @param sds matrix of standard errors (for coefficient estimates).
 #' @param mafs vector of minor allele frequencies (MAFs).
 #' @param dfs vector of degrees of freedom.
-#' @param priors vector of prior (marginal) probabilities.
+#' @param alt_proportions vector of the proportions of test-statistics used in estimating
+#' alternative densities.
 #' @param tol numerical value; specifies tolerance threshold for convergence.
 #' @param par_size numerical value; specifies the number of CPUs/cores/processors for
 #' parallel computing
@@ -22,7 +23,8 @@
 #' \code{Tstat_m} \tab matrix of moderated t-statistics\cr
 #' \code{D0} \tab matrix of densities calculated under the null distribution\cr
 #' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
-#' \code{priors} \tab vector of prior probabilities used in the estimation\cr
+#' \code{alt_proportions} \tab vector of the proportions of test-statistics used in
+#' estimating alternative densities\cr
 #' \code{tol} \tab numerical value; the tolerance threshold used in determining convergence
 #' }
 #'
@@ -37,14 +39,14 @@
 #'  \tab (same order as rows in \code{betas} and \code{sds}).\cr
 #' \code{dfs} \tab vector containing number of subjects in each dataset\cr
 #'  \tab (same order as columns in \code{betas} and \code{sds})\cr
-#' \code{priors} \tab marginal (prior) probability that a test-statistic comes from
+#' \code{alt_proportions} \tab proportion of test-statistics used to estimate
 #' the alternative distribution for each data source\cr
 #'  \tab (same order as columns in \code{betas} and \code{sds})
 #' }
 #'
 #' @export
 #'
-estimate_config <- function(betas, sds, mafs, dfs, priors, tol=1e-3, par_size=0){
+estimate_config <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, par_size=0){
 
   # store dimensions of test statistics
   m <- nrow(betas)
@@ -72,7 +74,7 @@ estimate_config <- function(betas, sds, mafs, dfs, priors, tol=1e-3, par_size=0)
 
     # estimate null and alternative densities
     D0 <- cbind(D0, dt(moderate.t, df=d1+n0))
-    v0 <- limma::tmixture.vector(moderate.t, sqrt(vg),d1+n0,proportion=priors[j],v0.lim=NULL)
+    v0 <- limma::tmixture.vector(moderate.t, sqrt(vg),d1+n0,proportion=alt_proportions[j],v0.lim=NULL)
     scaler=sqrt(1+v0/vg)
     D1 <- cbind(D1, metRology::dt.scaled(moderate.t,df=d1+n0,mean=0,sd=scaler))
   }
