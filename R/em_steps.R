@@ -47,7 +47,7 @@ e_step<-function(old_pi, n_obs, n_pattern, q, density_0, density_1, cl=NULL){
   Bmatrix<-Bmatrix-matrixStats::rowMins(Bmatrix)
 
   # may need to account for infinite resulting from precision problems
-  if(any(Bmatrix)>709){
+  if(any(Bmatrix>709)){
     Bmatrix <- Rmpfr::mpfr(Bmatrix,precBits=106)
     class(Bmatrix) <- 'mpfrArray'
     Bmatrix<-exp(Bmatrix)
