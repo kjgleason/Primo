@@ -1,3 +1,54 @@
+#' Estimate Densities Under the Null and Alternative Densities
+#'
+#' For each observation, estimate the density under the null and under the alternative.
+#'
+#' @param betas vector of coefficient estimates.
+#' @param sds vector of standard errors (for coefficient estimates).
+#' @param mafs vector of minor allele frequencies (MAFs).
+#' @param df first degrees of freedom of the F-distribution.
+#' @param alt_proportion proportion of test-statistics used in estimating alternative densities.
+#'
+#' @return A list with the following elements:
+#' \tabular{ll}{
+#' \code{Tstat_m} \tab matrix of moderated t-statistics\cr
+#' \code{D0} \tab matrix of densities calculated under the null distribution\cr
+#' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
+#' }
+#'
+#' @export
+#'
+#'
+estimate_densities <- function(betas, sds, mafs, df, alt_proportion){
+
+  m <- nrow(betas)
+  # account for MAF in variance calculations
+  vg = 1/(2*mafs*(1-mafs))
+  sigma2 <- sds^2*(2*mafs*(1-mafs))
+
+  # estimate moments of scaled F-distribution using method of Smyth (2004)
+  d1=df
+  xx <- limma::fitFDist(sigma2,d1)
+  s02 <- xx$scale; n0 <- xx$df2
+  # rescale t-statistic (see Smyth, 2004)
+  sg_tilde <- sqrt((n0*s02+d1*sigma2)/(n0+d1))
+  moderate.t <- betas/(sg_tilde*sqrt(vg))
+
+  # defunct: old way of estimating proportion of null
+  #pt <- 2*(1-pt(abs(moderate.t), df=d1+n0))
+  #pi0 <- 1
+  #try({pi0 <- qvalue(pt)$pi0}, silent=TRUE)
+
+  # estimate null and alternative densities
+  D0 <- dt(moderate.t, df=d1+n0)
+  v0 <- limma::tmixture.vector(moderate.t, sqrt(vg),d1+n0,proportion=alt_proportion,v0.lim=NULL)
+  scaler=sqrt(1+v0/vg)
+  D1 <- metRology::dt.scaled(moderate.t,df=d1+n0,mean=0,sd=scaler)
+
+  return(list(Tstat_m = moderate.t, D0=D0, D1=D1))
+}
+
+
+
 #' Estimate Posterior Probabilities of Configurations
 #'
 #' For each SNP, estimates the posterior probability for each configuration.
@@ -51,32 +102,14 @@ estimate_config <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, pa
   # store dimensions of test statistics
   m <- nrow(betas)
   d <- ncol(betas)
-  # account for MAF in variance calculations
-  vg = 1/(2*mafs*(1-mafs))
-  sigma2 <- sds^2*matrix(rep(2*mafs*(1-mafs), each=d), byrow=T, ncol=d)
 
+  ## estimate null and alternate densities for each column/
   Tstat_m <- D0 <- D1 <- NULL
-
   for (j in 1:d){
-    # estimate moments of scaled F-distribution using method of Smyth (2004)
-    d1=rep(dfs[j],m)
-    xx <- limma::fitFDist(sigma2[,j],d1)
-    s02 <- xx$scale; n0 <- xx$df2
-    # rescale t-statistic (see Smyth, 2004)
-    sg_tilde <- sqrt((n0*s02+d1*sigma2[,j])/(n0+d1))
-    moderate.t <- betas[,j]/(sg_tilde*sqrt(vg))
-    Tstat_m <- cbind(Tstat_m, moderate.t)
-
-    # defunct: old way of estimating proportion of nulls
-    #pt <- 2*(1-pt(abs(moderate.t), df=d1+n0))
-    #pi0 <- 1
-    #try({pi0 <- qvalue(pt)$pi0}, silent=TRUE)
-
-    # estimate null and alternative densities
-    D0 <- cbind(D0, dt(moderate.t, df=d1+n0))
-    v0 <- limma::tmixture.vector(moderate.t, sqrt(vg),d1+n0,proportion=alt_proportions[j],v0.lim=NULL)
-    scaler=sqrt(1+v0/vg)
-    D1 <- cbind(D1, metRology::dt.scaled(moderate.t,df=d1+n0,mean=0,sd=scaler))
+    temp <- estimate_densities(betas[,j],sds[,j],mafs,dfs[j],alt_proportion = alt_proportions[j])
+    Tstat_m <- cbind(Tstat_m, temp$Tstat_m)
+    D0 <- cbind(D0, temp$D0)
+    D1 <- cbind(D1, temp$D1)
   }
 
   if (par_size>0){

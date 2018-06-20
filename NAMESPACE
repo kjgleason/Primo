@@ -3,6 +3,7 @@
 export(e_step)
 export(efdr)
 export(estimate_config)
+export(estimate_densities)
 export(m_step)
 export(make_qmat)
 export(permute_integ)
