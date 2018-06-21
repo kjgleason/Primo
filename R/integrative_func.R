@@ -62,8 +62,9 @@ estimate_densities <- function(betas, sds, mafs, df, alt_proportion){
 #' alternative densities.
 #' @param tol numerical value; specifies tolerance threshold for convergence.
 #' @param par_size numerical value; specifies the number of CPUs/cores/processors for
-#' parallel computing
-#' (0 for sequential processing).
+#' parallel computing (0 for sequential processing).
+#' @param density_list (optional) list of densities estimated by \code{estimate_densities()}.
+#' If provided by user, must follow the format specified in Details.
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
@@ -92,7 +93,11 @@ estimate_densities <- function(betas, sds, mafs, df, alt_proportion){
 #'  \tab (same order as columns in \code{betas} and \code{sds})\cr
 #' \code{alt_proportions} \tab proportion of test-statistics used to estimate
 #' the alternative distribution for each data source\cr
-#'  \tab (same order as columns in \code{betas} and \code{sds})
+#'  \tab (same order as columns in \code{betas} and \code{sds})\cr
+#' \code{density_list} \tab list must be 3 elements, named \code{Tstat_m},\code{D0}, and \code{D1}
+#'  -- outputs from \code{estimate_densities()}\cr
+#'  \tab (each element is a matrix, with row matching observations of \code{betas} and \code{sds},\cr
+#'  \tab and columns in the same order as columns in \code{betas} and \code{sds})
 #' }
 #'
 #' @export

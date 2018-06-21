@@ -23,8 +23,7 @@ alternative densities.}
 
 \item{tol}{numerical value; specifies tolerance threshold for convergence.}
 
-\item{par_size}{numerical value; specifies the number of CPUs/cores/processors for
-parallel computing
+\item{par_size}{numerical value; specifies the number of CPUs/cores/processors for parallel computing
 (0 for sequential processing).}
 }
 \value{

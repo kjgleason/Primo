@@ -4,7 +4,15 @@
 #' for each SNP under the permuted dataset.
 #' Utilizes parallel computing, when available.
 #'
-#' @inheritParams estimate_config
+#' @param betas matrix of coefficient estimates.
+#' @param sds matrix of standard errors (for coefficient estimates).
+#' @param mafs vector of minor allele frequencies (MAFs).
+#' @param dfs vector of degrees of freedom.
+#' @param alt_proportions vector of the proportions of test-statistics used in estimating
+#' alternative densities.
+#' @param par_size numerical value; specifies the number of CPUs/cores/processors for parallel computing
+#' (0 for sequential processing).
+#' @param tol numerical value; specifies tolerance threshold for convergence.
 #' @param perm_col numerical value; column number to permute
 #'
 #' @return A list with the following elements, based on permuted data:
@@ -46,7 +54,15 @@ permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1
 #' for each SNP under each permuted dataset.
 #' Utilizes parallel computing, when available.
 #'
-#' @inheritParams estimate_config
+#' @param betas matrix of coefficient estimates.
+#' @param sds matrix of standard errors (for coefficient estimates).
+#' @param mafs vector of minor allele frequencies (MAFs).
+#' @param dfs vector of degrees of freedom.
+#' @param alt_proportions vector of the proportions of test-statistics used in estimating
+#' alternative densities.
+#' @param par_size numerical value; specifies the number of CPUs/cores/processors for parallel computing
+#' (0 for sequential processing).
+#' @param tol numerical value; specifies tolerance threshold for convergence.
 #' @param perm_par_size numerical value; specifies the number of CPUs/cores/processors for
 #' parallel computing of permutations(0 for sequential processing).
 #'
