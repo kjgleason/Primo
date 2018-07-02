@@ -28,7 +28,7 @@ e_step<-function(old_pi, n_obs, n_pattern, q, density_0, density_1, cl=NULL){
       # calculate log density
       Iq <- matrix(rep(q[j,],m),byrow=T,ncol=nT)
       Pi <- rep(log(old_pi[j]),m)
-      oo <- Pi+rowSums((1-Iq)*log(density_0)+Iq*log(density_1))
+      oo <- Pi+matrixStats::rowSums2((1-Iq)*log(density_0)+Iq*log(density_1))
       return(oo)
     },q=q, density_0=density_0, density_1=density_1, old_pi=old_pi)
   #sequential version
@@ -39,7 +39,7 @@ e_step<-function(old_pi, n_obs, n_pattern, q, density_0, density_1, cl=NULL){
       Iq <- matrix(rep(q[j,],m),byrow=T,ncol=nT)
       # calculate log density
       Pi <- rep(log(old_pi[j]),m)
-      Bmatrix[,j] <- Pi+rowSums((1-Iq)*log(density_0)+Iq*log(density_1))
+      Bmatrix[,j] <- Pi+matrixStats::rowSums2((1-Iq)*log(density_0)+Iq*log(density_1))
     }
   }
 
@@ -60,7 +60,7 @@ e_step<-function(old_pi, n_obs, n_pattern, q, density_0, density_1, cl=NULL){
   } else{
     Bmatrix<-exp(Bmatrix)
     # can use rowSums directly since columns are recycled
-    Bmatrix<-Bmatrix/rowSums(Bmatrix)
+    Bmatrix<-Bmatrix/matrixStats::rowSums2(Bmatrix)
   }
 
   return(Bmatrix)
