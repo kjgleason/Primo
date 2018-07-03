@@ -23,23 +23,14 @@ e_step<-function(old_pi, n_obs, n_pattern, q, density_0, density_1, cl=NULL){
   # parallel version
   if(!is.null(cl)){
     Bmatrix <- parallel::parSapply(cl, 1:n_pattern,function(j,q,density_0,density_1,old_pi){
-      nT=ncol(q)
-      m=nrow(density_0)
-      # calculate log density
-      Iq <- matrix(rep(q[j,],m),byrow=T,ncol=nT)
-      Pi <- rep(log(old_pi[j]),m)
-      oo <- Pi+matrixStats::rowSums2((1-Iq)*log(density_0)+Iq*log(density_1))
-      return(oo)
+      # calculate log density for current pattern/configuration
+      return(as.numeric(log(old_pi[j]) + (log(density_0))%*%(1-q[j,]) +  (log(density_1))%*%q[j,]))
     },q=q, density_0=density_0, density_1=density_1, old_pi=old_pi)
   #sequential version
   }else{
-    nT=ncol(q)
-    m=nrow(density_0)
     for(j in 1:n_pattern){
-      Iq <- matrix(rep(q[j,],m),byrow=T,ncol=nT)
-      # calculate log density
-      Pi <- rep(log(old_pi[j]),m)
-      Bmatrix[,j] <- Pi+matrixStats::rowSums2((1-Iq)*log(density_0)+Iq*log(density_1))
+      # calculate log density for current pattern/configuration
+      Bmatrix[,j] <- as.numeric(log(old_pi[j]) + (log(density_0))%*%(1-q[j,]) +  (log(density_1))%*%q[j,])
     }
   }
 
