@@ -28,10 +28,9 @@ e_step<-function(old_pi, n_obs, n_pattern, q, density_0, density_1, cl=NULL){
     },q=q, density_0=density_0, density_1=density_1, old_pi=old_pi)
   #sequential version
   }else{
-    for(j in 1:n_pattern){
-      # calculate log density for current pattern/configuration
-      Bmatrix[,j] <- as.numeric(log(old_pi[j]) + (log(density_0))%*%(1-q[j,]) +  (log(density_1))%*%q[j,])
-    }
+    t_Q <- t(Q)
+    Bmatrix <- log(density_0) %*% (1-t_Q) + log(density_1) %*% t_Q
+    Bmatrix <- sweep(Bmatrix,2,log(old_pi),"+")
   }
 
   # subtract minimum, then e^(B)/rowSums(B)
