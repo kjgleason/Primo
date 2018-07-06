@@ -20,5 +20,7 @@ Imports:
     matrixStats (>= 0.53.1),
     metRology (>= 0.9.26.2),
     parallel (>= 3.4.3),
-    Rmpfr (>= 0.7.0)
+    Rmpfr (>= 0.7.0),
+    Rcpp (>= 0.12.17)
+LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1
