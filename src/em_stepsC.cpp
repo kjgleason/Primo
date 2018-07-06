@@ -21,24 +21,25 @@ using namespace Rcpp;
 //'
 // [[Rcpp::export]]
 arma::mat e_stepC(const arma::colvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1) {
-  int n_obs = D_0.n_rows, n_pattern = Q.n_rows;
-
-  arma::mat Bmat(n_obs,n_pattern);
+  int n_obs = D_0.n_rows;
 
   // transpose Q to form compatible dimensions for matrix multiplications
   arma::mat t_Q = Q.t();
 
-  // Consider updating loops to iterator format
-  for(int j=0; j < n_pattern; j++){
-    Bmat.col(j) = log(old_pi[j]) + log(D_0) * (1-t_Q.col(j)) + log(D_1) * t_Q.col(j);
-  }
+  // calculate log density under each configuration
+  arma::mat Bmat = log(D_0) * (1-t_Q) + log(D_1) * t_Q;
+  // factor in proportion of observations estimated to belong to each configuration
+  Bmat.each_row() += log(old_pi);
 
+  // subtract minimum
   for(int i=0; i < n_obs; i++){
     Bmat.row(i)= Bmat.row(i) - Bmat.row(i).min();
   }
 
+  // exponentiate to get (relative) density
   Bmat = exp(Bmat);
 
+  // convert to proportion/probability
   for(int i=0; i < n_obs; i++){
     Bmat.row(i)= Bmat.row(i) / sum(Bmat.row(i));
   }
