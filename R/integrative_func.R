@@ -136,8 +136,8 @@ estimate_config <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, pa
   # EM algorithm
   while(diff>tol){
     numiters<-numiters+1
-    curb<-e_step(curpi, n_obs=m, n_pattern=n_pattern, q=Q, density_0=D0, density_1=D1,cl=cl)
-    curpi<-m_step(curb, n_obs=m, n_pattern=n_pattern)
+    curb<-e_step(curpi, Q=Q, D_0=D0, D_1=D1)
+    curpi<-m_step(curb)
     itermat<-rbind(itermat,curpi)
     diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
     if (!(numiters %% 10)) cat("\nIteration:",numiters,"Diff:",diff,"\nPi-hat:",curpi,"\n")

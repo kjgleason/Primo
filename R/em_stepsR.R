@@ -1,5 +1,6 @@
 #' E Step
 #'
+#' DEPRECATED (replaced by faster RcppArmadillo version).
 #' Calculate posterior expectations given maximized estimate for \eqn{\pi} (the
 #' proportion of SNPs coming from each configuration).
 #'
@@ -17,7 +18,7 @@
 #'
 #' @export
 #'
-e_step<-function(old_pi, n_obs, n_pattern, q, density_0, density_1, cl=NULL){
+e_stepR<-function(old_pi, n_obs, n_pattern, q, density_0, density_1, cl=NULL){
   Bmatrix<-matrix(NA,nrow=n_obs,ncol=n_pattern)
 
   # parallel version
@@ -60,6 +61,7 @@ e_step<-function(old_pi, n_obs, n_pattern, q, density_0, density_1, cl=NULL){
 
 #' M Step
 #'
+#' DEPRECATED (replaced by faster RcppArmadillo version).
 #' Estimates the \eqn{\pi} vector that maximizes the posterior expectation function from the E-step.
 #'
 #' @param old_b matrix of posterior expectations/probabilities ; usually
@@ -72,7 +74,7 @@ e_step<-function(old_pi, n_obs, n_pattern, q, density_0, density_1, cl=NULL){
 #'
 #' @export
 #'
-m_step<-function(old_b, n_obs, n_pattern){
+m_stepR<-function(old_b, n_obs, n_pattern){
   # ensure no zero probabilities when calculating pi: newpi<-colSums(old_b)/(n_obs)
   newpi<-(colSums(old_b)+1)/(n_obs+n_pattern)
   return(newpi)

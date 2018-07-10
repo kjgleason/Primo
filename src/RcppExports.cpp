@@ -6,9 +6,9 @@
 
 using namespace Rcpp;
 
-// e_stepC
-arma::mat e_stepC(const arma::colvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1);
-RcppExport SEXP _primo_e_stepC(SEXP old_piSEXP, SEXP QSEXP, SEXP D_0SEXP, SEXP D_1SEXP) {
+// e_step
+arma::mat e_step(const arma::colvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1);
+RcppExport SEXP _primo_e_step(SEXP old_piSEXP, SEXP QSEXP, SEXP D_0SEXP, SEXP D_1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,25 +16,25 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::mat& >::type Q(QSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type D_0(D_0SEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type D_1(D_1SEXP);
-    rcpp_result_gen = Rcpp::wrap(e_stepC(old_pi, Q, D_0, D_1));
+    rcpp_result_gen = Rcpp::wrap(e_step(old_pi, Q, D_0, D_1));
     return rcpp_result_gen;
 END_RCPP
 }
-// m_stepC
-arma::mat m_stepC(const arma::mat& old_B);
-RcppExport SEXP _primo_m_stepC(SEXP old_BSEXP) {
+// m_step
+arma::mat m_step(const arma::mat& old_B);
+RcppExport SEXP _primo_m_step(SEXP old_BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type old_B(old_BSEXP);
-    rcpp_result_gen = Rcpp::wrap(m_stepC(old_B));
+    rcpp_result_gen = Rcpp::wrap(m_step(old_B));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_primo_e_stepC", (DL_FUNC) &_primo_e_stepC, 4},
-    {"_primo_m_stepC", (DL_FUNC) &_primo_m_stepC, 1},
+    {"_primo_e_step", (DL_FUNC) &_primo_e_step, 4},
+    {"_primo_m_step", (DL_FUNC) &_primo_m_step, 1},
     {NULL, NULL, 0}
 };
 

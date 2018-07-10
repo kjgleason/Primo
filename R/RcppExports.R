@@ -17,8 +17,8 @@
 #'
 #' @export
 #'
-e_stepC <- function(old_pi, Q, D_0, D_1) {
-    .Call('_primo_e_stepC', PACKAGE = 'primo', old_pi, Q, D_0, D_1)
+e_step <- function(old_pi, Q, D_0, D_1) {
+    .Call('_primo_e_step', PACKAGE = 'primo', old_pi, Q, D_0, D_1)
 }
 
 #' M Step
@@ -32,7 +32,7 @@ e_stepC <- function(old_pi, Q, D_0, D_1) {
 #'
 #' @export
 #'
-m_stepC <- function(old_B) {
-    .Call('_primo_m_stepC', PACKAGE = 'primo', old_B)
+m_step <- function(old_B) {
+    .Call('_primo_m_step', PACKAGE = 'primo', old_B)
 }
 
