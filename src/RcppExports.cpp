@@ -7,12 +7,12 @@
 using namespace Rcpp;
 
 // e_step
-arma::mat e_step(const arma::vec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1);
+arma::mat e_step(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1);
 RcppExport SEXP _primo_e_step(SEXP old_piSEXP, SEXP QSEXP, SEXP D_0SEXP, SEXP D_1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type old_pi(old_piSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type old_pi(old_piSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type Q(QSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type D_0(D_0SEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type D_1(D_1SEXP);
