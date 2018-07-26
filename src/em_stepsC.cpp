@@ -74,13 +74,13 @@ arma::mat findDiffGit(const arma::rowvec& old_pi, const arma::mat& Q, const arma
   Bmat.each_row() = log(old_pi);
 
   // substract minimum from each row (i.e. subtract colvec of rowMins from each column)
-  //Bmat.each_col() -= min(Bmat,1);
+  Bmat.each_col() -= min(Bmat,1);
 
   // exponentiate to convert (relative) log density to (relative) density
-  //Bmat = exp(Bmat);
+  Bmat = exp(Bmat);
 
   // convert to proportion (i.e. divide every column by colvec of rowSums)
-  //Bmat.each_col() /= sum(Bmat,1);
+  Bmat.each_col() /= sum(Bmat,1);
 
   return Bmat;
 }
