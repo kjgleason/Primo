@@ -123,7 +123,7 @@ estimate_config <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, pa
   } else cl <- NULL
 
   # fix configuration matrix and number of patterns
-  Q <- makeQ(1:d)
+  Q <- make_qmat(1:d)
   n_pattern <- nrow(Q)
   # initialize values for proportions coming from each configuration
   curpi<- c(0.80, rep((1-0.80)/(n_pattern-1),n_pattern-1))
