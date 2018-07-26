@@ -32,7 +32,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // findDiffGit
-arma::rowvec findDiffGit(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1);
+arma::mat findDiffGit(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1);
 RcppExport SEXP _primo_findDiffGit(SEXP old_piSEXP, SEXP QSEXP, SEXP D_0SEXP, SEXP D_1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
