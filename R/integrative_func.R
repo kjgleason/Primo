@@ -140,6 +140,7 @@ estimate_config <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, pa
     curpi<-m_step(curb)
     itermat<-rbind(itermat,curpi)
     diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
+    cat("\n\ndiff=",diff)
     if (!(numiters %% 10)) cat("\nIteration:",numiters,"Diff:",diff,"\nPi-hat:",curpi,"\n")
   }
 
