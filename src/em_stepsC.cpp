@@ -57,7 +57,6 @@ arma::mat m_step(const arma::mat& old_B){
   int n_obs = old_B.n_rows, n_pattern = old_B.n_cols;
 
   arma::mat newpi = (sum(old_B,0)+1)/(n_obs+n_pattern);
-  //arma::mat newpi = sum(old_B,0);
 
   return newpi;
 }
