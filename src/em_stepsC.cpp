@@ -64,15 +64,14 @@ arma::mat m_step(const arma::mat& old_B){
 
 
 // [[Rcpp::export]]
-arma::rowvec findDiffGit(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1) {
+arma::mat findDiffGit(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1) {
   // transpose Q to form compatible dimensions for matrix multiplications
   arma::mat t_Q = Q.t();
 
   // calculate log density under each configuration
   arma::mat Bmat = log(D_0) * (1-t_Q) + log(D_1) * t_Q;
   // factor in proportion of observations estimated to belong to each configuration
-  return log(old_pi);
-  //Bmat.each_row() += log(old_pi);
+  Bmat.each_row() = log(old_pi);
 
   // substract minimum from each row (i.e. subtract colvec of rowMins from each column)
   //Bmat.each_col() -= min(Bmat,1);
@@ -83,5 +82,5 @@ arma::rowvec findDiffGit(const arma::rowvec& old_pi, const arma::mat& Q, const a
   // convert to proportion (i.e. divide every column by colvec of rowSums)
   //Bmat.each_col() /= sum(Bmat,1);
 
-  //return Bmat;
+  return Bmat;
 }
