@@ -20,7 +20,7 @@ using namespace Rcpp;
 //' @export
 //'
 // [[Rcpp::export]]
-arma::mat e_step(const arma::vec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1) {
+arma::mat e_step(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1) {
   // transpose Q to form compatible dimensions for matrix multiplications
   arma::mat t_Q = Q.t();
 
