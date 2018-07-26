@@ -56,7 +56,7 @@ arma::mat e_step(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat
 arma::mat m_step(const arma::mat& old_B){
   int n_obs = old_B.n_rows, n_pattern = old_B.n_cols;
 
-  arma::vec newpi = (sum(old_B,0)+1)/(n_obs+n_pattern);
+  arma::mat newpi = (sum(old_B,0)+1)/(n_obs+n_pattern);
 
   return newpi;
 }
