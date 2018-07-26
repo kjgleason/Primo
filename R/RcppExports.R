@@ -36,7 +36,3 @@ m_step <- function(old_B) {
     .Call(`_primo_m_step`, old_B)
 }
 
-findDiffGit <- function(old_pi, Q, D_0, D_1) {
-    .Call(`_primo_findDiffGit`, old_pi, Q, D_0, D_1)
-}
-
