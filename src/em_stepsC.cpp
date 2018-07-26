@@ -71,7 +71,7 @@ arma::mat findDiffGit(const arma::rowvec& old_pi, const arma::mat& Q, const arma
   // calculate log density under each configuration
   arma::mat Bmat = log(D_0) * (1-t_Q) + log(D_1) * t_Q;
   // factor in proportion of observations estimated to belong to each configuration
-  //Bmat.each_row() = log(old_pi);
+  Bmat.each_row() = log(old_pi);
 
   // substract minimum from each row (i.e. subtract colvec of rowMins from each column)
   //Bmat.each_col() -= min(Bmat,1);
