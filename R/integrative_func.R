@@ -102,19 +102,25 @@ estimate_densities <- function(betas, sds, mafs, df, alt_proportion){
 #'
 #' @export
 #'
-estimate_config <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, par_size=0){
+estimate_config <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, par_size=0, density_list=NULL){
 
   # store dimensions of test statistics
   m <- nrow(betas)
   d <- ncol(betas)
 
-  ## estimate null and alternate densities for each column/
-  Tstat_m <- D0 <- D1 <- NULL
-  for (j in 1:d){
-    temp <- estimate_densities(betas[,j],sds[,j],mafs,dfs[j],alt_proportion = alt_proportions[j])
-    Tstat_m <- cbind(Tstat_m, temp$Tstat_m)
-    D0 <- cbind(D0, temp$D0)
-    D1 <- cbind(D1, temp$D1)
+  ## estimate null and alternate densities for each column/study
+  if(is.null(density_list)){
+    Tstat_m <- D0 <- D1 <- NULL
+    for (j in 1:d){
+      temp <- estimate_densities(betas[,j],sds[,j],mafs,dfs[j],alt_proportion = alt_proportions[j])
+      Tstat_m <- cbind(Tstat_m, temp$Tstat_m)
+      D0 <- cbind(D0, temp$D0)
+      D1 <- cbind(D1, temp$D1)
+    }
+  }else{
+    Tstat_m <- density_list$Tstat_m
+    D0 <- density_list$D0
+    D1 <- density_list$D1
   }
 
   if (par_size>0){
