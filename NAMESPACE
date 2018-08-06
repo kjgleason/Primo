@@ -3,6 +3,7 @@
 export(e_step)
 export(e_stepR)
 export(efdr)
+export(em_iter)
 export(estimate_config)
 export(estimate_densities)
 export(m_step)

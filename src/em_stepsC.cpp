@@ -60,3 +60,50 @@ arma::mat m_step(const arma::mat& old_B){
 
   return newpi;
 }
+
+//' EM Iteration
+//'
+//' Complete one iteration of the EM-algorithm (combines E-step and M-step).
+//' Calculate posterior expectations given current estimate for \eqn{\pi} (the
+//' proportion of SNPs coming from each configuration; E-Step).
+//' Re-estimates the \eqn{\pi} vector that maximizes the posterior expectation function from the E-step (i.e. M-step).
+//'
+//' @param old_pi vector of configuration proportions, fit through maximization
+//' (usualy 2^J for J data types)
+//' @param Q matrix of configurations
+//' @param D_0 estimate for the null density function
+//' @param D_1 estimate for the alternative density function
+//'
+//' @return Returns a vector estimating the proportion of SNPs coming from each configuration.
+//'
+//' @export
+//'
+// [[Rcpp::export]]
+arma::mat em_iter(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1) {
+  // E-step
+
+  // transpose Q to form compatible dimensions for matrix multiplications
+  arma::mat t_Q = Q.t();
+
+  // calculate log density under each configuration
+  arma::mat Bmat = log(D_0) * (1-t_Q) + log(D_1) * t_Q;
+  // factor in proportion of observations estimated to belong to each configuration
+  Bmat.each_row() += log(old_pi);
+
+  // substract minimum from each row (i.e. subtract colvec of rowMins from each column)
+  Bmat.each_col() -= min(Bmat,1);
+
+  // exponentiate to convert (relative) log density to (relative) density
+  Bmat = exp(Bmat);
+
+  // convert to proportion (i.e. divide every column by colvec of rowSums)
+  Bmat.each_col() /= sum(Bmat,1);
+
+
+  // M-step
+  int n_obs = Bmat.n_rows, n_pattern = Bmat.n_cols;
+  // Calculate pi vector that maximizes posterior expectation
+  arma::mat newpi = (sum(Bmat,0)+1)/(n_obs+n_pattern);
+
+  return newpi;
+}

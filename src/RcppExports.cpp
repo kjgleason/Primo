@@ -31,10 +31,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// em_iter
+arma::mat em_iter(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1);
+RcppExport SEXP _primo_em_iter(SEXP old_piSEXP, SEXP QSEXP, SEXP D_0SEXP, SEXP D_1SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type old_pi(old_piSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Q(QSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type D_0(D_0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type D_1(D_1SEXP);
+    rcpp_result_gen = Rcpp::wrap(em_iter(old_pi, Q, D_0, D_1));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_primo_e_step", (DL_FUNC) &_primo_e_step, 4},
     {"_primo_m_step", (DL_FUNC) &_primo_m_step, 1},
+    {"_primo_em_iter", (DL_FUNC) &_primo_em_iter, 4},
     {NULL, NULL, 0}
 };
 

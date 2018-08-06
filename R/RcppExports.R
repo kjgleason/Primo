@@ -36,3 +36,24 @@ m_step <- function(old_B) {
     .Call(`_primo_m_step`, old_B)
 }
 
+#' EM Iteration
+#'
+#' Complete one iteration of the EM-algorithm (combines E-step and M-step).
+#' Calculate posterior expectations given current estimate for \eqn{\pi} (the
+#' proportion of SNPs coming from each configuration; E-Step).
+#' Re-estimates the \eqn{\pi} vector that maximizes the posterior expectation function from the E-step (i.e. M-step).
+#'
+#' @param old_pi vector of configuration proportions, fit through maximization
+#' (usualy 2^J for J data types)
+#' @param Q matrix of configurations
+#' @param D_0 estimate for the null density function
+#' @param D_1 estimate for the alternative density function
+#'
+#' @return Returns a vector estimating the proportion of SNPs coming from each configuration.
+#'
+#' @export
+#'
+em_iter <- function(old_pi, Q, D_0, D_1) {
+    .Call(`_primo_em_iter`, old_pi, Q, D_0, D_1)
+}
+

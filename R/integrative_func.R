@@ -134,20 +134,63 @@ estimate_config <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, pa
   cat("\nIterating...\n")
 
   # EM algorithm
-  while(diff>tol){
-    numiters<-numiters+1
-    curb<-e_step(curpi, Q=Q, D_0=D0, D_1=D1)
-    curpi<-m_step(curb)
-    itermat<-rbind(itermat,curpi)
-    diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
-    if (!(numiters %% 10)) cat("\nIteration:",numiters,"Diff:",diff,"\nPi-hat:",curpi,"\n")
+  # maximum vector size in R is 2^31-1 (need to process in chunks if # elements in matrix exceeds)
+  if(m*as.double(n_pattern) <= 2^31-1){
+    while(diff>tol){
+      numiters<-numiters+1
+      curb<-e_step(curpi, Q=Q, D_0=D0, D_1=D1)
+      curpi<-m_step(curb)
+      itermat<-rbind(itermat,curpi)
+      diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
+      if (!(numiters %% 10)) cat("\nIteration:",numiters,"; Change:",diff,"\nPi-hat:",curpi,"\n")
+    }
+  } else{
+    while(diff>tol){
+      numiters<-numiters+1
+      # process large matrix in chunks
+      num_chunks <- ceiling((m*as.double(n_pattern))/(2^31-1))
+      Drow_chunks <- split(1:m, ceiling(seq_along(1:m)/(m/num_chunks)))
+      # e-step, in chunks
+      curb_colsums <- 0
+      for(ch in 1:length(Drow_chunks)){
+        D_rows <-  Drow_chunks[[ch]]
+        curb_chunk <- e_step(curpi,Q,D0[D_rows,],D1[D_rows,])
+        curb_colsums <- curb_colsums + colSums(curb_chunk)
+      }
+      curpi<-matrix((curb_colsums+1)/(m+n_pattern),nrow=1)
+      itermat<-rbind(itermat,curpi)
+      diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
+      if (!(numiters %% 10)) { cat("\nIteration:",numiters,"; Change:",diff,"\nPi-hat:",curpi,"\n")
+      } else cat("\nIteration:",numiters,"; Change:",diff,"\n")
+    }
   }
+
 
   if (par_size>0) parallel::stopCluster(cl)
 
   cat("\nIteration:",numiters,"; Change:",diff,"\nPi-hat:",curpi,"\n\n")
 
-  return(list(post_prob = curb, config_prop = curpi, Tstat_m = Tstat_m, D0=D0, D1=D1))
+  if(m*as.double(n_pattern) <= 2^31-1){
+    return(list(post_prob = curb, config_prop = curpi, Tstat_m = Tstat_m, D0=D0, D1=D1,
+                alt_proportions=alt_proportions, tol=tol))
+  } else{
+    curb <- NULL
+    exit_m_step <-function(curpi,Q,D0,D1){
+      t_Q <- t(Q)
+      # consider using `bigmemory` package for following matrix
+      curb <- log(D0) %*% (1-t_Q) + log(D1) %*% t_Q
+      curb <- sweep(curb,2,log(curpi),"+")
+      # subtract minimum, then e^(B)/rowSums(B)
+      curb<-curb-matrixStats::rowMins(curb)
+      curb<-exp(curb)
+      # can use rowSums directly since columns are recycled
+      curb<-curb/matrixStats::rowSums2(curb)
+      return(curb)
+    }
+    try(curb<-exit_m_step(curpi,Q,D0,D1))
+    return(list(post_prob = curb, config_prop = curpi, Tstat_m = Tstat_m, D0=D0, D1=D1,
+                alt_proportions=alt_proportions, tol=tol))
+  }
 }
 
 
