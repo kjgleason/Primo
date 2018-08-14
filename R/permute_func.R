@@ -185,7 +185,7 @@ permute_multi <- function(betas, sds, mafs, dfs, true_res, nperm=10, par_size=0,
 
   for(p in 1:nperm){
     # run permutations using same parameters as true data
-    res <- permute_setup(betas, sds, mafs, dfs, alt_proportions, tol, par_size, perm_par_size, density_list)
+    res <- permute_setup(betas, sds, mafs, dfs, true_res, par_size, perm_par_size, density_list)
     res <- lapply(res, function(x) x$post_prob)
     return_list[[p]] <- res
   }
