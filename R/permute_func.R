@@ -73,7 +73,6 @@ permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1
 #' @param perm_par_size numerical value; specifies the number of CPUs/cores/processors for
 #' parallel computing of permutations(0 for sequential processing).
 #' @param density_list (optional) list of densities estimated by \code{estimate_densities()}.
-
 #'
 #' @return A list of lists, where each list holds results from a single run of
 #' \code{\link{estimate_config}}. Each run represents results using one permuted dataset.
@@ -130,7 +129,6 @@ permute_integ <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, par_
 #' @param perm_par_size numerical value; specifies the number of CPUs/cores/processors for
 #' parallel computing of permutations(0 for sequential processing).
 #' @param density_list (optional) list of densities estimated by \code{estimate_densities()}.
-
 #'
 #' @return A list of lists, where each list holds results from a single run
 #' of \code{\link{estimate_config}}.Each run represents results using one permuted dataset.
@@ -151,4 +149,46 @@ permute_setup <- function(betas, sds, mafs, dfs, true_res, par_size=0, perm_par_
   # run permutations using same parameters as true data
   res <- permute_integ(betas, sds, mafs, dfs, alt_proportions, tol, par_size, perm_par_size, density_list)
   return(res)
+}
+
+
+#' Estimate Posterior Probabilities for Multiple Permuted Datasets
+#'
+#' Run multiple permutations of multi-omics datasets.
+#' Each set of permutations permutes one column at a time
+#' and estimates the posterior probability for each configuration
+#' for each SNP under each permuted dataset.
+#'
+#' @param betas matrix of coefficient estimates.
+#' @param sds matrix of standard errors (for coefficient estimates).
+#' @param mafs vector of minor allele frequencies (MAFs).
+#' @param dfs vector of degrees of freedom.
+#' @param true_res a list; results returned by \code{\link{estimate_config}} when
+#' run with true data
+#' @param nperm numerical value; number of permutations to run
+#' @param par_size numerical value; specifies the number of CPUs/cores/processors for
+#' parallel computing (0 for sequential processing).
+#' @param perm_par_size numerical value; specifies the number of CPUs/cores/processors for
+#' parallel computing of permutations(0 for sequential processing).
+#' @param density_list (optional) list of densities estimated by \code{estimate_densities()}.
+#'
+#' @return A list of lists, where each list holds the matrices of posterior probabilities
+#' from \code{\link{estimate_config}} run on a permuted dataset (i.e. a single column).
+#'
+#' @details See documentation for \code{\link{estimate_config}} for additional details
+#' regarding the input arguments.
+#'
+#' @export
+#'
+permute_multi <- function(betas, sds, mafs, dfs, true_res, nperm=10, par_size=0, perm_par_size=0, density_list=NULL){
+  return_list <- list()
+
+  for(p in 1:nperm){
+    # run permutations using same parameters as true data
+    res <- permute_setup(betas, sds, mafs, dfs, alt_proportions, tol, par_size, perm_par_size, density_list)
+    res <- lapply(res, function(x) x$post_prob)
+    return_list[[p]] <- res
+  }
+
+  return(return_list)
 }
