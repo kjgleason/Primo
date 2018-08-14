@@ -5,7 +5,7 @@
 \title{Estimate Posterior Probabilities for Permuted Datasets}
 \usage{
 permute_integ(betas, sds, mafs, dfs, alt_proportions, tol = 0.001,
-  par_size = 0, perm_par_size = 0)
+  par_size = 0, perm_par_size = 0, density_list = NULL)
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}
@@ -26,6 +26,8 @@ alternative densities.}
 
 \item{perm_par_size}{numerical value; specifies the number of CPUs/cores/processors for
 parallel computing of permutations(0 for sequential processing).}
+
+\item{density_list}{(optional) list of densities estimated by \code{estimate_densities()}.}
 }
 \value{
 A list of lists, where each list holds results from a single run of

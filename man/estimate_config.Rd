@@ -5,7 +5,7 @@
 \title{Estimate Posterior Probabilities of Configurations}
 \usage{
 estimate_config(betas, sds, mafs, dfs, alt_proportions, tol = 0.001,
-  par_size = 0)
+  par_size = 0, density_list = NULL)
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}

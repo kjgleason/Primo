@@ -5,7 +5,7 @@
 \title{Estimate Posterior Probabilities after Permuting One Column}
 \usage{
 permute_once(betas, sds, mafs, dfs, alt_proportions, perm_col, tol = 0.001,
-  par_size = 0)
+  par_size = 0, density_list = NULL)
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}
@@ -25,6 +25,8 @@ alternative densities.}
 
 \item{par_size}{numerical value; specifies the number of CPUs/cores/processors for parallel computing
 (0 for sequential processing).}
+
+\item{density_list}{(optional) list of densities estimated by \code{estimate_densities()}.}
 }
 \value{
 A list with the following elements, based on permuted data:
