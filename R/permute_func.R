@@ -15,6 +15,8 @@
 #' @param tol numerical value; specifies tolerance threshold for convergence.
 #' @param perm_col numerical value; column number to permute
 #' @param density_list (optional) list of densities estimated by \code{estimate_densities()}.
+#' @param perm_densities logical value; when true, permutes the previously calculated densities
+#' instead of reestimating densities from permuted betas and sds
 #'
 #' @return A list with the following elements, based on permuted data:
 #' \tabular{ll}{
@@ -35,17 +37,26 @@
 #'
 #' @export
 #'
-permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1e-3, par_size=0, density_list=NULL){
+permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1e-3, par_size=0, density_list=NULL, perm_densities=F){
   # permute the order of rows
   od <- sample(1:nrow(betas))
   # shuffle column using permuted order
   betas[,perm_col] <- betas[od,perm_col]
   sds[,perm_col] <- sds[od,perm_col]
-  # match densities to permuted order, if densities are provided
-  if(!is.null(density_list)){
+  # match densities of perm_col to permuted order, if densities are provided and perm_densities=T
+  if(perm_densities){
+    if(is.null(density_list)) stop("Density list cannot be null if perm_densities=T")
     density_list$Tstat_m[,perm_col] <- density_list$Tstat_m[od,perm_col]
     density_list$D0[,perm_col] <- density_list$D0[od,perm_col]
-    density_list$D1[,perm_col] <- density_list$D1[,perm_col]
+    density_list$D1[,perm_col] <- density_list$D1[od,perm_col]
+  } else{
+    # calculate new density for permuted data only, if densities are provided
+    if(!is.null(density_list)){
+      perm_dens <- estimate_densities(betas[,perm_col],sds[,perm_col],mafs[perm_col],dfs[perm_col],alt_proportions[perm_col])
+      density_list$Tstat_m[,perm_col] <- perm_dens$Tstat_m
+      density_list$D0[,perm_col] <- perm_dens$D0
+      density_list$D1[,perm_col] <- perm_dens$D1
+    }
   }
   # estimate configuration for permuted data
   xx <- NULL
@@ -96,14 +107,14 @@ permute_integ <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, par_
                                function(j,betas,sds,mafs,dfs,alt_proportions,tol,par_size) {
                                  return(permute_once(betas=betas,sds=sds,mafs=mafs,
                                                      dfs=dfs, alt_proportions=alt_proportions,perm_col=j,
-                                                     tol=tol,par_size=par_size))
+                                                     tol=tol,par_size=par_size,density_list=density_list))
                                },betas=betas,sds=sds,mafs=mafs,dfs=dfs,
-                               alt_proportions=alt_proportions,tol=tol,par_size=par_size)
+                               alt_proportions=alt_proportions,tol=tol,par_size=par_size,density_list=density_list)
     parallel::stopCluster(clust)
   # sequential version
   # run estimate_config for each permuted dataset
   } else res <- lapply(1:ncol(betas), function(j)
-                        permute_once(betas,sds,maf,dfs,alt_proportions,perm_col=j,tol,par_size))
+                        permute_once(betas,sds,maf,dfs,alt_proportions,perm_col=j,tol,par_size,density_list))
 
   return(res)
 }
