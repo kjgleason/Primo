@@ -52,7 +52,7 @@ permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1
   } else{
     # calculate new density for permuted data only, if densities are provided
     if(!is.null(density_list)){
-      perm_dens <- estimate_densities(betas[,perm_col],sds[,perm_col],mafs[perm_col],dfs[perm_col],alt_proportions[perm_col])
+      perm_dens <- estimate_densities(betas[,perm_col],sds[,perm_col],mafs,dfs[perm_col],alt_proportions[perm_col])
       density_list$Tstat_m[,perm_col] <- perm_dens$Tstat_m
       density_list$D0[,perm_col] <- perm_dens$D0
       density_list$D1[,perm_col] <- perm_dens$D1
