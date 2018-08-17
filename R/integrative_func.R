@@ -145,6 +145,8 @@ estimate_config <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, pa
     while(diff>tol){
       numiters<-numiters+1
       curb<-e_step(curpi, Q=Q, D_0=D0, D_1=D1)
+      # temporary solution to precision problems caused by |t-statistics| > 30
+      curb[which(is.na(curb))] <- 0
       curpi<-m_step(curb)
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
@@ -161,6 +163,8 @@ estimate_config <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, pa
       for(ch in 1:length(Drow_chunks)){
         D_rows <-  Drow_chunks[[ch]]
         curb_chunk <- e_step(curpi,Q,D0[D_rows,],D1[D_rows,])
+        # temporary solution to precision problems caused by |t-statistics| > 30
+        curb_chunk[which(is.na(curb_chunk))] <- 0
         curb_colsums <- curb_colsums + colSums(curb_chunk)
       }
       curpi<-matrix((curb_colsums+1)/(m+n_pattern),nrow=1)
