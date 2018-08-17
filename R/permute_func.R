@@ -192,11 +192,17 @@ permute_setup <- function(betas, sds, mafs, dfs, true_res, par_size=0, perm_par_
 #' @export
 #'
 permute_multi <- function(betas, sds, mafs, dfs, true_res, nperm=10, par_size=0, perm_par_size=0, density_list=NULL){
-  return_list <- list()
+  # obtain parameters used with true data
+  alt_proportions <- true_res$alt_proportions
+  tol <- true_res$tol
+  if(is.null(density_list)){
+    density_list <- list(Tstat_m=true_res$Tstat_m,D0=true_res$D0,D1=true_res$D0)
+  }
 
+  return_list <- list()
   for(p in 1:nperm){
     # run permutations using same parameters as true data
-    res <- permute_setup(betas, sds, mafs, dfs, true_res, par_size, perm_par_size, density_list)
+    res <- permute_integ(betas, sds, mafs, dfs, alt_proportions, tol, par_size, perm_par_size, density_list)
     res <- lapply(res, function(x) x$post_prob)
     return_list[[p]] <- res
   }
