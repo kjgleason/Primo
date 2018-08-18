@@ -114,7 +114,7 @@ permute_integ <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, par_
   # sequential version
   # run estimate_config for each permuted dataset
   } else res <- lapply(1:ncol(betas), function(j)
-                        permute_once(betas,sds,maf,dfs,alt_proportions,perm_col=j,tol,par_size,density_list))
+                        permute_once(betas,sds,mafs,dfs,alt_proportions,perm_col=j,tol,par_size,density_list))
 
   return(res)
 }
