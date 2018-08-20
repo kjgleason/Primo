@@ -5,7 +5,7 @@
 \title{Estimate Posterior Probabilities after Permuting One Column}
 \usage{
 permute_once(betas, sds, mafs, dfs, alt_proportions, perm_col, tol = 0.001,
-  par_size = 0, density_list = NULL, perm_densities = F)
+  par_size = 0, density_list = NULL, perm_densities = T)
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}

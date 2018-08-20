@@ -37,7 +37,7 @@
 #'
 #' @export
 #'
-permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1e-3, par_size=0, density_list=NULL, perm_densities=F){
+permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1e-3, par_size=0, density_list=NULL, perm_densities=T){
   # permute the order of rows
   od <- sample(1:nrow(betas))
   # shuffle column using permuted order
@@ -84,6 +84,8 @@ permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1
 #' @param perm_par_size numerical value; specifies the number of CPUs/cores/processors for
 #' parallel computing of permutations(0 for sequential processing).
 #' @param density_list (optional) list of densities estimated by \code{estimate_densities()}.
+#' @param perm_densities logical value; when true, permutes the previously calculated densities
+#' instead of reestimating densities from permuted betas and sds
 #'
 #' @return A list of lists, where each list holds results from a single run of
 #' \code{\link{estimate_config}}. Each run represents results using one permuted dataset.
@@ -97,24 +99,25 @@ permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1
 #'
 #' @export
 #'
-permute_integ <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, par_size=0, perm_par_size=0, density_list=NULL){
+permute_integ <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, par_size=0, perm_par_size=0, density_list=NULL, perm_densities=T){
   # permute each column
   # parallel version
   if(perm_par_size>0){
     clust <- parallel::makeCluster(perm_par_size)
+    parallel::clusterCall(clust, function() {library(primo)})
     # run estimate_config for one permuted dataset on each cluster node
     res <- parallel::parLapply(cl=clust, 1:ncol(betas),
                                function(j,betas,sds,mafs,dfs,alt_proportions,tol,par_size) {
                                  return(permute_once(betas=betas,sds=sds,mafs=mafs,
                                                      dfs=dfs, alt_proportions=alt_proportions,perm_col=j,
-                                                     tol=tol,par_size=par_size,density_list=density_list))
+                                                     tol=tol,par_size=par_size,density_list=density_list,perm_densities=perm_densities))
                                },betas=betas,sds=sds,mafs=mafs,dfs=dfs,
-                               alt_proportions=alt_proportions,tol=tol,par_size=par_size,density_list=density_list)
+                               alt_proportions=alt_proportions,tol=tol,par_size=par_size,density_list=density_list,perm_densities=perm_densities)
     parallel::stopCluster(clust)
   # sequential version
   # run estimate_config for each permuted dataset
   } else res <- lapply(1:ncol(betas), function(j)
-                        permute_once(betas,sds,mafs,dfs,alt_proportions,perm_col=j,tol,par_size,density_list))
+                        permute_once(betas,sds,mafs,dfs,alt_proportions,perm_col=j,tol,par_size,density_list,perm_densities))
 
   return(res)
 }
