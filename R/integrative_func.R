@@ -20,7 +20,6 @@
 #'
 estimate_densities <- function(betas, sds, mafs, df, alt_proportion){
 
-  m <- nrow(betas)
   # account for MAF in variance calculations
   vg = 1/(2*mafs*(1-mafs))
   sigma2 <- sds^2*(2*mafs*(1-mafs))
