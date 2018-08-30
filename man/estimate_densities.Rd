@@ -4,9 +4,12 @@
 \alias{estimate_densities}
 \title{Estimate Densities Under the Null and Alternative Densities}
 \usage{
-estimate_densities(betas, sds, mafs, df, alt_proportion)
+estimate_densities(pvals = NULL, betas = NULL, sds = NULL, mafs = NULL,
+  df = NULL, alt_proportion, use_tstats = TRUE)
 }
 \arguments{
+\item{pvals}{vector of p-values.}
+
 \item{betas}{vector of coefficient estimates.}
 
 \item{sds}{vector of standard errors (for coefficient estimates).}
@@ -16,15 +19,20 @@ estimate_densities(betas, sds, mafs, df, alt_proportion)
 \item{df}{first degrees of freedom of the F-distribution.}
 
 \item{alt_proportion}{proportion of test-statistics used in estimating alternative densities.}
+
+\item{use_tstats}{logical; when true densities are calculated using moderated t-statistics
+(use p-values when false)}
 }
 \value{
 A list with the following elements:
 \tabular{ll}{
-\code{Tstat_m} \tab matrix of moderated t-statistics\cr
+\code{Tstat_m} \tab matrix of moderated t-statistics (set to NULL for p-value method)\cr
 \code{D0} \tab matrix of densities calculated under the null distribution\cr
 \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
 }
 }
 \description{
-For each observation, estimate the density under the null and under the alternative.
+For each observation, estimate the density under the null and under the alternative hypotheses.
+This function is a wrapper to call either \code{estimate_densities_modT()}or
+\code{estimate_densities_pval()} for density estimation using moderated t-statistics or p-values, respectively.
 }

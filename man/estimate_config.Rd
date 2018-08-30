@@ -4,10 +4,13 @@
 \alias{estimate_config}
 \title{Estimate Posterior Probabilities of Configurations}
 \usage{
-estimate_config(betas, sds, mafs, dfs, alt_proportions, tol = 0.001,
-  par_size = 0, density_list = NULL)
+estimate_config(pvals = NULL, betas = NULL, sds = NULL, mafs = NULL,
+  dfs = NULL, alt_proportions, tol = 0.001, par_size = 0,
+  density_list = NULL)
 }
 \arguments{
+\item{pvals}{matrix of p-values from test statistics.}
+
 \item{betas}{matrix of coefficient estimates.}
 
 \item{sds}{matrix of standard errors (for coefficient estimates).}
@@ -47,9 +50,14 @@ For each SNP, estimates the posterior probability for each configuration.
 Utilizes parallel computing, when available.
 }
 \details{
+Either \code{pvals} are all four of \code{betas}, \code{sds}, \code{mafs} and \code{dfs}
+must be specified (i.e. not \code{NULL}).
+
 The following are additional details describing the input arguments:
 \tabular{ll}{
-\code{betas} \tab  coefficients should be an LxD matrix: L = number of SNPs ("Loci");
+\code{pvals} \tab  p-values should be an LxD matrix: L = number of SNPs ("Loci");
+D = number data sources.\cr
+\code{betas} \tab  beta coefficients should be an LxD matrix: L = number of SNPs ("Loci");
 D = number data sources.\cr
 \code{sds} \tab standard errors should be an LxD matrix: L = number of SNPs ("Loci");
 D = number data sources.\cr

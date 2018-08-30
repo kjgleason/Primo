@@ -1,11 +1,12 @@
 #' Estimate Densities Under the Null and Alternative Densities
 #'
-#' For each observation, estimate the density under the null and under the alternative.
+#' For each observation, estimate the density under the null and under the alternative
+#' hypotheses using moderated t-statistics.
 #'
 #' @param betas vector of coefficient estimates.
 #' @param sds vector of standard errors (for coefficient estimates).
 #' @param mafs vector of minor allele frequencies (MAFs).
-#' @param df first degrees of freedom of the F-distribution.
+#' @param df first degrees of freedom of the F-distribution (usually, the number of subjects/observations).
 #' @param alt_proportion proportion of test-statistics used in estimating alternative densities.
 #'
 #' @return A list with the following elements:
@@ -15,10 +16,14 @@
 #' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
 #' }
 #'
+#' @details Following Smyth (2004), the function calculates moderated t-statistics using
+#' conditional posterior means of the variance. The moderated t-statistics are used to estimate
+#' the null density under a t-distribution with estimated degrees of freedom and
+#' the alternative density under a scaled t-distribution.
+#'
 #' @export
 #'
-#'
-estimate_densities <- function(betas, sds, mafs, df, alt_proportion){
+estimate_densities_modT <- function(betas, sds, mafs, df, alt_proportion){
 
   # account for MAF in variance calculations
   vg = 1/(2*mafs*(1-mafs))
@@ -46,6 +51,98 @@ estimate_densities <- function(betas, sds, mafs, df, alt_proportion){
   return(list(Tstat_m = moderate.t, D0=D0, D1=D1))
 }
 
+#' Estimate Densities Under the Null and Alternative Densities
+#'
+#' For each observation, estimate the density under the null and under the alternative
+#' hypotheses using p-values.
+#'
+#' @param pvals vector of coefficient estimates.
+#' @param alt_proportion proportion of pvalues used in estimating alternative densities.
+#' Authors suggest using a value >= 0.05 since the alternative density estimation may fail
+#' if the value is too small.
+#'
+#' @return A list with the following elements:
+#' \tabular{ll}{
+#' \code{D0} \tab matrix of densities calculated under the null distribution\cr
+#' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
+#' }
+#'
+#' @details The function estimates densities under the null and under the alternative
+#' given a vector of p-values from test statistics and the marginal probability of
+#' coming from the alternative distribution. Under the null hypothesis,
+#' \code{-2*log()} transformed p-values follow a chi-square distribution with 2 degrees of freedom.
+#' Under the alternative, the function assumes that the \code{-2*log()} transformed p-values
+#' follow a scaled chi-square distribution with unknown scale parameter and
+#' unknown degrees of freedom. Those two parameters are solved by using the first and
+#' second moments of the transformed p-values and the known proportion of alternatives
+#' (specified in \code{alt_proportion}). The function solves a theoretical formula of the first and
+#' second moments as functions of the scale parameter and degrees of freedom.
+#'
+#' @export
+#'
+estimate_densities_pval <- function(pvals, alt_proportion){
+
+  if(alt_proportion < 0.05) warning("alt_proportion is smaller than recommended; alternative density estimation may fail")
+
+  ##Transform to chi square; under the null, the transformed p-values follow a chi square distribution with df 2.
+  chi_mix<-(-2)*log(pvals)
+
+  ##Using the first and second moments to solve the scale parameter and the degrees of freedom under the alternative
+  prod<-(mean(chi_mix)-(1-alt_proportion)*2)/alt_proportion
+  ## store scale parameter in a_alt
+  a_alt<-(mean((chi_mix-mean(chi_mix))^2)-(1-alt_proportion)*2*2-(1-alt_proportion)*alt_proportion*(prod-2)^2)/(alt_proportion*2*prod)
+  ## store degrees of freedom in df_alt
+  df_alt<-prod/a_alt
+
+  ##Density under the null
+  D0<-dchisq(chi_mix,df=2)
+  ##Density under the alternative
+  D1<-dchisq(chi_mix/a_alt,df=df_alt)/a_alt
+
+  return(list(D0=D0, D1=D1))
+}
+
+#' Estimate Densities Under the Null and Alternative Densities
+#'
+#' For each observation, estimate the density under the null and under the alternative hypotheses.
+#' This function is a wrapper to call either \code{estimate_densities_modT()}or
+#' \code{estimate_densities_pval()} for density estimation using moderated t-statistics or p-values, respectively.
+#'
+#' @param pvals vector of p-values.
+#' @param betas vector of coefficient estimates.
+#' @param sds vector of standard errors (for coefficient estimates).
+#' @param mafs vector of minor allele frequencies (MAFs).
+#' @param df first degrees of freedom of the F-distribution.
+#' @param alt_proportion proportion of test-statistics used in estimating alternative densities.
+#' @param use_tstats logical; when true densities are calculated using moderated t-statistics
+#' (use p-values when false)
+#'
+#' @return A list with the following elements:
+#' \tabular{ll}{
+#' \code{Tstat_m} \tab matrix of moderated t-statistics (set to NULL for p-value method)\cr
+#' \code{D0} \tab matrix of densities calculated under the null distribution\cr
+#' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
+#' }
+#'
+#' @export
+#'
+#'
+estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=NULL, alt_proportion, use_tstats=TRUE){
+
+  if(use_tstats){
+    if(is.null(betas) | is.null(sds) | is.null(mafs) | is.null(df)){
+      if(!is.null(pvals)) {
+          warning("use_tstats=TRUE requires non-null values for betas, sds, mafs and df; using p-values for density estimation.")
+          myDens <- estimate_densities_pval(pvals, alt_proportion)
+      } else warning("use_tstats=TRUE requires non-null values for betas, sds, mafs and df.")
+    } else myDens <- estimate_densities_modT(betas, sds, mafs, df, alt_proportion)
+  } else{
+    myDens <- estimate_densities_pval(pvals, alt_proportion)
+    myDens <- list(Tstat_m=NULL,D0=myDens$D0,D1=myDens$D1)
+  }
+  return(myDens)
+}
+
 
 
 #' Estimate Posterior Probabilities of Configurations
@@ -53,6 +150,7 @@ estimate_densities <- function(betas, sds, mafs, df, alt_proportion){
 #' For each SNP, estimates the posterior probability for each configuration.
 #' Utilizes parallel computing, when available.
 #'
+#' @param pvals matrix of p-values from test statistics.
 #' @param betas matrix of coefficient estimates.
 #' @param sds matrix of standard errors (for coefficient estimates).
 #' @param mafs vector of minor allele frequencies (MAFs).
@@ -79,9 +177,14 @@ estimate_densities <- function(betas, sds, mafs, df, alt_proportion){
 #' \code{tol} \tab numerical value; the tolerance threshold used in determining convergence
 #' }
 #'
-#' @details The following are additional details describing the input arguments:
+#' @details Either \code{pvals} are all four of \code{betas}, \code{sds}, \code{mafs} and \code{dfs}
+#' must be specified (i.e. not \code{NULL}).
+#'
+#' The following are additional details describing the input arguments:
 #' \tabular{ll}{
-#' \code{betas} \tab  coefficients should be an LxD matrix: L = number of SNPs ("Loci");
+#' \code{pvals} \tab  p-values should be an LxD matrix: L = number of SNPs ("Loci");
+#' D = number data sources.\cr
+#' \code{betas} \tab  beta coefficients should be an LxD matrix: L = number of SNPs ("Loci");
 #' D = number data sources.\cr
 #' \code{sds} \tab standard errors should be an LxD matrix: L = number of SNPs ("Loci");
 #' D = number data sources.\cr
@@ -101,20 +204,34 @@ estimate_densities <- function(betas, sds, mafs, df, alt_proportion){
 #'
 #' @export
 #'
-estimate_config <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, par_size=0, density_list=NULL){
+estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NULL, alt_proportions, tol=1e-3, par_size=0, density_list=NULL){
 
   # store dimensions of test statistics
-  m <- nrow(betas)
-  d <- ncol(betas)
+  if(!is.null(betas)){
+    m <- nrow(betas)
+    d <- ncol(betas)
+  } else{
+    m <- nrow(pvals)
+    d <- ncol(pvals)
+  }
 
   ## estimate null and alternate densities for each column/study
   if(is.null(density_list)){
     Tstat_m <- D0 <- D1 <- NULL
-    for (j in 1:d){
-      temp <- estimate_densities(betas[,j],sds[,j],mafs,dfs[j],alt_proportion = alt_proportions[j])
-      Tstat_m <- cbind(Tstat_m, temp$Tstat_m)
-      D0 <- cbind(D0, temp$D0)
-      D1 <- cbind(D1, temp$D1)
+    if(!is.null(betas)){
+      for (j in 1:d){
+        temp <- estimate_densities(betas=betas[,j],sds=sds[,j],mafs=mafs,df=dfs[j],alt_proportion = alt_proportions[j])
+        Tstat_m <- cbind(Tstat_m, temp$Tstat_m)
+        D0 <- cbind(D0, temp$D0)
+        D1 <- cbind(D1, temp$D1)
+      }
+    } else{
+      for (j in 1:d){
+        temp <- estimate_densities(pvals=pvals[,j],alt_proportion = alt_proportions[j],use_tstats=F)
+        Tstat_m <- cbind(Tstat_m, temp$Tstat_m)
+        D0 <- cbind(D0, temp$D0)
+        D1 <- cbind(D1, temp$D1)
+      }
     }
   }else{
     Tstat_m <- density_list$Tstat_m
