@@ -134,7 +134,7 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
       if(!is.null(pvals)) {
           warning("use_tstats=TRUE requires non-null values for betas, sds, mafs and df; using p-values for density estimation.")
           myDens <- estimate_densities_pval(pvals, alt_proportion)
-      } else warning("use_tstats=TRUE requires non-null values for betas, sds, mafs and df.")
+      } else stop("use_tstats=TRUE requires non-null values for betas, sds, mafs and df.")
     } else myDens <- estimate_densities_modT(betas, sds, mafs, df, alt_proportion)
   } else{
     myDens <- estimate_densities_pval(pvals, alt_proportion)
