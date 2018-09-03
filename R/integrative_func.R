@@ -58,7 +58,7 @@ estimate_densities_modT <- function(betas, sds, mafs, df, alt_proportion){
 #'
 #' @param pvals vector of coefficient estimates.
 #' @param alt_proportion proportion of pvalues used in estimating alternative densities.
-#' Authors suggest using a value >= 0.05 since the alternative density estimation may fail
+#' Note that the alternative density estimation may fail
 #' if the value is too small.
 #'
 #' @return A list with the following elements:
@@ -82,7 +82,7 @@ estimate_densities_modT <- function(betas, sds, mafs, df, alt_proportion){
 #'
 estimate_densities_pval <- function(pvals, alt_proportion){
 
-  if(alt_proportion < 0.05) warning("alt_proportion is smaller than recommended; alternative density estimation may fail")
+  if(alt_proportion < 0.05) warning("magnitude of alt_proportion is small; alternative density estimation may fail")
 
   ##Transform to chi square; under the null, the transformed p-values follow a chi square distribution with df 2.
   chi_mix<-(-2)*log(pvals)

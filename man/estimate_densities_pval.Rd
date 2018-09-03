@@ -10,7 +10,7 @@ estimate_densities_pval(pvals, alt_proportion)
 \item{pvals}{vector of coefficient estimates.}
 
 \item{alt_proportion}{proportion of pvalues used in estimating alternative densities.
-Authors suggest using a value >= 0.05 since the alternative density estimation may fail
+Note that the alternative density estimation may fail
 if the value is too small.}
 }
 \value{
