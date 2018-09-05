@@ -102,6 +102,66 @@ estimate_densities_pval <- function(pvals, alt_prop){
   return(list(D0=D0, D1=D1))
 }
 
+#' Difference from nominal p-values, chi2 mixture
+#'
+#' Match observed p-values to nominal p-values by rank and calculate total difference. Objective
+#' function of a chi-square mixture is used. This function is optimized to estimate the unknown
+#' scale and degree of freedom parameters for the scaled chi-square distribution under the
+#' alternative hypothesis.
+#'
+#' @param data list with two elements: \code{chi_mix} (vector) and \code{alt_prop} (scalar).
+#' @param par vector of two parameters for the alternative distribution:
+#' scale parameter [1] and degrees of freedom [2].
+#'
+#' @return Returns a scalar value of the total (absolute) difference between observed p-values
+#' (given the parameters) and nominal p-values.
+#'
+#' @details The argument \code{data} should be a two-element list. The first element, named \code{chi_mix}, is
+#' a vector of the observed values from the chi-square mixture. The second element, named \code{alt_prop},
+#' is the proportion of statistics that come from the alternative distribution.
+#'
+#' The order of parameters is important in \code{par}. The scale parameter should be in the first position;
+#' the degrees of freedom should be in the second position.
+#'
+#' @export
+#'
+chiMix_pDiff <- function(data, par){
+  chi_mix <- data$chi_mix
+  alt_prop <- data$alt_prop
+
+  ## total number of statistics
+  M <- length(chi_mix)
+
+  ## number of statistics to use in estimation
+  pM <- alt_prop * M
+
+  ##===== Method I: Fit top p*M statistics to true objective function =====##
+  ## ranks
+  r <- 1:pM
+
+  x <- sort(chi_mix, decreasing=T)
+  x <- x[r]
+
+  ## objective function: 1 - p*F(a*x,d) - (1-p)*F(x,2) - (rank-0.5)/M
+  ## par[1] holds a, the scale factor; par[2] holds d, the degrees of freedom
+  # obj_sum <- sum(abs(1 - alt_prop*pgamma(x,shape=par[2]/2,scale=2*par[1]) - (1-alt_prop)*pchisq(x,2) - (r-0.5)/M))
+  ## Use lower tail estimates directly
+  obj_sum <- sum(abs(alt_prop*pgamma(x,shape=par[2]/2,scale=2*par[1],lower.tail=F) + (1-alt_prop)*pchisq(x,2,lower.tail=F) - (r-0.5)/M))
+
+  ##===== Method II: Fit one-half of expected alternative statistics (p*M/2) to alternative density =====##
+  # ## ranks
+  # r <- 1:(pM/2)
+  #
+  # x <- sort(chi_mix, decreasing=T)
+  # x <- x[r]
+  #
+  # # obj_sum <- sum(abs(1 - pgamma(x,shape=par[2]/2,scale=2*par[1]) - (r-0.5)/(p*M)))
+  # ## Use lower tail estimates directly
+  # obj_sum <- sum(abs(pgamma(x,shape=par[2]/2,scale=2*par[1],lower.tail = F) - (r-0.5)/(p*M)))
+
+  return(obj_sum)
+}
+
 #' Estimate Densities Under the Null and Alternative Densities
 #'
 #' For each observation, estimate the density under the null and under the alternative hypotheses.
