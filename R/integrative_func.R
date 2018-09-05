@@ -11,7 +11,7 @@
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
-#' \code{Tstat_m} \tab matrix of moderated t-statistics\cr
+#' \code{Tstat_mod} \tab matrix of moderated t-statistics\cr
 #' \code{D0} \tab matrix of densities calculated under the null distribution\cr
 #' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
 #' }
@@ -48,7 +48,7 @@ estimate_densities_modT <- function(betas, sds, mafs, df, alt_prop){
   scaler=sqrt(1+v0/vg)
   D1 <- metRology::dt.scaled(moderate.t,df=d1+n0,mean=0,sd=scaler)
 
-  return(list(Tstat_m = moderate.t, D0=D0, D1=D1))
+  return(list(Tstat_mod = moderate.t, D0=D0, D1=D1))
 }
 
 #' Estimate Densities Under the Null and Alternative Densities
@@ -175,7 +175,7 @@ chiMix_pDiff <- function(data, par){
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
-#' \code{Tstat_m} \tab matrix of moderated t-statistics (set to NULL for p-value method)\cr
+#' \code{Tstat_mod} \tab matrix of moderated t-statistics (set to NULL for p-value method)\cr
 #' \code{D0} \tab matrix of densities calculated under the null distribution\cr
 #' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
 #' }
@@ -194,7 +194,7 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
     } else myDens <- estimate_densities_modT(betas, sds, mafs, df, alt_prop)
   } else{
     myDens <- estimate_densities_pval(pvals, alt_prop)
-    myDens <- list(Tstat_m=NULL,D0=myDens$D0,D1=myDens$D1)
+    myDens <- list(Tstat_mod=NULL,D0=myDens$D0,D1=myDens$D1)
   }
   return(myDens)
 }
@@ -225,7 +225,7 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
 #' (rows are SNPs; columns are configurations)\cr
 #' \code{config_prop} \tab vector of estimated proportion of SNPs
 #' belonging to each configuration\cr
-#' \code{Tstat_m} \tab matrix of moderated t-statistics\cr
+#' \code{Tstat_mod} \tab matrix of moderated t-statistics\cr
 #' \code{D0} \tab matrix of densities calculated under the null distribution\cr
 #' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
 #' \code{alt_props} \tab vector of the proportions of test-statistics used in
@@ -252,7 +252,7 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
 #' \code{alt_props} \tab proportion of test-statistics used to estimate
 #' the alternative distribution for each data source\cr
 #'  \tab (same order as columns in \code{betas} and \code{sds})\cr
-#' \code{density_list} \tab list must be 3 elements, named \code{Tstat_m},\code{D0}, and \code{D1}
+#' \code{density_list} \tab list must be 3 elements, named \code{Tstat_mod},\code{D0}, and \code{D1}
 #'  -- outputs from \code{estimate_densities()}\cr
 #'  \tab (each element is a matrix, with row matching observations of \code{betas} and \code{sds},\cr
 #'  \tab and columns in the same order as columns in \code{betas} and \code{sds})
@@ -273,24 +273,24 @@ estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NUL
 
   ## estimate null and alternate densities for each column/study
   if(is.null(density_list)){
-    Tstat_m <- D0 <- D1 <- NULL
+    Tstat_mod <- D0 <- D1 <- NULL
     if(!is.null(betas)){
       for (j in 1:d){
         temp <- estimate_densities(betas=betas[,j],sds=sds[,j],mafs=mafs,df=dfs[j],alt_prop = alt_props[j])
-        Tstat_m <- cbind(Tstat_m, temp$Tstat_m)
+        Tstat_mod <- cbind(Tstat_mod, temp$Tstat_mod)
         D0 <- cbind(D0, temp$D0)
         D1 <- cbind(D1, temp$D1)
       }
     } else{
       for (j in 1:d){
         temp <- estimate_densities(pvals=pvals[,j],alt_prop = alt_props[j],use_tstats=F)
-        Tstat_m <- cbind(Tstat_m, temp$Tstat_m)
+        Tstat_mod <- cbind(Tstat_mod, temp$Tstat_mod)
         D0 <- cbind(D0, temp$D0)
         D1 <- cbind(D1, temp$D1)
       }
     }
   }else{
-    Tstat_m <- density_list$Tstat_m
+    Tstat_mod <- density_list$Tstat_mod
     D0 <- density_list$D0
     D1 <- density_list$D1
   }
@@ -353,7 +353,7 @@ estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NUL
   cat("\nIteration:",numiters,"; Change:",diff,"\nPi-hat:",curpi,"\n\n")
 
   if(m*as.double(n_pattern) <= 2^31-1){
-    return(list(post_prob = curb, config_prop = curpi, Tstat_m = Tstat_m, D0=D0, D1=D1,
+    return(list(post_prob = curb, config_prop = curpi, Tstat_mod = Tstat_mod, D0=D0, D1=D1,
                 alt_props=alt_props, tol=tol))
   } else{
     curb <- NULL
@@ -370,7 +370,7 @@ estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NUL
       return(curb)
     }
     try(curb<-exit_m_step(curpi,Q,D0,D1))
-    return(list(post_prob = curb, config_prop = curpi, Tstat_m = Tstat_m, D0=D0, D1=D1,
+    return(list(post_prob = curb, config_prop = curpi, Tstat_mod = Tstat_mod, D0=D0, D1=D1,
                 alt_props=alt_props, tol=tol))
   }
 }

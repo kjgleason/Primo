@@ -24,7 +24,7 @@
 #' (rows are SNPs; columns are configurations)\cr
 #' \code{config_prop} \tab vector of estimated proportion of SNPs
 #' belonging to each configuration\cr
-#' \code{Tstat_m} \tab matrix of moderated t-statistics\cr
+#' \code{Tstat_mod} \tab matrix of moderated t-statistics\cr
 #' \code{D0} \tab matrix of densities calculated under the null distribution\cr
 #' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
 #' \code{alt_props} \tab vector of the proportions of test-statistics used in
@@ -46,14 +46,14 @@ permute_once <- function(betas, sds, mafs, dfs, alt_props, perm_col, tol=1e-3, p
   # match densities of perm_col to permuted order, if densities are provided and perm_densities=T
   if(perm_densities){
     if(is.null(density_list)) stop("Density list cannot be null if perm_densities=T")
-    density_list$Tstat_m[,perm_col] <- density_list$Tstat_m[od,perm_col]
+    density_list$Tstat_mod[,perm_col] <- density_list$Tstat_mod[od,perm_col]
     density_list$D0[,perm_col] <- density_list$D0[od,perm_col]
     density_list$D1[,perm_col] <- density_list$D1[od,perm_col]
   } else{
     # calculate new density for permuted data only, if densities are provided
     if(!is.null(density_list)){
       perm_dens <- estimate_densities(betas[,perm_col],sds[,perm_col],mafs,dfs[perm_col],alt_props[perm_col])
-      density_list$Tstat_m[,perm_col] <- perm_dens$Tstat_m
+      density_list$Tstat_mod[,perm_col] <- perm_dens$Tstat_mod
       density_list$D0[,perm_col] <- perm_dens$D0
       density_list$D1[,perm_col] <- perm_dens$D1
     }
@@ -158,7 +158,7 @@ permute_setup <- function(betas, sds, mafs, dfs, true_res, par_size=0, perm_par_
   alt_props <- true_res$alt_props
   tol <- true_res$tol
   if(is.null(density_list)){
-    density_list <- list(Tstat_m=true_res$Tstat_m,D0=true_res$D0,D1=true_res$D0)
+    density_list <- list(Tstat_mod=true_res$Tstat_mod,D0=true_res$D0,D1=true_res$D0)
   }
   # run permutations using same parameters as true data
   res <- permute_integ(betas, sds, mafs, dfs, alt_props, tol, par_size, perm_par_size, density_list)
@@ -199,7 +199,7 @@ permute_multi <- function(betas, sds, mafs, dfs, true_res, nperm=10, par_size=0,
   alt_props <- true_res$alt_props
   tol <- true_res$tol
   if(is.null(density_list)){
-    density_list <- list(Tstat_m=true_res$Tstat_m,D0=true_res$D0,D1=true_res$D0)
+    density_list <- list(Tstat_mod=true_res$Tstat_mod,D0=true_res$D0,D1=true_res$D0)
   }
 
   return_list <- list()
