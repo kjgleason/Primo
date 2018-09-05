@@ -142,10 +142,7 @@ chiMix_pDiff <- function(data, par){
   x <- sort(chi_mix, decreasing=T)
   x <- x[r]
 
-  ## objective function: 1 - p*F(a*x,d) - (1-p)*F(x,2) - (rank-0.5)/M
   ## par[1] holds a, the scale factor; par[2] holds d, the degrees of freedom
-  # obj_sum <- sum(abs(1 - alt_prop*pgamma(x,shape=par[2]/2,scale=2*par[1]) - (1-alt_prop)*pchisq(x,2) - (r-0.5)/M))
-  ## Use lower tail estimates directly
   obj_sum <- sum(abs(alt_prop*pgamma(x,shape=par[2]/2,scale=2*par[1],lower.tail=F) + (1-alt_prop)*pchisq(x,2,lower.tail=F) - (r-0.5)/M))
 
   ##===== Method II: Fit one-half of expected alternative statistics (p*M/2) to alternative density =====##
@@ -155,7 +152,6 @@ chiMix_pDiff <- function(data, par){
   # x <- sort(chi_mix, decreasing=T)
   # x <- x[r]
   #
-  # # obj_sum <- sum(abs(1 - pgamma(x,shape=par[2]/2,scale=2*par[1]) - (r-0.5)/(p*M)))
   # ## Use lower tail estimates directly
   # obj_sum <- sum(abs(pgamma(x,shape=par[2]/2,scale=2*par[1],lower.tail = F) - (r-0.5)/(p*M)))
 
