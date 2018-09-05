@@ -4,7 +4,7 @@
 \alias{permute_once}
 \title{Estimate Posterior Probabilities after Permuting One Column}
 \usage{
-permute_once(betas, sds, mafs, dfs, alt_proportions, perm_col, tol = 0.001,
+permute_once(betas, sds, mafs, dfs, alt_props, perm_col, tol = 0.001,
   par_size = 0, density_list = NULL, perm_densities = T)
 }
 \arguments{
@@ -16,7 +16,7 @@ permute_once(betas, sds, mafs, dfs, alt_proportions, perm_col, tol = 0.001,
 
 \item{dfs}{vector of degrees of freedom.}
 
-\item{alt_proportions}{vector of the proportions of test-statistics used in estimating
+\item{alt_props}{vector of the proportions of test-statistics used in estimating
 alternative densities.}
 
 \item{perm_col}{numerical value; column number to permute}
@@ -41,7 +41,7 @@ belonging to each configuration\cr
 \code{Tstat_m} \tab matrix of moderated t-statistics\cr
 \code{D0} \tab matrix of densities calculated under the null distribution\cr
 \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
-\code{alt_proportions} \tab vector of the proportions of test-statistics used in
+\code{alt_props} \tab vector of the proportions of test-statistics used in
 estimating alternative densities\cr
 \code{tol} \tab numerical value; the tolerance threshold used in determining convergence
 }

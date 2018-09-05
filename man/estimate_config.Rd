@@ -5,8 +5,7 @@
 \title{Estimate Posterior Probabilities of Configurations}
 \usage{
 estimate_config(pvals = NULL, betas = NULL, sds = NULL, mafs = NULL,
-  dfs = NULL, alt_proportions, tol = 0.001, par_size = 0,
-  density_list = NULL)
+  dfs = NULL, alt_props, tol = 0.001, par_size = 0, density_list = NULL)
 }
 \arguments{
 \item{pvals}{matrix of p-values from test statistics.}
@@ -19,7 +18,7 @@ estimate_config(pvals = NULL, betas = NULL, sds = NULL, mafs = NULL,
 
 \item{dfs}{vector of degrees of freedom.}
 
-\item{alt_proportions}{vector of the proportions of test-statistics used in estimating
+\item{alt_props}{vector of the proportions of test-statistics used in estimating
 alternative densities.}
 
 \item{tol}{numerical value; specifies tolerance threshold for convergence.}
@@ -40,7 +39,7 @@ belonging to each configuration\cr
 \code{Tstat_m} \tab matrix of moderated t-statistics\cr
 \code{D0} \tab matrix of densities calculated under the null distribution\cr
 \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
-\code{alt_proportions} \tab vector of the proportions of test-statistics used in
+\code{alt_props} \tab vector of the proportions of test-statistics used in
 estimating alternative densities\cr
 \code{tol} \tab numerical value; the tolerance threshold used in determining convergence
 }
@@ -66,7 +65,7 @@ the number of SNPs/Loci\cr
  \tab (same order as rows in \code{betas} and \code{sds}).\cr
 \code{dfs} \tab vector containing number of subjects in each dataset\cr
  \tab (same order as columns in \code{betas} and \code{sds})\cr
-\code{alt_proportions} \tab proportion of test-statistics used to estimate
+\code{alt_props} \tab proportion of test-statistics used to estimate
 the alternative distribution for each data source\cr
  \tab (same order as columns in \code{betas} and \code{sds})\cr
 \code{density_list} \tab list must be 3 elements, named \code{Tstat_m},\code{D0}, and \code{D1}

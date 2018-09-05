@@ -4,12 +4,12 @@
 \alias{estimate_densities_pval}
 \title{Estimate Densities Under the Null and Alternative Densities}
 \usage{
-estimate_densities_pval(pvals, alt_proportion)
+estimate_densities_pval(pvals, alt_prop)
 }
 \arguments{
 \item{pvals}{vector of coefficient estimates.}
 
-\item{alt_proportion}{proportion of pvalues used in estimating alternative densities.
+\item{alt_prop}{proportion of pvalues used in estimating alternative densities.
 Note that the alternative density estimation may fail
 if the value is too small.}
 }
@@ -33,6 +33,6 @@ Under the alternative, the function assumes that the \code{-2*log()} transformed
 follow a scaled chi-square distribution with unknown scale parameter and
 unknown degrees of freedom. Those two parameters are solved by using the first and
 second moments of the transformed p-values and the known proportion of alternatives
-(specified in \code{alt_proportion}). The function solves a theoretical formula of the first and
+(specified in \code{alt_prop}). The function solves a theoretical formula of the first and
 second moments as functions of the scale parameter and degrees of freedom.
 }

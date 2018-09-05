@@ -8,7 +8,7 @@
 #' @param sds matrix of standard errors (for coefficient estimates).
 #' @param mafs vector of minor allele frequencies (MAFs).
 #' @param dfs vector of degrees of freedom.
-#' @param alt_proportions vector of the proportions of test-statistics used in estimating
+#' @param alt_props vector of the proportions of test-statistics used in estimating
 #' alternative densities.
 #' @param par_size numerical value; specifies the number of CPUs/cores/processors for parallel computing
 #' (0 for sequential processing).
@@ -27,7 +27,7 @@
 #' \code{Tstat_m} \tab matrix of moderated t-statistics\cr
 #' \code{D0} \tab matrix of densities calculated under the null distribution\cr
 #' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
-#' \code{alt_proportions} \tab vector of the proportions of test-statistics used in
+#' \code{alt_props} \tab vector of the proportions of test-statistics used in
 #' estimating alternative densities\cr
 #' \code{tol} \tab numerical value; the tolerance threshold used in determining convergence
 #' }
@@ -37,7 +37,7 @@
 #'
 #' @export
 #'
-permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1e-3, par_size=0, density_list=NULL, perm_densities=T){
+permute_once <- function(betas, sds, mafs, dfs, alt_props, perm_col, tol=1e-3, par_size=0, density_list=NULL, perm_densities=T){
   # permute the order of rows
   od <- sample(1:nrow(betas))
   # shuffle column using permuted order
@@ -52,7 +52,7 @@ permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1
   } else{
     # calculate new density for permuted data only, if densities are provided
     if(!is.null(density_list)){
-      perm_dens <- estimate_densities(betas[,perm_col],sds[,perm_col],mafs,dfs[perm_col],alt_proportions[perm_col])
+      perm_dens <- estimate_densities(betas[,perm_col],sds[,perm_col],mafs,dfs[perm_col],alt_props[perm_col])
       density_list$Tstat_m[,perm_col] <- perm_dens$Tstat_m
       density_list$D0[,perm_col] <- perm_dens$D0
       density_list$D1[,perm_col] <- perm_dens$D1
@@ -60,7 +60,7 @@ permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1
   }
   # estimate configuration for permuted data
   xx <- NULL
-  try({xx <- estimate_config(betas, sds, mafs, dfs, alt_proportions=alt_proportions, tol=tol, par_size=par_size, density_list=density_list)}, silent=TRUE)
+  try({xx <- estimate_config(betas, sds, mafs, dfs, alt_props=alt_props, tol=tol, par_size=par_size, density_list=density_list)}, silent=TRUE)
   return(xx)
 }
 
@@ -76,7 +76,7 @@ permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1
 #' @param sds matrix of standard errors (for coefficient estimates).
 #' @param mafs vector of minor allele frequencies (MAFs).
 #' @param dfs vector of degrees of freedom.
-#' @param alt_proportions vector of the proportions of test-statistics used in estimating
+#' @param alt_props vector of the proportions of test-statistics used in estimating
 #' alternative densities.
 #' @param tol numerical value; specifies tolerance threshold for convergence.
 #' @param par_size numerical value; specifies the number of CPUs/cores/processors for parallel computing
@@ -99,7 +99,7 @@ permute_once <- function(betas, sds, mafs, dfs, alt_proportions, perm_col, tol=1
 #'
 #' @export
 #'
-permute_integ <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, par_size=0, perm_par_size=0, density_list=NULL, perm_densities=T){
+permute_integ <- function(betas, sds, mafs, dfs, alt_props, tol=1e-3, par_size=0, perm_par_size=0, density_list=NULL, perm_densities=T){
   # permute each column
   # parallel version
   if(perm_par_size>0){
@@ -107,17 +107,17 @@ permute_integ <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, par_
     parallel::clusterCall(clust, function() {library(primo)})
     # run estimate_config for one permuted dataset on each cluster node
     res <- parallel::parLapply(cl=clust, 1:ncol(betas),
-                               function(j,betas,sds,mafs,dfs,alt_proportions,tol,par_size) {
+                               function(j,betas,sds,mafs,dfs,alt_props,tol,par_size) {
                                  return(permute_once(betas=betas,sds=sds,mafs=mafs,
-                                                     dfs=dfs, alt_proportions=alt_proportions,perm_col=j,
+                                                     dfs=dfs, alt_props=alt_props,perm_col=j,
                                                      tol=tol,par_size=par_size,density_list=density_list,perm_densities=perm_densities))
                                },betas=betas,sds=sds,mafs=mafs,dfs=dfs,
-                               alt_proportions=alt_proportions,tol=tol,par_size=par_size,density_list=density_list,perm_densities=perm_densities)
+                               alt_props=alt_props,tol=tol,par_size=par_size,density_list=density_list,perm_densities=perm_densities)
     parallel::stopCluster(clust)
   # sequential version
   # run estimate_config for each permuted dataset
   } else res <- lapply(1:ncol(betas), function(j)
-                        permute_once(betas,sds,mafs,dfs,alt_proportions,perm_col=j,tol,par_size,density_list,perm_densities))
+                        permute_once(betas,sds,mafs,dfs,alt_props,perm_col=j,tol,par_size,density_list,perm_densities))
 
   return(res)
 }
@@ -155,13 +155,13 @@ permute_integ <- function(betas, sds, mafs, dfs, alt_proportions, tol=1e-3, par_
 #'
 permute_setup <- function(betas, sds, mafs, dfs, true_res, par_size=0, perm_par_size=0, density_list=NULL){
   # obtain parameters used with true data
-  alt_proportions <- true_res$alt_proportions
+  alt_props <- true_res$alt_props
   tol <- true_res$tol
   if(is.null(density_list)){
     density_list <- list(Tstat_m=true_res$Tstat_m,D0=true_res$D0,D1=true_res$D0)
   }
   # run permutations using same parameters as true data
-  res <- permute_integ(betas, sds, mafs, dfs, alt_proportions, tol, par_size, perm_par_size, density_list)
+  res <- permute_integ(betas, sds, mafs, dfs, alt_props, tol, par_size, perm_par_size, density_list)
   return(res)
 }
 
@@ -196,7 +196,7 @@ permute_setup <- function(betas, sds, mafs, dfs, true_res, par_size=0, perm_par_
 #'
 permute_multi <- function(betas, sds, mafs, dfs, true_res, nperm=10, par_size=0, perm_par_size=0, density_list=NULL){
   # obtain parameters used with true data
-  alt_proportions <- true_res$alt_proportions
+  alt_props <- true_res$alt_props
   tol <- true_res$tol
   if(is.null(density_list)){
     density_list <- list(Tstat_m=true_res$Tstat_m,D0=true_res$D0,D1=true_res$D0)
@@ -205,7 +205,7 @@ permute_multi <- function(betas, sds, mafs, dfs, true_res, nperm=10, par_size=0,
   return_list <- list()
   for(p in 1:nperm){
     # run permutations using same parameters as true data
-    res <- permute_integ(betas, sds, mafs, dfs, alt_proportions, tol, par_size, perm_par_size, density_list)
+    res <- permute_integ(betas, sds, mafs, dfs, alt_props, tol, par_size, perm_par_size, density_list)
     res <- lapply(res, function(x) x$post_prob)
     return_list[[p]] <- res
   }

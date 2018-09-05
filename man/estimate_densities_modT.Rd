@@ -4,7 +4,7 @@
 \alias{estimate_densities_modT}
 \title{Estimate Densities Under the Null and Alternative Densities}
 \usage{
-estimate_densities_modT(betas, sds, mafs, df, alt_proportion)
+estimate_densities_modT(betas, sds, mafs, df, alt_prop)
 }
 \arguments{
 \item{betas}{vector of coefficient estimates.}
@@ -15,7 +15,7 @@ estimate_densities_modT(betas, sds, mafs, df, alt_proportion)
 
 \item{df}{first degrees of freedom of the F-distribution (usually, the number of subjects/observations).}
 
-\item{alt_proportion}{proportion of test-statistics used in estimating alternative densities.}
+\item{alt_prop}{proportion of test-statistics used in estimating alternative densities.}
 }
 \value{
 A list with the following elements:

@@ -5,7 +5,7 @@
 \title{Estimate Densities Under the Null and Alternative Densities}
 \usage{
 estimate_densities(pvals = NULL, betas = NULL, sds = NULL, mafs = NULL,
-  df = NULL, alt_proportion, use_tstats = TRUE)
+  df = NULL, alt_prop, use_tstats = TRUE)
 }
 \arguments{
 \item{pvals}{vector of p-values.}
@@ -18,7 +18,7 @@ estimate_densities(pvals = NULL, betas = NULL, sds = NULL, mafs = NULL,
 
 \item{df}{first degrees of freedom of the F-distribution.}
 
-\item{alt_proportion}{proportion of test-statistics used in estimating alternative densities.}
+\item{alt_prop}{proportion of test-statistics used in estimating alternative densities.}
 
 \item{use_tstats}{logical; when true densities are calculated using moderated t-statistics
 (use p-values when false)}

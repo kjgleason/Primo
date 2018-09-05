@@ -7,7 +7,7 @@
 #' @param sds vector of standard errors (for coefficient estimates).
 #' @param mafs vector of minor allele frequencies (MAFs).
 #' @param df first degrees of freedom of the F-distribution (usually, the number of subjects/observations).
-#' @param alt_proportion proportion of test-statistics used in estimating alternative densities.
+#' @param alt_prop proportion of test-statistics used in estimating alternative densities.
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
@@ -23,7 +23,7 @@
 #'
 #' @export
 #'
-estimate_densities_modT <- function(betas, sds, mafs, df, alt_proportion){
+estimate_densities_modT <- function(betas, sds, mafs, df, alt_prop){
 
   # account for MAF in variance calculations
   vg = 1/(2*mafs*(1-mafs))
@@ -44,7 +44,7 @@ estimate_densities_modT <- function(betas, sds, mafs, df, alt_proportion){
 
   # estimate null and alternative densities
   D0 <- dt(moderate.t, df=d1+n0)
-  v0 <- limma::tmixture.vector(moderate.t, sqrt(vg),d1+n0,proportion=alt_proportion,v0.lim=NULL)
+  v0 <- limma::tmixture.vector(moderate.t, sqrt(vg),d1+n0,proportion=alt_prop,v0.lim=NULL)
   scaler=sqrt(1+v0/vg)
   D1 <- metRology::dt.scaled(moderate.t,df=d1+n0,mean=0,sd=scaler)
 
@@ -57,7 +57,7 @@ estimate_densities_modT <- function(betas, sds, mafs, df, alt_proportion){
 #' hypotheses using p-values.
 #'
 #' @param pvals vector of coefficient estimates.
-#' @param alt_proportion proportion of pvalues used in estimating alternative densities.
+#' @param alt_prop proportion of pvalues used in estimating alternative densities.
 #' Note that the alternative density estimation may fail
 #' if the value is too small.
 #'
@@ -75,22 +75,22 @@ estimate_densities_modT <- function(betas, sds, mafs, df, alt_proportion){
 #' follow a scaled chi-square distribution with unknown scale parameter and
 #' unknown degrees of freedom. Those two parameters are solved by using the first and
 #' second moments of the transformed p-values and the known proportion of alternatives
-#' (specified in \code{alt_proportion}). The function solves a theoretical formula of the first and
+#' (specified in \code{alt_prop}). The function solves a theoretical formula of the first and
 #' second moments as functions of the scale parameter and degrees of freedom.
 #'
 #' @export
 #'
-estimate_densities_pval <- function(pvals, alt_proportion){
+estimate_densities_pval <- function(pvals, alt_prop){
 
-  if(alt_proportion < 0.05) warning("magnitude of alt_proportion is small; alternative density estimation may fail")
+  if(alt_prop < 0.05) warning("magnitude of alt_prop is small; alternative density estimation may fail")
 
   ##Transform to chi square; under the null, the transformed p-values follow a chi square distribution with df 2.
   chi_mix<-(-2)*log(pvals)
 
   ##Using the first and second moments to solve the scale parameter and the degrees of freedom under the alternative
-  prod<-(mean(chi_mix)-(1-alt_proportion)*2)/alt_proportion
+  prod<-(mean(chi_mix)-(1-alt_prop)*2)/alt_prop
   ## store scale parameter in a_alt
-  a_alt<-(mean((chi_mix-mean(chi_mix))^2)-(1-alt_proportion)*2*2-(1-alt_proportion)*alt_proportion*(prod-2)^2)/(alt_proportion*2*prod)
+  a_alt<-(mean((chi_mix-mean(chi_mix))^2)-(1-alt_prop)*2*2-(1-alt_prop)*alt_prop*(prod-2)^2)/(alt_prop*2*prod)
   ## store degrees of freedom in df_alt
   df_alt<-prod/a_alt
 
@@ -113,7 +113,7 @@ estimate_densities_pval <- function(pvals, alt_proportion){
 #' @param sds vector of standard errors (for coefficient estimates).
 #' @param mafs vector of minor allele frequencies (MAFs).
 #' @param df first degrees of freedom of the F-distribution.
-#' @param alt_proportion proportion of test-statistics used in estimating alternative densities.
+#' @param alt_prop proportion of test-statistics used in estimating alternative densities.
 #' @param use_tstats logical; when true densities are calculated using moderated t-statistics
 #' (use p-values when false)
 #'
@@ -127,17 +127,17 @@ estimate_densities_pval <- function(pvals, alt_proportion){
 #' @export
 #'
 #'
-estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=NULL, alt_proportion, use_tstats=TRUE){
+estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=NULL, alt_prop, use_tstats=TRUE){
 
   if(use_tstats){
     if(is.null(betas) | is.null(sds) | is.null(mafs) | is.null(df)){
       if(!is.null(pvals)) {
           warning("use_tstats=TRUE requires non-null values for betas, sds, mafs and df; using p-values for density estimation.")
-          myDens <- estimate_densities_pval(pvals, alt_proportion)
+          myDens <- estimate_densities_pval(pvals, alt_prop)
       } else stop("use_tstats=TRUE requires non-null values for betas, sds, mafs and df.")
-    } else myDens <- estimate_densities_modT(betas, sds, mafs, df, alt_proportion)
+    } else myDens <- estimate_densities_modT(betas, sds, mafs, df, alt_prop)
   } else{
-    myDens <- estimate_densities_pval(pvals, alt_proportion)
+    myDens <- estimate_densities_pval(pvals, alt_prop)
     myDens <- list(Tstat_m=NULL,D0=myDens$D0,D1=myDens$D1)
   }
   return(myDens)
@@ -155,7 +155,7 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
 #' @param sds matrix of standard errors (for coefficient estimates).
 #' @param mafs vector of minor allele frequencies (MAFs).
 #' @param dfs vector of degrees of freedom.
-#' @param alt_proportions vector of the proportions of test-statistics used in estimating
+#' @param alt_props vector of the proportions of test-statistics used in estimating
 #' alternative densities.
 #' @param tol numerical value; specifies tolerance threshold for convergence.
 #' @param par_size numerical value; specifies the number of CPUs/cores/processors for
@@ -172,7 +172,7 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
 #' \code{Tstat_m} \tab matrix of moderated t-statistics\cr
 #' \code{D0} \tab matrix of densities calculated under the null distribution\cr
 #' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
-#' \code{alt_proportions} \tab vector of the proportions of test-statistics used in
+#' \code{alt_props} \tab vector of the proportions of test-statistics used in
 #' estimating alternative densities\cr
 #' \code{tol} \tab numerical value; the tolerance threshold used in determining convergence
 #' }
@@ -193,7 +193,7 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
 #'  \tab (same order as rows in \code{betas} and \code{sds}).\cr
 #' \code{dfs} \tab vector containing number of subjects in each dataset\cr
 #'  \tab (same order as columns in \code{betas} and \code{sds})\cr
-#' \code{alt_proportions} \tab proportion of test-statistics used to estimate
+#' \code{alt_props} \tab proportion of test-statistics used to estimate
 #' the alternative distribution for each data source\cr
 #'  \tab (same order as columns in \code{betas} and \code{sds})\cr
 #' \code{density_list} \tab list must be 3 elements, named \code{Tstat_m},\code{D0}, and \code{D1}
@@ -204,7 +204,7 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
 #'
 #' @export
 #'
-estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NULL, alt_proportions, tol=1e-3, par_size=0, density_list=NULL){
+estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NULL, alt_props, tol=1e-3, par_size=0, density_list=NULL){
 
   # store dimensions of test statistics
   if(!is.null(betas)){
@@ -220,14 +220,14 @@ estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NUL
     Tstat_m <- D0 <- D1 <- NULL
     if(!is.null(betas)){
       for (j in 1:d){
-        temp <- estimate_densities(betas=betas[,j],sds=sds[,j],mafs=mafs,df=dfs[j],alt_proportion = alt_proportions[j])
+        temp <- estimate_densities(betas=betas[,j],sds=sds[,j],mafs=mafs,df=dfs[j],alt_prop = alt_props[j])
         Tstat_m <- cbind(Tstat_m, temp$Tstat_m)
         D0 <- cbind(D0, temp$D0)
         D1 <- cbind(D1, temp$D1)
       }
     } else{
       for (j in 1:d){
-        temp <- estimate_densities(pvals=pvals[,j],alt_proportion = alt_proportions[j],use_tstats=F)
+        temp <- estimate_densities(pvals=pvals[,j],alt_prop = alt_props[j],use_tstats=F)
         Tstat_m <- cbind(Tstat_m, temp$Tstat_m)
         D0 <- cbind(D0, temp$D0)
         D1 <- cbind(D1, temp$D1)
@@ -298,7 +298,7 @@ estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NUL
 
   if(m*as.double(n_pattern) <= 2^31-1){
     return(list(post_prob = curb, config_prop = curpi, Tstat_m = Tstat_m, D0=D0, D1=D1,
-                alt_proportions=alt_proportions, tol=tol))
+                alt_props=alt_props, tol=tol))
   } else{
     curb <- NULL
     exit_m_step <-function(curpi,Q,D0,D1){
@@ -315,7 +315,7 @@ estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NUL
     }
     try(curb<-exit_m_step(curpi,Q,D0,D1))
     return(list(post_prob = curb, config_prop = curpi, Tstat_m = Tstat_m, D0=D0, D1=D1,
-                alt_proportions=alt_proportions, tol=tol))
+                alt_props=alt_props, tol=tol))
   }
 }
 
