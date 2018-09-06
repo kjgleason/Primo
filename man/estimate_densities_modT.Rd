@@ -20,7 +20,7 @@ estimate_densities_modT(betas, sds, mafs, df, alt_prop)
 \value{
 A list with the following elements:
 \tabular{ll}{
-\code{Tstat_m} \tab matrix of moderated t-statistics\cr
+\code{Tstat_mod} \tab matrix of moderated t-statistics\cr
 \code{D0} \tab matrix of densities calculated under the null distribution\cr
 \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
 }

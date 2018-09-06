@@ -36,7 +36,7 @@ A list with the following elements:
 (rows are SNPs; columns are configurations)\cr
 \code{config_prop} \tab vector of estimated proportion of SNPs
 belonging to each configuration\cr
-\code{Tstat_m} \tab matrix of moderated t-statistics\cr
+\code{Tstat_mod} \tab matrix of moderated t-statistics\cr
 \code{D0} \tab matrix of densities calculated under the null distribution\cr
 \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
 \code{alt_props} \tab vector of the proportions of test-statistics used in
@@ -68,7 +68,7 @@ the number of SNPs/Loci\cr
 \code{alt_props} \tab proportion of test-statistics used to estimate
 the alternative distribution for each data source\cr
  \tab (same order as columns in \code{betas} and \code{sds})\cr
-\code{density_list} \tab list must be 3 elements, named \code{Tstat_m},\code{D0}, and \code{D1}
+\code{density_list} \tab list must be 3 elements, named \code{Tstat_mod},\code{D0}, and \code{D1}
  -- outputs from \code{estimate_densities()}\cr
  \tab (each element is a matrix, with row matching observations of \code{betas} and \code{sds},\cr
  \tab and columns in the same order as columns in \code{betas} and \code{sds})

@@ -38,7 +38,7 @@ A list with the following elements, based on permuted data:
 (rows are SNPs; columns are configurations)\cr
 \code{config_prop} \tab vector of estimated proportion of SNPs
 belonging to each configuration\cr
-\code{Tstat_m} \tab matrix of moderated t-statistics\cr
+\code{Tstat_mod} \tab matrix of moderated t-statistics\cr
 \code{D0} \tab matrix of densities calculated under the null distribution\cr
 \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
 \code{alt_props} \tab vector of the proportions of test-statistics used in
