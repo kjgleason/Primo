@@ -102,9 +102,9 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
     ## store degrees of freedom in df_alt
     df_alt<-prod/a_alt
   } else{
-    optim_dat <- list(chi_mix=chi_mix,alt_prop=alt_prop)
+    optim_dat <- list(chi_mix=sort(chi_mix, decreasing=T), alt_prop=alt_prop)
     ##scale parameter should be >= 1 ; df >= 2
-    optim_res <- optim(par=c(2,3),fn=chiMix_pDiff,data=optim_dat,lower=c(1,2),method="L-BFGS-B")
+    optim_res <- optim(par=c(2,3),fn=chiMix_pDiff,data=optim_dat, sorted=T, lower=c(1,2),method="L-BFGS-B")
     ## store scale parameter in a_alt
     a_alt<-optim_res$par[1]
     ## store degrees of freedom in df_alt
@@ -129,6 +129,7 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
 #' @param data list with two elements: \code{chi_mix} (vector) and \code{alt_prop} (scalar).
 #' @param par vector of two parameters for the alternative distribution:
 #' scale parameter [1] and degrees of freedom [2].
+#' @param sorted logical, denoting whether \code{data$chi_mix} is sorted in decreasing order.
 #'
 #' @return Returns a scalar value of the total (absolute) difference between observed p-values
 #' (given the parameters) and nominal p-values.
@@ -142,7 +143,7 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
 #'
 #' @export
 #'
-chiMix_pDiff <- function(data, par){
+chiMix_pDiff <- function(data, par, sorted=F){
   chi_mix <- data$chi_mix
   alt_prop <- data$alt_prop
 
@@ -156,21 +157,21 @@ chiMix_pDiff <- function(data, par){
   ## ranks
   r <- 1:pM
 
-  x <- sort(chi_mix, decreasing=T)
-  x <- x[r]
+  if(!sorted) chi_mix <- sort(chi_mix, decreasing=T)
+  chi_mix <- chi_mix[r]
 
   ## par[1] holds a, the scale factor; par[2] holds d, the degrees of freedom
-  obj_sum <- sum(abs(alt_prop*pgamma(x,shape=par[2]/2,scale=2*par[1],lower.tail=F) + (1-alt_prop)*pchisq(x,2,lower.tail=F) - (r-0.5)/M))
+  obj_sum <- sum(abs(alt_prop*pgamma(chi_mix,shape=par[2]/2,scale=2*par[1],lower.tail=F) + (1-alt_prop)*pchisq(chi_mix,2,lower.tail=F) - (r-0.5)/M))
 
   ##===== Method II: Fit one-half of expected alternative statistics (p*M/2) to alternative density =====##
   # ## ranks
   # r <- 1:(pM/2)
   #
-  # x <- sort(chi_mix, decreasing=T)
-  # x <- x[r]
+  # if(!sorted) chi_mix <- sort(chi_mix, decreasing=T)
+  # chi_mix <- chi_mix[r]
   #
   # ## Use lower tail estimates directly
-  # obj_sum <- sum(abs(pgamma(x,shape=par[2]/2,scale=2*par[1],lower.tail = F) - (r-0.5)/(p*M)))
+  # obj_sum <- sum(abs(pgamma(chi_mix,shape=par[2]/2,scale=2*par[1],lower.tail = F) - (r-0.5)/(p*M)))
 
   return(obj_sum)
 }

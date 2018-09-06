@@ -4,13 +4,15 @@
 \alias{chiMix_pDiff}
 \title{Difference from nominal p-values, chi2 mixture}
 \usage{
-chiMix_pDiff(data, par)
+chiMix_pDiff(data, par, sorted = F)
 }
 \arguments{
 \item{data}{list with two elements: \code{chi_mix} (vector) and \code{alt_prop} (scalar).}
 
 \item{par}{vector of two parameters for the alternative distribution:
 scale parameter [1] and degrees of freedom [2].}
+
+\item{sorted}{logical, denoting whether \code{data$chi_mix} is sorted in decreasing order.}
 }
 \value{
 Returns a scalar value of the total (absolute) difference between observed p-values
