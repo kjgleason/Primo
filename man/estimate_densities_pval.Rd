@@ -4,14 +4,15 @@
 \alias{estimate_densities_pval}
 \title{Estimate Densities Under the Null and Alternative Densities}
 \usage{
-estimate_densities_pval(pvals, alt_prop)
+estimate_densities_pval(pvals, alt_prop, method_moments = F)
 }
 \arguments{
 \item{pvals}{vector of coefficient estimates.}
 
-\item{alt_prop}{proportion of pvalues used in estimating alternative densities.
-Note that the alternative density estimation may fail
-if the value is too small.}
+\item{alt_prop}{proportion of pvalues used in estimating alternative densities.}
+
+\item{method_moments}{logical, denoting whether to estimate scale and degree of freedom
+parameters using Method of Moments (\code{TRUE}) or optimization (\code{FALSE}).}
 }
 \value{
 A list with the following elements:
@@ -31,8 +32,15 @@ coming from the alternative distribution. Under the null hypothesis,
 \code{-2*log()} transformed p-values follow a chi-square distribution with 2 degrees of freedom.
 Under the alternative, the function assumes that the \code{-2*log()} transformed p-values
 follow a scaled chi-square distribution with unknown scale parameter and
-unknown degrees of freedom. Those two parameters are solved by using the first and
-second moments of the transformed p-values and the known proportion of alternatives
+unknown degrees of freedom.
+
+When \code{method_moments=TRUE}, the two unknown parameters are estimated by using the first and
+second moments of the transformed p-values given the known proportion of alternatives
 (specified in \code{alt_prop}). The function solves a theoretical formula of the first and
-second moments as functions of the scale parameter and degrees of freedom.
+second moments as functions of the scale parameter and degrees of freedom. Note that
+the alternative density estimation may fail if \code{alt_prop} is small and
+\code{method_moments=TRUE}.
+
+When \code{method_moments=FALSE}, the two unknown parameters are estimated by minimizing the differences
+between the p-values given the parameters and the nominal p-values based on each statistic's rank.
 }

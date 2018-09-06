@@ -58,8 +58,8 @@ estimate_densities_modT <- function(betas, sds, mafs, df, alt_prop){
 #'
 #' @param pvals vector of coefficient estimates.
 #' @param alt_prop proportion of pvalues used in estimating alternative densities.
-#' Note that the alternative density estimation may fail
-#' if the value is too small.
+#' @param method_moments logical, denoting whether to estimate scale and degree of freedom
+#' parameters using Method of Moments (\code{TRUE}) or optimization (\code{FALSE}).
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
@@ -73,26 +73,43 @@ estimate_densities_modT <- function(betas, sds, mafs, df, alt_prop){
 #' \code{-2*log()} transformed p-values follow a chi-square distribution with 2 degrees of freedom.
 #' Under the alternative, the function assumes that the \code{-2*log()} transformed p-values
 #' follow a scaled chi-square distribution with unknown scale parameter and
-#' unknown degrees of freedom. Those two parameters are solved by using the first and
-#' second moments of the transformed p-values and the known proportion of alternatives
+#' unknown degrees of freedom.
+#'
+#' When \code{method_moments=TRUE}, the two unknown parameters are estimated by using the first and
+#' second moments of the transformed p-values given the known proportion of alternatives
 #' (specified in \code{alt_prop}). The function solves a theoretical formula of the first and
-#' second moments as functions of the scale parameter and degrees of freedom.
+#' second moments as functions of the scale parameter and degrees of freedom. Note that
+#' the alternative density estimation may fail if \code{alt_prop} is small and
+#' \code{method_moments=TRUE}.
+#'
+#' When \code{method_moments=FALSE}, the two unknown parameters are estimated by minimizing the differences
+#' between the p-values given the parameters and the nominal p-values based on each statistic's rank.
 #'
 #' @export
 #'
-estimate_densities_pval <- function(pvals, alt_prop){
-
-  if(alt_prop < 0.05) warning("magnitude of alt_prop is small; alternative density estimation may fail")
+estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
 
   ##Transform to chi square; under the null, the transformed p-values follow a chi square distribution with df 2.
   chi_mix<-(-2)*log(pvals)
 
-  ##Using the first and second moments to solve the scale parameter and the degrees of freedom under the alternative
-  prod<-(mean(chi_mix)-(1-alt_prop)*2)/alt_prop
-  ## store scale parameter in a_alt
-  a_alt<-(mean((chi_mix-mean(chi_mix))^2)-(1-alt_prop)*2*2-(1-alt_prop)*alt_prop*(prod-2)^2)/(alt_prop*2*prod)
-  ## store degrees of freedom in df_alt
-  df_alt<-prod/a_alt
+  if(method_moments){
+    if(alt_prop < 0.02) warning("magnitude of alt_prop is small; alternative density estimation may fail")
+
+    ##Using the first and second moments to solve the scale parameter and the degrees of freedom under the alternative
+    prod<-(mean(chi_mix)-(1-alt_prop)*2)/alt_prop
+    ## store scale parameter in a_alt
+    a_alt<-(mean((chi_mix-mean(chi_mix))^2)-(1-alt_prop)*2*2-(1-alt_prop)*alt_prop*(prod-2)^2)/(alt_prop*2*prod)
+    ## store degrees of freedom in df_alt
+    df_alt<-prod/a_alt
+  } else{
+    optim_dat <- list(chi_mix=chi_mix,alt_prop=alt_prop)
+    ##scale parameter should be >= 1 ; df >= 2
+    optim_res <- optim(par=c(2,3),fn=chiMix_pDiff,data=optim_dat,lower=c(1,2),method="L-BFGS-B")
+    ## store scale parameter in a_alt
+    a_alt<-optim_res$par[1]
+    ## store degrees of freedom in df_alt
+    df_alt<-optim_res$par[2]
+  }
 
   ##Density under the null
   D0<-dchisq(chi_mix,df=2)
