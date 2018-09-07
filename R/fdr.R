@@ -16,14 +16,15 @@
 #' @export
 #'
 tfdr_thresh <- function(post_prob,fdr=0.1){
-  # last configuration (alternative for all data sources/types) is default for posterior prob. eFDR
-  if (is.null(config)) config <- ncol(true_res$post_prob)
-  pp <- true_res$post_prob[,config]
-  if(multi_perm){
-    pp0 <- sapply(unlist(perm_res,recursive = F), function(x) x[,config])
-  } else pp0 <- sapply(perm_res,function(x) x$post_prob[,config])
-  # calculate eFDR at each threshold
-  efdr <- sapply(thresholds, function(x) mean(pp0>=x)/mean(pp>=x))
+  ## sort posterior probabilities
+  post_prob <- sort(post_prob,decreasing=T)
+  cumsum_1pp <- cumsum(1-post_prob)
+  ## calculate tfdr
+  tfdr <- cumsum_1pp/(1:length(post_prob))
+  ## indices of tfdr larger than desired threshold
+  tfdr_above_thresh <- which(tfdr>fdr)
+  ## return posterior probability threshold that controls FDR
+  return(post_prob[tfdr_above_thresh[1]])
 }
 
 #' Calculate empirical False Discovery Rate (eFDR)
