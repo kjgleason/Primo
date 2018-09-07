@@ -1,3 +1,31 @@
+#' Calculate threshold for theoretical False Discovery Rate (tFDR)
+#'
+#' Determine the posterior probability threshold at which to control the theoretical
+#' False Discovery Rate (tFDR) given observed posterior probabilities.
+#'
+#' @param post_prob vector of estimated posterior probabilities
+#' @param fdr numerical value; the desired false discovery rate (FDR)
+#'
+#' @return Posterior probability threshold (numeric) to use in controlling the FDR.
+#'
+#' @details The function estimates the theoretical false discovery rate at each observed
+#' posterior probability (PP) by sorting the PP in decreasing order and calculating
+#' \code{cumsum(1-PP)/(#obs >= PP)}. It observed selects the first PP for which this value
+#' is greater than \code{fdr}.
+#'
+#' @export
+#'
+tfdr_thresh <- function(post_prob,fdr=0.1){
+  # last configuration (alternative for all data sources/types) is default for posterior prob. eFDR
+  if (is.null(config)) config <- ncol(true_res$post_prob)
+  pp <- true_res$post_prob[,config]
+  if(multi_perm){
+    pp0 <- sapply(unlist(perm_res,recursive = F), function(x) x[,config])
+  } else pp0 <- sapply(perm_res,function(x) x$post_prob[,config])
+  # calculate eFDR at each threshold
+  efdr <- sapply(thresholds, function(x) mean(pp0>=x)/mean(pp>=x))
+}
+
 #' Calculate empirical False Discovery Rate (eFDR)
 #'
 #' Calculate the empirical False Discovery Rate (eFDR) given
