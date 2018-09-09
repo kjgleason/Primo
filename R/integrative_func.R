@@ -155,7 +155,7 @@ chiMix_pDiff <- function(data, par, sorted=F){
 
   ##===== Method I: Fit top p*M statistics to true objective function =====##
   ## ranks
-  r <- 1:pM
+  r <- 1:max(pM/2,20)
 
   if(!sorted) chi_mix <- sort(chi_mix, decreasing=T)
   chi_mix <- chi_mix[r]
