@@ -4,7 +4,7 @@
 \alias{tfdr_thresh}
 \title{Calculate threshold for theoretical False Discovery Rate (tFDR)}
 \usage{
-tfdr_thresh(post_prob, fdr = 0.1)
+tfdr_thresh(post_prob, fdr)
 }
 \arguments{
 \item{post_prob}{vector of estimated posterior probabilities}
@@ -15,12 +15,13 @@ tfdr_thresh(post_prob, fdr = 0.1)
 Posterior probability threshold (numeric) to use in controlling the FDR.
 }
 \description{
-Determine the posterior probability threshold at which to control the theoretical
-False Discovery Rate (tFDR) given observed posterior probabilities.
+Determine the posterior probability threshold at which to control the
+false discovery rate (FDR) by estimating the theoretical FDR given the observed
+posterior probabilities.
 }
 \details{
-The function estimates the theoretical false discovery rate at each observed
-posterior probability (PP) by sorting the PP in decreasing order and calculating
-\code{cumsum(1-PP)/(#obs >= PP)}. It observed selects the first PP for which this value
-is greater than \code{fdr}.
+The function calculates the theoretical FDR at each observed posterior probability
+by averaging \code{(1-post_prob)} over observations at least as large as that probability.
+It returns the value of the first observation in \code{post_prob} for which the cumulative
+average is greater than \code{fdr}.
 }
