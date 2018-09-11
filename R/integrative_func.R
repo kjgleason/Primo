@@ -104,7 +104,7 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
   } else{
     optim_dat <- list(chi_mix=sort(chi_mix, decreasing=T), alt_prop=alt_prop)
     ##scale parameter should be >= 1 ; df >= 2
-    optim_res <- optim(par=c(2,3),fn=chiMix_pDiff,data=optim_dat, sorted=T, lower=c(1,2),method="L-BFGS-B")
+    optim_res <- optim(par=c(2,3),fn=chiMix_pDiff,data=optim_dat, sorted=T, lower=c(1,2),method="L-BFGS-B",control=list(factr=1e2))
     ## store scale parameter in a_alt
     a_alt<-optim_res$par[1]
     ## store degrees of freedom in df_alt
