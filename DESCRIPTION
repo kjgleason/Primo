@@ -18,6 +18,7 @@ LazyData: true
 Imports:
     limma (>= 3.34.9),
     metRology (>= 0.9.26.2),
+    nloptr(>= 1.0.4),
     parallel (>= 3.4.3),
     Rcpp (>= 0.12.17)
 Suggests:

@@ -104,11 +104,13 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
   } else{
     optim_dat <- list(chi_mix=sort(chi_mix, decreasing=T), alt_prop=alt_prop)
     ##scale parameter should be >= 1 ; df >= 2
-    optim_res <- optim(par=c(2,3),fn=chiMix_pDiff,data=optim_dat, sorted=T, lower=c(1,2),method="L-BFGS-B",control=list(factr=alt_prop*length(chi_mix)))
+    optim_res <- nloptr::nloptr(x0=c(2,3),eval_f=chiMix_pDiff,lb=c(1,2),
+                                opts=list(algorithm="NLOPT_LN_COBYLA",maxeval=500),
+                                data=optim_dat, sorted=T)
     ## store scale parameter in a_alt
-    a_alt<-optim_res$par[1]
+    a_alt<-optim_res$solution[1]
     ## store degrees of freedom in df_alt
-    df_alt<-optim_res$par[2]
+    df_alt<-optim_res$solution[2]
   }
 
   ##Density under the null
@@ -126,9 +128,9 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
 #' scale and degree of freedom parameters for the scaled chi-square distribution under the
 #' alternative hypothesis.
 #'
-#' @param data list with two elements: \code{chi_mix} (vector) and \code{alt_prop} (scalar).
 #' @param par vector of two parameters for the alternative distribution:
 #' scale parameter [1] and degrees of freedom [2].
+#' @param data list with two elements: \code{chi_mix} (vector) and \code{alt_prop} (scalar).
 #' @param sorted logical, denoting whether \code{data$chi_mix} is sorted in decreasing order.
 #'
 #' @return Returns a scalar value of the total (absolute) difference between observed p-values
@@ -143,7 +145,7 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
 #'
 #' @export
 #'
-chiMix_pDiff <- function(data, par, sorted=F){
+chiMix_pDiff <- function(par, data, sorted=F){
   chi_mix <- data$chi_mix
   alt_prop <- data$alt_prop
 
@@ -154,7 +156,7 @@ chiMix_pDiff <- function(data, par, sorted=F){
   pM <- alt_prop * M
 
   ##===== Method I: Fit top p*M statistics to true objective function =====##
-  ## ranks
+  ## decreasing ranks of chi_mix (restricted to those being used to estimate alternative density parameters)
   r <- 1:max(pM/2,20)
 
   if(!sorted) chi_mix <- sort(chi_mix, decreasing=T)
