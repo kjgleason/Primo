@@ -7,11 +7,10 @@ Authors@R: c(
     person("Fan", "Yang", email = "FAN.3.YANG@ucdenver.edu", role="aut"),
     person("Lin S.", "Chen", email = "lchen@health.bsd.uchicago.edu", role="aut"))
 Maintainer: Kevin J. Gleason <kevin.j.gleason@gmail.com>
-Description: Implements methods to integrate multi-omics data.
-    It includes functions to integrate omics data from more than 2 data types or sources.
-    May be used to calculate the posterior probability for configurations of sharing
-    the null and alternative densities. Incorporates functions to estimate densities using 
-    framework proposed by Smyth (2004) and implemented in the limma package (2015).
+Description: Implements methods to integrate multi-omics data to detect joint associations 
+              and pleiotropy effects across more than 3 eQTL and GWAS studies. 
+              It can also be used more broadly to infer multi-way associations 
+              using omics data from more than 2 data types or sources, beyond eQTL and GWAS.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

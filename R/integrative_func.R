@@ -39,7 +39,6 @@ estimate_densities_modT <- function(betas, sds, mafs, df, alt_prop){
 
   # warn user about using low number of statistics to estimate alternative density
   pM <- alt_prop*length(betas)
-
   if(pM/2 < 30) warning(paste("The specified proportion of alternative statistics yields a low count",
                         "and may result in unstable alternative density approximation."))
 
