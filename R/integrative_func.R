@@ -155,6 +155,15 @@ chiMix_pDiff <- function(par, data, sorted=F){
   ## number of statistics to use in estimation
   pM <- alt_prop * M
 
+  if(pM/2 < 30){
+    if(pM/2 >= 20){
+      warning(paste("The specified proportion of alternative statistics yields a low count",
+                    "and may result in unstable alternative density approximation."))
+    } else warning(paste("The specified proportion of alternative statistics yields a low count",
+                         "and may result in unstable alternative density approximation.",
+                         "\nFitting density to top 20 test-statistics."))
+  }
+
   ##===== Method I: Fit top p*M statistics to true objective function =====##
   ## decreasing ranks of chi_mix (restricted to those being used to estimate alternative density parameters)
   r <- 1:max(pM/2,20)
