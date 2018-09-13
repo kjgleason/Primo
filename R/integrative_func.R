@@ -37,10 +37,11 @@ estimate_densities_modT <- function(betas, sds, mafs, df, alt_prop){
   sg_tilde <- sqrt((n0*s02+d1*sigma2)/(n0+d1))
   moderate.t <- betas/(sg_tilde*sqrt(vg))
 
-  # defunct: old way of estimating proportion of null
-  #pt <- 2*(1-pt(abs(moderate.t), df=d1+n0))
-  #pi0 <- 1
-  #try({pi0 <- qvalue(pt)$pi0}, silent=TRUE)
+  # warn user about using low number of statistics to estimate alternative density
+  pM <- alt_prop*length(betas)
+
+  if(pM/2 < 30) warning(paste("The specified proportion of alternative statistics yields a low count",
+                        "and may result in unstable alternative density approximation."))
 
   # estimate null and alternative densities
   D0 <- dt(moderate.t, df=d1+n0)
@@ -155,6 +156,7 @@ chiMix_pDiff <- function(par, data, sorted=F){
   ## number of statistics to use in estimation
   pM <- alt_prop * M
 
+  # warn user about using low number of statistics to estimate alternative density
   if(pM/2 < 30){
     if(pM/2 >= 20){
       warning(paste("The specified proportion of alternative statistics yields a low count",
