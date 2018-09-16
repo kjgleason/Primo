@@ -73,10 +73,20 @@ tfdr <- function(post_prob,pp_thresh){
 efdr <- function(true_res,perm_res,thresholds=seq(0.9999,0.9000,-.0005),config=NULL,multi_perm=F){
   # last configuration (alternative for all data sources/types) is default for posterior prob. eFDR
   if (is.null(config)) config <- ncol(true_res$post_prob)
-  pp <- true_res$post_prob[,config]
-  if(multi_perm){
-    pp0 <- sapply(unlist(perm_res,recursive = F), function(x) x[,config])
-  } else pp0 <- sapply(perm_res,function(x) x$post_prob[,config])
+
+  ## if multiple configurations, sum posteriors (allows for "at least" calculations and collapsing categories)
+  if(length(config)> 1){
+    pp <- rowSums(true_res$post_prob[,config])
+    if(multi_perm){
+      pp0 <- sapply(unlist(perm_res,recursive = F), function(x) rowSums(x[,config]))
+    } else pp0 <- sapply(perm_res,function(x) rowSums(x$post_prob[,config]))
+  } else{
+    pp <- true_res$post_prob[,config]
+    if(multi_perm){
+      pp0 <- sapply(unlist(perm_res,recursive = F), function(x) x[,config])
+    } else pp0 <- sapply(perm_res,function(x) x$post_prob[,config])
+  }
+
   # calculate eFDR at each threshold
   efdr <- sapply(thresholds, function(x) mean(pp0>=x)/mean(pp>=x))
 }
