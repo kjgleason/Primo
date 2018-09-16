@@ -35,7 +35,7 @@ permute_once_dens <- function(alt_props, perm_col, tol=1e-3, density_list){
   ## permute densities within requested columns
   for(j in perm_col){
     od <- sample(1:m)
-    density_list$Tstat_m[,j] <- density_list$Tstat_m[od,j]
+    density_list$Tstat_mod[,j] <- density_list$Tstat_mod[od,j]
     density_list$D0[,j] <- density_list$D0[od,j]
     density_list$D1[,j] <- density_list$D1[od,j]
   }
