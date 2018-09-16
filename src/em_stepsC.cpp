@@ -11,8 +11,8 @@ using namespace Rcpp;
 //' @param old_pi vector of configuration proportions, fit through maximization
 //' (usualy 2^J for J data types)
 //' @param Q matrix of configurations
-//' @param D_0 estimate for the null density function
-//' @param D_1 estimate for the alternative density function
+//' @param D0 estimate for the null density function
+//' @param D1 estimate for the alternative density function
 //'
 //' @return Returns a vector estimating the posterior expectations
 //' (i.e. estimated probability of each configuration for each SNP).
@@ -20,12 +20,12 @@ using namespace Rcpp;
 //' @export
 //'
 // [[Rcpp::export]]
-arma::mat e_step(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1) {
+arma::mat e_step(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat& D0, const arma::mat& D1) {
   // transpose Q to form compatible dimensions for matrix multiplications
   arma::mat t_Q = Q.t();
 
   // calculate log density under each configuration
-  arma::mat Bmat = log(D_0) * (1-t_Q) + log(D_1) * t_Q;
+  arma::mat Bmat = log(D0) * (1-t_Q) + log(D1) * t_Q;
   // factor in proportion of observations estimated to belong to each configuration
   Bmat.each_row() += log(old_pi);
 
@@ -71,22 +71,22 @@ arma::mat m_step(const arma::mat& old_B){
 //' @param old_pi vector of configuration proportions, fit through maximization
 //' (usualy 2^J for J data types)
 //' @param Q matrix of configurations
-//' @param D_0 estimate for the null density function
-//' @param D_1 estimate for the alternative density function
+//' @param D0 estimate for the null density function
+//' @param D1 estimate for the alternative density function
 //'
 //' @return Returns a vector estimating the proportion of SNPs coming from each configuration.
 //'
 //' @export
 //'
 // [[Rcpp::export]]
-arma::mat em_iter(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat& D_0, const arma::mat& D_1) {
+arma::mat em_iter(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat& D0, const arma::mat& D1) {
   // E-step
 
   // transpose Q to form compatible dimensions for matrix multiplications
   arma::mat t_Q = Q.t();
 
   // calculate log density under each configuration
-  arma::mat Bmat = log(D_0) * (1-t_Q) + log(D_1) * t_Q;
+  arma::mat Bmat = log(D0) * (1-t_Q) + log(D1) * t_Q;
   // factor in proportion of observations estimated to belong to each configuration
   Bmat.each_row() += log(old_pi);
 

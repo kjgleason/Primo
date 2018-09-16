@@ -4,7 +4,7 @@
 \alias{e_step}
 \title{E Step}
 \usage{
-e_step(old_pi, Q, D_0, D_1)
+e_step(old_pi, Q, D0, D1)
 }
 \arguments{
 \item{old_pi}{vector of configuration proportions, fit through maximization
@@ -12,9 +12,9 @@ e_step(old_pi, Q, D_0, D_1)
 
 \item{Q}{matrix of configurations}
 
-\item{D_0}{estimate for the null density function}
+\item{D0}{estimate for the null density function}
 
-\item{D_1}{estimate for the alternative density function}
+\item{D1}{estimate for the alternative density function}
 }
 \value{
 Returns a vector estimating the posterior expectations
