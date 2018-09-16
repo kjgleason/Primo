@@ -9,16 +9,16 @@
 #' @param old_pi vector of configuration proportions, fit through maximization
 #' (usualy 2^J for J data types)
 #' @param Q matrix of configurations
-#' @param D_0 estimate for the null density function
-#' @param D_1 estimate for the alternative density function
+#' @param D0 estimate for the null density function
+#' @param D1 estimate for the alternative density function
 #'
 #' @return Returns a vector estimating the posterior expectations
 #' (i.e. estimated probability of each configuration for each SNP).
 #'
 #' @export
 #'
-e_step <- function(old_pi, Q, D_0, D_1) {
-    .Call(`_primo_e_step`, old_pi, Q, D_0, D_1)
+e_step <- function(old_pi, Q, D0, D1) {
+    .Call(`_primo_e_step`, old_pi, Q, D0, D1)
 }
 
 #' M Step
@@ -46,14 +46,14 @@ m_step <- function(old_B) {
 #' @param old_pi vector of configuration proportions, fit through maximization
 #' (usualy 2^J for J data types)
 #' @param Q matrix of configurations
-#' @param D_0 estimate for the null density function
-#' @param D_1 estimate for the alternative density function
+#' @param D0 estimate for the null density function
+#' @param D1 estimate for the alternative density function
 #'
 #' @return Returns a vector estimating the proportion of SNPs coming from each configuration.
 #'
 #' @export
 #'
-em_iter <- function(old_pi, Q, D_0, D_1) {
-    .Call(`_primo_em_iter`, old_pi, Q, D_0, D_1)
+em_iter <- function(old_pi, Q, D0, D1) {
+    .Call(`_primo_em_iter`, old_pi, Q, D0, D1)
 }
 

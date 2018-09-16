@@ -1,8 +1,56 @@
-#' Estimate Posterior Probabilities after Permuting One Column
+#' Estimate Posterior Probabilities after Permuting Densities
 #'
-#' Permute one column and estimate the posterior probability for each configuration
+#' Permute densities for one or more columns and estimate the posterior probability
+#' for each configuration for each SNP under the permuted dataset.
+#'
+#' @param alt_props vector of the proportions of test-statistics used in estimating
+#' alternative densities.
+#' @param perm_col (vector of) numerical value(s); column number(s) to permute
+#' @param tol numerical value; specifies tolerance threshold for convergence.
+#' @param density_list list of densities estimated by \code{estimate_densities()}.
+#'
+#' @return A list with the following elements, based on permuted data:
+#' \tabular{ll}{
+#' \code{post_prob} \tab matrix of posterior probabilities
+#' (rows are SNPs; columns are configurations)\cr
+#' \code{config_prop} \tab vector of estimated proportion of SNPs
+#' belonging to each configuration\cr
+#' \code{Tstat_mod} \tab matrix of moderated t-statistics\cr
+#' \code{D0} \tab matrix of densities calculated under the null distribution\cr
+#' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
+#' \code{alt_props} \tab vector of the proportions of test-statistics used in
+#' estimating alternative densities\cr
+#' \code{tol} \tab numerical value; the tolerance threshold used in determining convergence
+#' }
+#'
+#' @details See documentation for \code{\link{estimate_config}} for additional details
+#' regarding the input arguments.
+#'
+#' @export
+#'
+permute_once_dens <- function(alt_props, perm_col, tol=1e-3, density_list){
+  m <- nrow(density_list$D0)
+  d <- ncol(density_list$D0)
+
+  ## permute densities within requested columns
+  for(j in perm_col){
+    od <- sample(1:m)
+    density_list$Tstat_m[,j] <- density_list$Tstat_m[od,j]
+    density_list$D0[,j] <- density_list$D0[od,j]
+    density_list$D1[,j] <- density_list$D1[od,j]
+  }
+
+  # estimate configuration for permuted data
+  xx <- NULL
+  try({xx <- estimate_config(alt_props=alt_props, tol=tol, par_size=0, density_list=density_list)}, silent=TRUE)
+  return(xx)
+}
+
+
+#' Estimate Posterior Probabilities after Permuting One Column of Statistics
+#'
+#' Permute one column (beta and sd) and estimate the posterior probability for each configuration
 #' for each SNP under the permuted dataset.
-#' Utilizes parallel computing, when available.
 #'
 #' @param betas matrix of coefficient estimates.
 #' @param sds matrix of standard errors (for coefficient estimates).
@@ -37,6 +85,70 @@
 #'
 #' @export
 #'
+permute_once_stats <- function(betas, sds, mafs, dfs, alt_props, perm_col, tol=1e-3, par_size=0){
+  # permute the order of rows
+  od <- sample(1:nrow(betas))
+  # shuffle column using permuted order
+  betas[,perm_col] <- betas[od,perm_col]
+  sds[,perm_col] <- sds[od,perm_col]
+  # match densities of perm_col to permuted order, if densities are provided and perm_densities=T
+
+  # calculate new density for permuted data only, if densities are provided
+  if(!is.null(density_list)){
+    perm_dens <- estimate_densities(betas[,perm_col],sds[,perm_col],mafs,dfs[perm_col],alt_props[perm_col])
+    density_list$Tstat_mod[,perm_col] <- perm_dens$Tstat_mod
+    density_list$D0[,perm_col] <- perm_dens$D0
+    density_list$D1[,perm_col] <- perm_dens$D1
+  }
+
+  # estimate configuration for permuted data
+  xx <- NULL
+  try({xx <- estimate_config(betas, sds, mafs, dfs, alt_props=alt_props, tol=tol, par_size=par_size, density_list=density_list)}, silent=TRUE)
+  return(xx)
+}
+
+
+#' Estimate Posterior Probabilities after Permutation
+#'
+#' Permute column(s) and estimate the posterior probability for each configuration
+#' for each SNP under the permuted dataset.
+#'
+#' @param betas matrix of coefficient estimates.
+#' @param sds matrix of standard errors (for coefficient estimates).
+#' @param mafs vector of minor allele frequencies (MAFs).
+#' @param dfs vector of degrees of freedom.
+#' @param alt_props vector of the proportions of test-statistics used in estimating
+#' alternative densities.
+#' @param par_size numerical value; specifies the number of CPUs/cores/processors for parallel computing
+#' (0 for sequential processing).
+#' @param tol numerical value; specifies tolerance threshold for convergence.
+#' @param perm_col numerical value; column number to permute
+#' @param density_list (optional) list of densities estimated by \code{estimate_densities()}.
+#' @param perm_densities logical value; when true, permutes the previously calculated densities
+#' instead of reestimating densities from permuted betas and sds
+#'
+#' @return A list with the following elements, based on permuted data:
+#' \tabular{ll}{
+#' \code{post_prob} \tab matrix of posterior probabilities
+#' (rows are SNPs; columns are configurations)\cr
+#' \code{config_prop} \tab vector of estimated proportion of SNPs
+#' belonging to each configuration\cr
+#' \code{Tstat_mod} \tab matrix of moderated t-statistics\cr
+#' \code{D0} \tab matrix of densities calculated under the null distribution\cr
+#' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
+#' \code{alt_props} \tab vector of the proportions of test-statistics used in
+#' estimating alternative densities\cr
+#' \code{tol} \tab numerical value; the tolerance threshold used in determining convergence
+#' }
+#'
+#' @details See documentation for \code{\link{estimate_config}} for additional details
+#' regarding the input arguments.
+#'
+#' This funciton is a wrapper to call \code{permute_once_dens()} (when \code{perm_densities=TRUE})
+#' or \code{permute_once_stats()} (when \code{perm_densities=FALSE}).
+#'
+#' @export
+#'
 permute_once <- function(betas, sds, mafs, dfs, alt_props, perm_col, tol=1e-3, par_size=0, density_list=NULL, perm_densities=T){
   # permute the order of rows
   od <- sample(1:nrow(betas))
@@ -46,22 +158,8 @@ permute_once <- function(betas, sds, mafs, dfs, alt_props, perm_col, tol=1e-3, p
   # match densities of perm_col to permuted order, if densities are provided and perm_densities=T
   if(perm_densities){
     if(is.null(density_list)) stop("Density list cannot be null if perm_densities=T")
-    density_list$Tstat_mod[,perm_col] <- density_list$Tstat_mod[od,perm_col]
-    density_list$D0[,perm_col] <- density_list$D0[od,perm_col]
-    density_list$D1[,perm_col] <- density_list$D1[od,perm_col]
-  } else{
-    # calculate new density for permuted data only, if densities are provided
-    if(!is.null(density_list)){
-      perm_dens <- estimate_densities(betas[,perm_col],sds[,perm_col],mafs,dfs[perm_col],alt_props[perm_col])
-      density_list$Tstat_mod[,perm_col] <- perm_dens$Tstat_mod
-      density_list$D0[,perm_col] <- perm_dens$D0
-      density_list$D1[,perm_col] <- perm_dens$D1
-    }
-  }
-  # estimate configuration for permuted data
-  xx <- NULL
-  try({xx <- estimate_config(betas, sds, mafs, dfs, alt_props=alt_props, tol=tol, par_size=par_size, density_list=density_list)}, silent=TRUE)
-  return(xx)
+    return(permute_once_dens(alt_props=alt_props, perm_col=perm_col, tol=1e-3, density_list))
+  } else return(permute_once_stats(betas=betas, sds=sds, mafs=mafs, dfs=dfs, alt_props=alt_props, perm_col=perm_col, tol=tol, par_size=par_size))
 }
 
 

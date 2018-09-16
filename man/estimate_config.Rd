@@ -49,8 +49,8 @@ For each SNP, estimates the posterior probability for each configuration.
 Utilizes parallel computing, when available.
 }
 \details{
-Either \code{pvals} are all four of \code{betas}, \code{sds}, \code{mafs} and \code{dfs}
-must be specified (i.e. not \code{NULL}).
+Either \code{pvals}, \code{density_list}, or all four of \code{betas}, \code{sds},
+\code{mafs} and \code{dfs} must be specified (i.e. not \code{NULL}).
 
 The following are additional details describing the input arguments:
 \tabular{ll}{

@@ -263,8 +263,8 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
 #' \code{tol} \tab numerical value; the tolerance threshold used in determining convergence
 #' }
 #'
-#' @details Either \code{pvals} are all four of \code{betas}, \code{sds}, \code{mafs} and \code{dfs}
-#' must be specified (i.e. not \code{NULL}).
+#' @details Either \code{pvals}, \code{density_list}, or all four of \code{betas}, \code{sds},
+#' \code{mafs} and \code{dfs} must be specified (i.e. not \code{NULL}).
 #'
 #' The following are additional details describing the input arguments:
 #' \tabular{ll}{
@@ -296,9 +296,12 @@ estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NUL
   if(!is.null(betas)){
     m <- nrow(betas)
     d <- ncol(betas)
-  } else{
+  } else if (!is.null(pvals)){
     m <- nrow(pvals)
     d <- ncol(pvals)
+  } else{
+    m <- nrow(density_list$D0)
+    d <- ncol(density_list$D0)
   }
 
   ## estimate null and alternate densities for each column/study
@@ -346,7 +349,7 @@ estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NUL
   if(m*as.double(n_pattern) <= 2^31-1){
     while(diff>tol){
       numiters<-numiters+1
-      curb<-e_step(curpi, Q=Q, D_0=D0, D_1=D1)
+      curb<-e_step(curpi, Q=Q, D0=D0, D1=D1)
       # temporary solution to precision problems caused by |t-statistics| > 30
       curb[which(is.na(curb))] <- 0
       curpi<-m_step(curb)
