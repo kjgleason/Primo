@@ -46,7 +46,7 @@ tfdr_thresh <- function(post_prob,fdr){
 tfdr <- function(post_prob,pp_thresh){
   post_prob <- post_prob[which(post_prob >= pp_thresh)]
   ## return tfdr
-  return(mean(post_prob))
+  return(mean(1-post_prob))
 }
 
 
