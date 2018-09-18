@@ -4,8 +4,9 @@
 \alias{permute_integ}
 \title{Estimate Posterior Probabilities for Permuted Datasets}
 \usage{
-permute_integ(betas, sds, mafs, dfs, alt_props, tol = 0.001, par_size = 0,
-  perm_par_size = 0, density_list = NULL, perm_densities = T)
+permute_integ(betas = NULL, sds = NULL, mafs = NULL, dfs = NULL,
+  alt_props, tol = 0.001, par_size = 0, perm_par_size = 0,
+  density_list = NULL, perm_densities = T)
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}
@@ -30,7 +31,7 @@ parallel computing of permutations(0 for sequential processing).}
 \item{density_list}{(optional) list of densities estimated by \code{estimate_densities()}.}
 
 \item{perm_densities}{logical value; when true, permutes the previously calculated densities
-instead of reestimating densities from permuted betas and sds}
+instead of reestimating densities from permuted betas and sds.}
 }
 \value{
 A list of lists, where each list holds results from a single run of

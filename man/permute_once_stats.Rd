@@ -27,9 +27,6 @@ alternative densities.}
 (0 for sequential processing).}
 
 \item{density_list}{(optional) list of densities estimated by \code{estimate_densities()}.}
-
-\item{perm_densities}{logical value; when true, permutes the previously calculated densities
-instead of reestimating densities from permuted betas and sds}
 }
 \value{
 A list with the following elements, based on permuted data:
