@@ -2,7 +2,7 @@
 % Please edit documentation in R/permute_func.R
 \name{permute_once_stats}
 \alias{permute_once_stats}
-\title{Estimate Posterior Probabilities after Permuting One Column of Statistics}
+\title{Estimate Posterior Probabilities after Permuting Column(s) of Statistics}
 \usage{
 permute_once_stats(betas, sds, mafs, dfs, alt_props, perm_col, tol = 0.001,
   par_size = 0)

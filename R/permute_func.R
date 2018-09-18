@@ -47,7 +47,7 @@ permute_once_dens <- function(alt_props, perm_col, tol=1e-3, density_list){
 }
 
 
-#' Estimate Posterior Probabilities after Permuting One Column of Statistics
+#' Estimate Posterior Probabilities after Permuting Column(s) of Statistics
 #'
 #' Permute one column (beta and sd) and estimate the posterior probability for each configuration
 #' for each SNP under the permuted dataset.
@@ -84,19 +84,22 @@ permute_once_dens <- function(alt_props, perm_col, tol=1e-3, density_list){
 #' @export
 #'
 permute_once_stats <- function(betas, sds, mafs, dfs, alt_props, perm_col, tol=1e-3, par_size=0){
-  # permute the order of rows
-  od <- sample(1:nrow(betas))
-  # shuffle column using permuted order
-  betas[,perm_col] <- betas[od,perm_col]
-  sds[,perm_col] <- sds[od,perm_col]
-  # match densities of perm_col to permuted order, if densities are provided and perm_densities=T
+  for(j in perm_col){
+    # permute the order of rows
+    od <- sample(1:nrow(betas))
+    # shuffle column using permuted order
+    betas[,j] <- betas[od,j]
+    sds[,j] <- sds[od,j]
+  }
 
   # calculate new density for permuted data only, if densities are provided
   if(!is.null(density_list)){
-    perm_dens <- estimate_densities(betas[,perm_col],sds[,perm_col],mafs,dfs[perm_col],alt_props[perm_col])
-    density_list$Tstat_mod[,perm_col] <- perm_dens$Tstat_mod
-    density_list$D0[,perm_col] <- perm_dens$D0
-    density_list$D1[,perm_col] <- perm_dens$D1
+    for(j in perm_col){
+      perm_dens <- estimate_densities(betas[,j],sds[,j],mafs,dfs[j],alt_props[j])
+      density_list$Tstat_mod[,j] <- perm_dens$Tstat_mod
+      density_list$D0[,j] <- perm_dens$D0
+      density_list$D1[,j] <- perm_dens$D1
+    }
   }
 
   # estimate configuration for permuted data
