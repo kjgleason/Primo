@@ -380,7 +380,7 @@ estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NUL
                 alt_props=alt_props, tol=tol))
   } else{
     curb <- NULL
-    exit_m_step <-function(curpi,Q,D0,D1){
+    exit_e_step <-function(curpi,Q,D0,D1){
       t_Q <- t(Q)
       # consider using `bigmemory` package for following matrix
       curb <- log(D0) %*% (1-t_Q) + log(D1) %*% t_Q
@@ -392,7 +392,7 @@ estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NUL
       curb<-curb/matrixStats::rowSums2(curb)
       return(curb)
     }
-    try(curb<-exit_m_step(curpi,Q,D0,D1))
+    try(curb<-exit_e_step(curpi,Q,D0,D1))
     return(list(post_prob = curb, config_prop = curpi, Tstat_mod = Tstat_mod, D0=D0, D1=D1,
                 alt_props=alt_props, tol=tol))
   }
