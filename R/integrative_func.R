@@ -165,7 +165,7 @@ chiMix_pDiff <- function(par, data, sorted=F){
                          "\nFitting density to top 20 test-statistics."))
   }
 
-  ##===== Method I: Fit top p*M statistics to true objective function =====##
+  ##===== Fit top (p*M/2) statistics to objective function (mixture distribution) =====##
   ## decreasing ranks of chi_mix (restricted to those being used to estimate alternative density parameters)
   r <- 1:max(pM/2,20)
 
@@ -174,16 +174,6 @@ chiMix_pDiff <- function(par, data, sorted=F){
 
   ## par[1] holds a, the scale factor; par[2] holds d, the degrees of freedom
   obj_sum <- sum(abs(alt_prop*pgamma(chi_mix,shape=par[2]/2,scale=2*par[1],lower.tail=F) + (1-alt_prop)*pchisq(chi_mix,2,lower.tail=F) - (r-0.5)/M))
-
-  ##===== Method II: Fit one-half of expected alternative statistics (p*M/2) to alternative density =====##
-  # ## ranks
-  # r <- 1:(pM/2)
-  #
-  # if(!sorted) chi_mix <- sort(chi_mix, decreasing=T)
-  # chi_mix <- chi_mix[r]
-  #
-  # ## Use lower tail estimates directly
-  # obj_sum <- sum(abs(pgamma(chi_mix,shape=par[2]/2,scale=2*par[1],lower.tail = F) - (r-0.5)/(p*M)))
 
   return(obj_sum)
 }
