@@ -4,7 +4,7 @@
 \alias{permute_once_dens}
 \title{Estimate Posterior Probabilities after Permuting Densities}
 \usage{
-permute_once_dens(alt_props, perm_col, tol = 0.001, density_list)
+permute_once_dens(alt_props, perm_col, tol = 0.001, density_list, config_prop)
 }
 \arguments{
 \item{alt_props}{vector of the proportions of test-statistics used in estimating
@@ -15,6 +15,9 @@ alternative densities.}
 \item{tol}{numerical value; specifies tolerance threshold for convergence.}
 
 \item{density_list}{list of densities estimated by \code{estimate_densities()}.}
+
+\item{config_prop}{vector of estimated proportion of SNPs
+belonging to each configuration}
 }
 \value{
 A list with the following elements, based on permuted data:

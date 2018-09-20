@@ -6,7 +6,7 @@
 \usage{
 permute_integ(betas = NULL, sds = NULL, mafs = NULL, dfs = NULL,
   alt_props, tol = 0.001, par_size = 0, perm_par_size = 0,
-  density_list = NULL, perm_densities = T)
+  density_list = NULL, config_prop = NULL, perm_densities = T)
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}
@@ -29,6 +29,9 @@ alternative densities.}
 parallel computing of permutations(0 for sequential processing).}
 
 \item{density_list}{(optional) list of densities estimated by \code{estimate_densities()}.}
+
+\item{config_prop}{vector of estimated proportion of SNPs
+belonging to each configuration}
 
 \item{perm_densities}{logical value; when true, permutes the previously calculated densities
 instead of reestimating densities from permuted betas and sds.}
