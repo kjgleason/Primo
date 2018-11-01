@@ -66,8 +66,24 @@ permute_once_dens <- function(alt_props, perm_col, tol=1e-3, density_list, confi
       curb<-exp(curb)
       # can use rowSums directly since columns are recycled
       curb<-curb/matrixStats::rowSums2(curb)
+
       # temporary solution to precision problems caused by |t-statistics| > 30
-      curb[which(is.na(curb))] <- 0
+      ##process rows in chunks (clumsy, but faster than split command)
+      n_chunks <- ceiling((m*as.double(n_pattern)) / (2^31-1))
+      rowChunks <- list()
+      start <- 1
+      end <- increment
+      for(ch in 1:(n_chunks-1)){
+        rowChunks[[ch]] <- start:end
+        start <- end+1
+        end <- start + (increment-1)
+      }
+      rowChunks[[n_chunks]] <- start:m
+
+      for(myRow in rowChunks){
+        curb[myRow,][which(is.na(curb[myRow,]))] <- 0
+      }
+
       return(curb)
     }
     try(curb<-exit_e_step(curpi=config_prop,Q=Q,D0=density_list$D0,D1=density_list$D1))
