@@ -70,6 +70,7 @@ permute_once_dens <- function(alt_props, perm_col, tol=1e-3, density_list, confi
       # temporary solution to precision problems caused by |t-statistics| > 30
       ##process rows in chunks (clumsy, but faster than split command)
       n_chunks <- ceiling((m*as.double(n_pattern)) / (2^31-1))
+      increment <- ceiling(m/n_chunks)
       rowChunks <- list()
       start <- 1
       end <- increment
