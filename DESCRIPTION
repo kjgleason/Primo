@@ -24,4 +24,4 @@ Suggests:
     matrixStats (>= 0.53.1),
     Rmpfr (>= 0.7.0)
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0

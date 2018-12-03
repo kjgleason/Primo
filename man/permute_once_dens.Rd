@@ -4,7 +4,8 @@
 \alias{permute_once_dens}
 \title{Estimate Posterior Probabilities after Permuting Densities}
 \usage{
-permute_once_dens(alt_props, perm_col, tol = 0.001, density_list, config_prop)
+permute_once_dens(alt_props, perm_col, tol = 0.001, density_list,
+  config_prop)
 }
 \arguments{
 \item{alt_props}{vector of the proportions of test-statistics used in estimating

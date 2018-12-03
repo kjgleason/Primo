@@ -4,8 +4,8 @@
 \alias{permute_once_stats}
 \title{Estimate Posterior Probabilities after Permuting Column(s) of Statistics}
 \usage{
-permute_once_stats(betas, sds, mafs, dfs, alt_props, perm_col, tol = 0.001,
-  par_size = 0)
+permute_once_stats(betas, sds, mafs, dfs, alt_props, perm_col,
+  tol = 0.001, par_size = 0)
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}

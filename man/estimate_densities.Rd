@@ -4,8 +4,8 @@
 \alias{estimate_densities}
 \title{Estimate Densities Under the Null and Alternative Densities}
 \usage{
-estimate_densities(pvals = NULL, betas = NULL, sds = NULL, mafs = NULL,
-  df = NULL, alt_prop, use_tstats = TRUE)
+estimate_densities(pvals = NULL, betas = NULL, sds = NULL,
+  mafs = NULL, df = NULL, alt_prop, use_tstats = TRUE)
 }
 \arguments{
 \item{pvals}{vector of p-values.}

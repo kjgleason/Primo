@@ -4,8 +4,9 @@
 \alias{estimate_config}
 \title{Estimate Posterior Probabilities of Configurations}
 \usage{
-estimate_config(pvals = NULL, betas = NULL, sds = NULL, mafs = NULL,
-  dfs = NULL, alt_props, tol = 0.001, par_size = 0, density_list = NULL)
+estimate_config(pvals = NULL, betas = NULL, sds = NULL,
+  mafs = NULL, dfs = NULL, alt_props, tol = 0.001, par_size = 0,
+  density_list = NULL)
 }
 \arguments{
 \item{pvals}{matrix of p-values from test statistics.}
