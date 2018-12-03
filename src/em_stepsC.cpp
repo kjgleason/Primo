@@ -3,6 +3,69 @@ using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
+//' Density matrix calculation
+//'
+//' Calculate conditional joint densities for each configuration, given marginal
+//' null and alternative densities.
+//'
+//' @param Q matrix of configurations
+//' @param D0 estimate for the null density function
+//' @param D1 estimate for the alternative density function
+//'
+//' @return Returns a matrix estimating the conditional joint densities
+//' under each configuration
+//' (i.e. estimated probability of each configuration for each SNP).
+//'
+//' @export
+//'
+// [[Rcpp::export]]
+arma::mat calc_Dmatrix(const arma::mat& Q, const arma::mat& D0, const arma::mat& D1) {
+  // transpose Q to form compatible dimensions for matrix multiplications
+  arma::mat t_Q = Q.t();
+
+  // calculate log density under each configuration
+  arma::mat Dmat = log(D0) * (1-t_Q) + log(D1) * t_Q;
+
+  // exponentiate to convert log density to density
+  Dmat = exp(Dmat);
+
+  return Dmat;
+}
+
+//' E Step, using precalculated joint densities
+//'
+//' Calculate posterior expectations given maximized estimate for \eqn{\pi} (the
+//' proportion of SNPs coming from each configuration).
+//'
+//' @param old_pi vector of configuration proportions, fit through maximization
+//' (usualy 2^J for J data types)
+//' @param Dmat matrix of conditional joint densities under each configuration
+//'
+//' @return Returns a vector estimating the posterior expectations
+//' (i.e. estimated probability of each configuration for each SNP).
+//'
+//' @export
+//'
+// [[Rcpp::export]]
+arma::mat e_step_Dmat(const arma::rowvec& old_pi, const arma::mat& Dmat) {
+
+  // calculate log density under each configuration
+  arma::mat Bmat = log(Dmat);
+  // factor in proportion of observations estimated to belong to each configuration
+  Bmat.each_row() += log(old_pi);
+
+  // substract maximum from each row (i.e. subtract colvec of rowMaxs from each column)
+  Bmat.each_col() -= max(Bmat,1);
+
+  // exponentiate to convert (relative) log density to (relative) density
+  Bmat = exp(Bmat);
+
+  // convert to proportion (i.e. divide every column by colvec of rowSums)
+  Bmat.each_col() /= sum(Bmat,1);
+
+  return Bmat;
+}
+
 //' E Step
 //'
 //' Calculate posterior expectations given maximized estimate for \eqn{\pi} (the
