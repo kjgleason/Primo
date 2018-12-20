@@ -23,11 +23,17 @@
 #'
 #' @export
 #'
-estimate_densities_modT <- function(betas, sds, mafs, df, alt_prop){
+estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
+  m <- length(betas)
 
   # account for MAF in variance calculations
-  v1 = 1/(2*mafs*(1-mafs))
-  sigma2 <- sds^2*(2*mafs*(1-mafs))
+  if (is.null(mafs)){
+    v1 = rep(1,m)
+    sigma2 <- sds^2
+  } else{
+    v1 <- 1/(2*mafs*(1-mafs))
+    sigma2 <- sds^2*(2*mafs*(1-mafs))
+  }
 
   # estimate moments of scaled F-distribution using method of Smyth (2004)
   d1=df
