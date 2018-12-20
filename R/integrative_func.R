@@ -26,16 +26,16 @@
 estimate_densities_modT <- function(betas, sds, mafs, df, alt_prop){
 
   # account for MAF in variance calculations
-  vg = 1/(2*mafs*(1-mafs))
+  v1 = 1/(2*mafs*(1-mafs))
   sigma2 <- sds^2*(2*mafs*(1-mafs))
 
   # estimate moments of scaled F-distribution using method of Smyth (2004)
   d1=df
   xx <- limma::fitFDist(sigma2,d1)
-  s02 <- xx$scale; n0 <- xx$df2
+  s02 <- xx$scale; d0 <- xx$df2
   # rescale t-statistic (see Smyth, 2004)
-  sg_tilde <- sqrt((n0*s02+d1*sigma2)/(n0+d1))
-  moderate.t <- betas/(sg_tilde*sqrt(vg))
+  sg_tilde <- sqrt((d0*s02+d1*sigma2)/(d0+d1))
+  moderate.t <- betas/(sg_tilde*sqrt(v1))
 
   # warn user about using low number of statistics to estimate alternative density
   pM <- alt_prop*length(betas)
@@ -43,10 +43,11 @@ estimate_densities_modT <- function(betas, sds, mafs, df, alt_prop){
                         "and may result in unstable alternative density approximation."))
 
   # estimate null and alternative densities
-  D0 <- dt(moderate.t, df=d1+n0)
-  v0 <- limma::tmixture.vector(moderate.t, sqrt(vg),d1+n0,proportion=alt_prop,v0.lim=NULL)
-  scaler=sqrt(1+v0/vg)
-  D1 <- metRology::dt.scaled(moderate.t,df=d1+n0,mean=0,sd=scaler)
+  df_mod=d0+d1
+  D0 <- dt(moderate.t, df=df_mod)
+  v0 <- limma::tmixture.vector(moderate.t, sqrt(v1),df_mod,proportion=alt_prop,v0.lim=NULL)
+  scaler=sqrt(1+v0/v1)
+  D1 <- metRology::dt.scaled(moderate.t,df=df_mod,mean=0,sd=scaler)
 
   return(list(Tstat_mod = moderate.t, D0=D0, D1=D1))
 }
