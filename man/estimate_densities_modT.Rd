@@ -4,7 +4,7 @@
 \alias{estimate_densities_modT}
 \title{Estimate Densities Under the Null and Alternative Densities}
 \usage{
-estimate_densities_modT(betas, sds, mafs, df, alt_prop)
+estimate_densities_modT(betas, sds, mafs = NULL, df, alt_prop)
 }
 \arguments{
 \item{betas}{vector of coefficient estimates.}
@@ -23,6 +23,8 @@ A list with the following elements:
 \code{Tstat_mod} \tab matrix of moderated t-statistics\cr
 \code{D0} \tab matrix of densities calculated under the null distribution\cr
 \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
+\code{df_mod} \tab vector of the moderated degrees of freedom\cr
+\code{scaler} \tab vector of the scaling factors for the moderated t-statistics under the alternative\cr
 }
 }
 \description{

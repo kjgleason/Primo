@@ -14,6 +14,8 @@
 #' \code{Tstat_mod} \tab matrix of moderated t-statistics\cr
 #' \code{D0} \tab matrix of densities calculated under the null distribution\cr
 #' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
+#' \code{df_mod} \tab vector of the moderated degrees of freedom\cr
+#' \code{scaler} \tab vector of the scaling factors for the moderated t-statistics under the alternative\cr
 #' }
 #'
 #' @details Following Smyth (2004), the function calculates moderated t-statistics using
@@ -55,7 +57,7 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
   scaler=sqrt(1+v0/v1)
   D1 <- metRology::dt.scaled(moderate.t,df=df_mod,mean=0,sd=scaler)
 
-  return(list(Tstat_mod = moderate.t, D0=D0, D1=D1))
+  return(list(Tstat_mod = moderate.t, D0=D0, D1=D1, df_mod=df_mod, scaler=scaler))
 }
 
 #' Estimate Densities Under the Null and Alternative Densities
