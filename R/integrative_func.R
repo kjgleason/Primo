@@ -74,6 +74,8 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
 #' \tabular{ll}{
 #' \code{D0} \tab matrix of densities calculated under the null distribution\cr
 #' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
+#' \code{scaler} \tab estimated scaling factor for the alternative distribution\cr
+#' \code{df_alt} \tab estimated degrees of freedom for the alternative distribution\cr
 #' }
 #'
 #' @details The function estimates densities under the null and under the alternative
@@ -127,7 +129,7 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
   ##Density under the alternative
   D1<-dchisq(chi_mix/a_alt,df=df_alt)/a_alt
 
-  return(list(D0=D0, D1=D1))
+  return(list(D0=D0, D1=D1, scaler=a_alt, df_alt=df_alt))
 }
 
 #' Difference from nominal p-values, chi2 mixture

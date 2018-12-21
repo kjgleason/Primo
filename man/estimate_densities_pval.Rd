@@ -19,6 +19,8 @@ A list with the following elements:
 \tabular{ll}{
 \code{D0} \tab matrix of densities calculated under the null distribution\cr
 \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
+\code{scaler} \tab estimated scaling factor for the alternative distribution\cr
+\code{df_alt} \tab estimated degrees of freedom for the alternative distribution\cr
 }
 }
 \description{
