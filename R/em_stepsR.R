@@ -76,6 +76,7 @@ e_stepR<-function(old_pi, n_obs, n_pattern, q, density_0, density_1, cl=NULL){
 #'
 m_stepR<-function(old_b, n_obs, n_pattern){
   # ensure no zero probabilities when calculating pi: newpi<-colSums(old_b)/(n_obs)
-  newpi<-(colSums(old_b)+1)/(n_obs+n_pattern)
+  # newpi<-(colSums(old_b)+1)/(n_obs+n_pattern)
+  newpi<-colSums(old_b)/n_obs
   return(newpi)
 }
