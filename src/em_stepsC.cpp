@@ -117,9 +117,9 @@ arma::mat e_step(const arma::rowvec& old_pi, const arma::mat& Q, const arma::mat
 //'
 // [[Rcpp::export]]
 arma::mat m_step(const arma::mat& old_B){
-  int n_obs = old_B.n_rows, n_pattern = old_B.n_cols;
+  int n_obs = old_B.n_rows;
 
-  arma::mat newpi = (sum(old_B,0)+1)/(n_obs+n_pattern);
+  arma::mat newpi = sum(old_B,0)/n_obs;
 
   return newpi;
 }
@@ -164,9 +164,9 @@ arma::mat em_iter(const arma::rowvec& old_pi, const arma::mat& Q, const arma::ma
 
 
   // M-step
-  int n_obs = Bmat.n_rows, n_pattern = Bmat.n_cols;
+  int n_obs = Bmat.n_rows;
   // Calculate pi vector that maximizes posterior expectation
-  arma::mat newpi = (sum(Bmat,0)+1)/(n_obs+n_pattern);
+  arma::mat newpi = sum(Bmat,0)/n_obs;
 
   return newpi;
 }
