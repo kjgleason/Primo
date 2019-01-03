@@ -1,8 +1,9 @@
 citHeader("To cite Primo in publications, please use:")
 
-citEntry(entry = "article",
+citEntry(entry = "misc",
   author = "Kevin J Gleason and Fan Yan and Brandon L. Pierce and Xin He and Lin S. Chen",
   title = "Integrating GWAS and omics QTL summary statistics in mapping multiple complex and omics trait associations",
+  note = "in preparation",
   url = "https://github.com/kjgleason/primo",
   textVersion = "K.J. Gleason, F. Yang, B.L. Pierce, X. He, and L.S. Chen. Integrating GWAS and omics QTL summary statistics in mapping multiple complex and omics trait associations. Manuscript in preparation."
 )
