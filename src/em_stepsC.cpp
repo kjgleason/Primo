@@ -170,3 +170,45 @@ arma::mat em_iter(const arma::rowvec& old_pi, const arma::mat& Q, const arma::ma
 
   return newpi;
 }
+
+//' EM Iteration, using precalculated joint densities
+//'
+//' Complete one iteration of the EM-algorithm (combines E-step and M-step).
+//' Calculate posterior expectations given current estimate for \eqn{\pi} (the
+//' proportion of SNPs coming from each configuration; E-Step).
+//' Re-estimates the \eqn{\pi} vector that maximizes the posterior expectation function from the E-step (i.e. M-step).
+//'
+//' @param old_pi vector of configuration proportions, fit through maximization
+//' (usually 2^J for J data types)
+//' @param Dmat matrix of conditional joint densities under each configuration
+//'
+//' @return Returns a vector estimating the proportion of SNPs coming from each configuration.
+//'
+//' @export
+//'
+// [[Rcpp::export]]
+arma::mat em_iter_Dmat(const arma::rowvec& old_pi, const arma::mat& Dmat) {
+  // E-step
+
+  // calculate log density under each configuration
+  arma::mat Bmat = log(Dmat);
+  // factor in proportion of observations estimated to belong to each configuration
+  Bmat.each_row() += log(old_pi);
+
+  // substract minimum from each row (i.e. subtract colvec of rowMins from each column)
+  Bmat.each_col() -= min(Bmat,1);
+
+  // exponentiate to convert (relative) log density to (relative) density
+  Bmat = exp(Bmat);
+
+  // convert to proportion (i.e. divide every column by colvec of rowSums)
+  Bmat.each_col() /= sum(Bmat,1);
+
+
+  // M-step
+  int n_obs = Bmat.n_rows;
+  // Calculate pi vector that maximizes posterior expectation
+  arma::mat newpi = sum(Bmat,0)/n_obs;
+
+  return newpi;
+}
