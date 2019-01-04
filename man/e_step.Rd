@@ -17,7 +17,7 @@ e_step(old_pi, Q, D0, D1)
 \item{D1}{estimate for the alternative density function}
 }
 \value{
-Returns a vector estimating the posterior expectations
+Returns a matrix estimating the posterior expectations
 (i.e. estimated probability of each configuration for each SNP).
 }
 \description{

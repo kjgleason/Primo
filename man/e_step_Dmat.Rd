@@ -13,7 +13,7 @@ e_step_Dmat(old_pi, Dmat)
 \item{Dmat}{matrix of conditional joint densities under each configuration}
 }
 \value{
-Returns a vector estimating the posterior expectations
+Returns a matrix estimating the posterior expectations
 (i.e. estimated probability of each configuration for each SNP).
 }
 \description{
