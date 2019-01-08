@@ -192,7 +192,7 @@ arma::mat em_iter(const arma::rowvec& old_pi, const arma::mat& Q, const arma::ma
   Bmat.each_row() += log(old_pi);
 
   // substract minimum from each row (i.e. subtract colvec of rowMins from each column)
-  Bmat.each_col() -= min(Bmat,1);
+  Bmat.each_col() -= max(Bmat,1);
 
   // exponentiate to convert (relative) log density to (relative) density
   Bmat = exp(Bmat);
@@ -234,7 +234,7 @@ arma::mat em_iter_Dmat(const arma::rowvec& old_pi, const arma::mat& Dmat) {
   Bmat.each_row() += log(old_pi);
 
   // substract minimum from each row (i.e. subtract colvec of rowMins from each column)
-  Bmat.each_col() -= min(Bmat,1);
+  Bmat.each_col() -= max(Bmat,1);
 
   // exponentiate to convert (relative) log density to (relative) density
   Bmat = exp(Bmat);
