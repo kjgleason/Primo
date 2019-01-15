@@ -114,8 +114,16 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
     df_alt<-prod/a_alt
   } else{
     optim_dat <- list(chi_mix=sort(chi_mix, decreasing=T), alt_prop=alt_prop)
-    ##scale parameter should be >= 1 ; df >= 2
-    optim_res <- nloptr::nloptr(x0=c(2,3),eval_f=chiMix_pDiff,lb=c(1,2),
+    init1 <- 2
+    init2 <- 3
+    ## run global optimization to identify correct "neighborhood" of optimum
+    global_res <- nloptr::nloptr(x0=c(init1,init2),eval_f=chiMix_pDiff,lb=c(1,2),ub=c(100,100),
+                                 opts=list(algorithm="NLOPT_GN_DIRECT",maxeval=500),
+                                 data=optim_dat, sorted=T)
+    init1 <- global_res$solution[1]
+    init2 <- global_res$solution[2]
+    ## refine optimum using a local optimization algorithm
+    optim_res <- nloptr::nloptr(x0=c(init1,init2),eval_f=chiMix_pDiff,lb=c(1,2),
                                 opts=list(algorithm="NLOPT_LN_COBYLA",maxeval=500),
                                 data=optim_dat, sorted=T)
     ## store scale parameter in a_alt
