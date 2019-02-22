@@ -1,4 +1,4 @@
-#' Estimate posteriorpProbabilities of association patterns, using t-statistics.
+#' Estimate posterior probabilities of association patterns, using t-statistics.
 #'
 #' For each SNP, estimates the posterior probability for each configuration.
 #' Utilizes parallel computing, when available.
@@ -187,7 +187,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 }
 
 
-#' Estimate posteriorpProbabilities of association patterns, using p-values.
+#' Estimate posteriorp probabilities of association patterns, using p-values.
 #'
 #' For each SNP, estimates the posterior probability for each configuration.
 #' Utilizes parallel computing, when available.

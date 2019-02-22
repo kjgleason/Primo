@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{Primo_pval}
 \alias{Primo_pval}
-\title{Estimate posteriorpProbabilities of association patterns, using p-values.}
+\title{Estimate posteriorp probabilities of association patterns, using p-values.}
 \usage{
 Primo_pval(pvals, alt_props, Gamma = NULL, tol = 0.001)
 }

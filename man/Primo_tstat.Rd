@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{Primo_tstat}
 \alias{Primo_tstat}
-\title{Estimate posteriorpProbabilities of association patterns, using t-statistics.}
+\title{Estimate posterior probabilities of association patterns, using t-statistics.}
 \usage{
 Primo_tstat(betas, sds, dfs, alt_props, mafs = NULL, Gamma = NULL,
   tol = 0.001, par_size = 1)
