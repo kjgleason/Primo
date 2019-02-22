@@ -16,12 +16,13 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     limma (>= 3.34.9),
+    matrixStats (>= 0.53.1),
     metRology (>= 0.9.26.2),
     nloptr(>= 1.0.4),
     parallel (>= 3.4.3),
     Rcpp (>= 0.12.17)
 Suggests:
-    matrixStats (>= 0.53.1),
+    lcmix (>= 0.3),
     Rmpfr (>= 0.7.0)
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.1.0
