@@ -46,7 +46,6 @@
 #'
 #' @export
 #'
-
 Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=0.001,par_size=1){
   m <- nrow(betas)
   d <- ncol(betas)
@@ -71,7 +70,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
   mdfs <- NULL
   V <- NULL
 
-  ## consider parallelizing (would need: dfs, sigma2,betas,v1), but may not be worth overhead of loading data into clusters
+  ## consider parallelizing for large d
   for (j in 1:d){
 
     if(is.matrix(dfs)){
@@ -352,3 +351,139 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001){
 }
 
 
+#' Estimate posterior probabilities of association patterns, using moderated t-statistics.
+#'
+#' This version of the function uses moderated \eqn{t}-statistics and parameters
+#' previously calcualted under the limma framework. It is useful for cases where
+#' the same statistic from one study (e.g. gene-SNP pair) may be mapped to
+#' multiple statistics from another study (e.g. multiple gene-CpG pairs).
+#' For each SNP, estimates the posterior probability for each configuration.
+#' Utilizes parallel computing, when available.
+#'
+#' @param Tstat_mod matrix of moderated t-statistics.
+#' @param mdfs matrix of moderated degrees of freedom.
+#' @param V matrix of scaling factors.
+#' @param Gamma correlation matrix.
+#' @param tol numerical value; specifies tolerance threshold for convergence.
+#' @param par_size numerical value; specifies the number of CPUs/cores/processors for
+#' parallel computing (1 for sequential processing).
+#'
+#' @return A list with the following elements:
+#' \tabular{ll}{
+#' \code{post_prob} \tab matrix of posterior probabilities
+#' (rows are SNPs; columns are association patterns)\cr
+#' \code{pis} \tab vector of estimated proportion of SNPs
+#' belonging to each association pattern\cr
+#' \code{D_mat} \tab matrix of densities under each association pattern\cr
+#' \code{Gamma} \tab correlation matrix\cr
+#' \code{Tstat_mod} \tab matrix of moderated t-statistics\cr
+#' \code{V_mat} \tab matrix of scaling factors under the alternative distribution\cr
+#' \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
+#'  moderated degrees of freedom: df/(df-2)\cr
+#' }
+#'
+#' @details The following are additional details describing the input arguments
+#'  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
+#' \tabular{ll}{
+#' \code{Tstat_mod} \tab  \eqn{m} x \eqn{d} matrix\cr
+#' \code{mdfs} \tab \eqn{m} x \eqn{d} matrix\cr
+#' \code{V} \tab \eqn{m} x \eqn{d} matrix\cr
+#' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
+#' }
+#'
+#' @export
+#'
+Primo_ModT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
+  m <- nrow(Tstat_mod)
+  d <- ncol(Tstat_mod)
+
+  ## when degrees of freedom are the same for 1 phenotype across observations, rbind sd based on mdf into matrix format
+  if(!is.matrix(mdfs)){
+    mdf_sd_mat <- matrix(rep(sqrt(mdfs/(mdfs-2)),each=m),ncol=d)
+  } else{
+    mdf_sd_mat <- sqrt(mdfs/(mdfs-2))
+  }
+
+  ## parallel computation of D_mat(densities under each pattern)
+  Q<-make_qmat(1:d)
+  D_mat_func <- function(k){
+    m=nrow(V_mat)
+    d=ncol(V_mat)
+    v_k <-   V_mat %*%diag(Q[k,]) + matrix(1, nrow=nrow(V_mat),ncol=ncol(V_mat))%*%diag( 1-Q[k,])
+    v_k <- v_k * mdf_sd_mat
+    Z <- Tstat_mod/v_k
+    dets <- exp(rowSums(log(v_k)))*sqrt(det(Gamma))
+    return(mvtnorm::dmvnorm(Z, mean=rep(0,d),sigma=Gamma)/dets)
+  }
+
+  ## parallel version
+  if(par_size > 1){
+    cl <- parallel::makeCluster(par_size)
+    parallel::clusterEvalQ(cl, library(mvtnorm))
+    parallel::clusterExport(cl=cl, varlist=list("D_mat_func","Tstat_mod","V_mat","mdf_sd_mat","Q","Gamma"),envir=environment())
+    D_mat_byk <- parallel::parLapply(cl, 1:2^d, function(k) D_mat_func(k=k))
+    parallel::stopCluster(cl)
+  } else{
+    ## sequential version
+    D_mat_byk <- lapply(1:2^d, function(k) D_mat_func(k=k))
+  }
+
+  D_mat <- do.call("cbind",D_mat_byk)
+  rm(D_mat_byk)
+
+  ## resume algorithm now that D_mat has been calculated either in parallel or sequentially
+  n_pattern <- 2^d
+  curpi<- c(0.80, rep((1-0.80)/(n_pattern-1),n_pattern-1))
+  diff<-1
+  numiters<-1
+  itermat<-curpi
+
+  ## Rcpp has maximum vector size of 2^31-1
+  ## for now, process large matrices in chunks (may eventually utilize bigmemory package)
+  if(m*as.double(n_pattern) <= 2^31-1){
+    while(diff>tol){
+      start_time <- Sys.time()
+      cat("\nIteration:",numiters)
+      numiters<-numiters+1
+      curpi <- primo::em_iter_Dmat(curpi,D_mat)
+      itermat<-rbind(itermat,curpi)
+      diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
+      Sys.time() - start_time
+    }
+
+    PP<- primo::e_step_Dmat(curpi, Dmat=D_mat)
+
+  } else{
+
+    num_chunks <- ceiling((m*as.double(n_pattern))/(2^31-1))
+    Drow_chunks <- split(1:m, ceiling(seq_along(1:m)/(m/num_chunks)))
+
+    while(diff>tol){
+      start_time <- Sys.time()
+      cat("\nIteration:",numiters)
+      numiters<-numiters+1
+      # e-step, in chunks
+      curb_colsums <- 0
+      for(ch in 1:length(Drow_chunks)){
+        D_rows <-  Drow_chunks[[ch]]
+        curb_colsums_temp<-primo::e_step_Dmat_withColSums(curpi, Dmat=D_mat[D_rows,])
+        curb_colsums <- curb_colsums + curb_colsums_temp
+      }
+      curpi<-curb_colsums/m
+      itermat<-rbind(itermat,curpi)
+      diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
+      Sys.time() - start_time
+    }
+
+    ## obtain posterior probabilities
+    PP <- sweep(log(D_mat),2,log(curpi),"+")
+    # subtract maximum, then e^(B)/rowSums(B)
+    PP<-PP-matrixStats::rowMaxs(PP)
+    PP<-exp(PP)
+    # can use rowSums directly since columns are recycled
+    PP<-PP/matrixStats::rowSums2(PP)
+
+  }
+
+  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, Tstat_mod=Tstat_mod, V_mat = V_mat, mdf_sd_mat = mdf_sd_mat))
+}
