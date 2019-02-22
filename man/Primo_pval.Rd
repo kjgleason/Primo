@@ -42,8 +42,6 @@ For each SNP, estimates the posterior probability for each configuration.
 Utilizes parallel computing, when available.
 }
 \details{
-\code{pvals} and \code{alt_props} must be specified.
-
 The following are additional details describing the input arguments
  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
 \tabular{ll}{

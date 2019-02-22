@@ -31,19 +31,17 @@
 #' \code{tol} \tab numerical value; the tolerance threshold used in determining convergence
 #' }
 #'
-#' @details \code{betas}, \code{sds},\code{dfs} and \code{alt_props} must be specified (i.e. not \code{NULL}).
-#'
-#' The following are additional details describing the input arguments
+#' @details The following are additional details describing the input arguments
 #'  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
 #' \tabular{ll}{
 #' \code{betas} \tab  \eqn{m} x \eqn{d} matrix\cr
 #' \code{sds} \tab \eqn{m} x \eqn{d} matrix\cr
 #' \code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix\cr
 #' \code{alt_props} \tab vector of length \eqn{d}\cr
-#' \code{mafs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix\cr
+#' \code{mafs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
 #'  \tab If not specified, standard errors will not be adjusted for MAF.\cr
-#' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix
-#'  \tab If not specified, will be estimated using observations where all abs(t) < 5.\cr
+#' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
+#'  \tab If not specified, will be estimated using observations where all \eqn{|t| < 5}.\cr
 #' }
 #'
 #' @export
@@ -185,7 +183,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 
   }
 
-  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Tstat_mod=Tstat_mod, V_mat = V, mdf_sd_mat = mdf_sd_mat, Gamma=Gamma, alt_props=alt_props, tol=tol))
+  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, alt_props=alt_props, tol=tol, Tstat_mod=Tstat_mod, V_mat = V, mdf_sd_mat = mdf_sd_mat))
 }
 
 
@@ -219,9 +217,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 #'  moderated degrees of freedom: df/(df-2)\cr
 #' }
 #'
-#' @details \code{pvals} and \code{alt_props} must be specified.
-#'
-#' The following are additional details describing the input arguments
+#' @details The following are additional details describing the input arguments
 #'  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
 #' \tabular{ll}{
 #' \code{pvals} \tab  \eqn{m} x \eqn{d} matrix\cr

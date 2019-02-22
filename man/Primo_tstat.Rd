@@ -49,8 +49,6 @@ For each SNP, estimates the posterior probability for each configuration.
 Utilizes parallel computing, when available.
 }
 \details{
-\code{betas}, \code{sds},\code{dfs} and \code{alt_props} must be specified (i.e. not \code{NULL}).
-
 The following are additional details describing the input arguments
  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
 \tabular{ll}{
@@ -58,9 +56,9 @@ The following are additional details describing the input arguments
 \code{sds} \tab \eqn{m} x \eqn{d} matrix\cr
 \code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix\cr
 \code{alt_props} \tab vector of length \eqn{d}\cr
-\code{mafs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix\cr
+\code{mafs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
  \tab If not specified, standard errors will not be adjusted for MAF.\cr
-\code{Gamma} \tab  \eqn{d} x \eqn{d} matrix
- \tab If not specified, will be estimated using observations where all abs(t) < 5.\cr
+\code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
+ \tab If not specified, will be estimated using observations where all \eqn{|t| < 5}.\cr
 }
 }
