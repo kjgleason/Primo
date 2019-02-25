@@ -1,7 +1,7 @@
 Package: primo
 Type: Package
 Title: Package in R for Integrating Multi-Omics data
-Version: 0.0.0.9004
+Version: 0.0.0.9005
 Authors@R: c(
     person("Kevin J.", "Gleason", email = "kevin.j.gleason@gmail.com", role=c("aut","cre")),
     person("Fan", "Yang", email = "FAN.3.YANG@ucdenver.edu", role="aut"),
