@@ -37,7 +37,7 @@ belonging to each association pattern\cr
 }
 \description{
 This version of the function uses moderated \eqn{t}-statistics and parameters
-previously calcualted under the limma framework. It is useful for cases where
+previously calculated under the limma framework. It is useful for cases where
 the same statistic from one study (e.g. gene-SNP pair) may be mapped to
 multiple statistics from another study (e.g. multiple gene-CpG pairs).
 For each SNP, estimates the posterior probability for each configuration.
