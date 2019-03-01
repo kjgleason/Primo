@@ -13,7 +13,7 @@
 #'
 calc_fdr <- function(post_prob,threshold){
   post_prob <- post_prob[which(post_prob > threshold)]
-  return(sum(1-post_prob)/length(post_prob))
+  return(mean(1-post_prob))
 }
 
 
@@ -45,7 +45,7 @@ calc_fdr_finemap <- function(post_prob,threshold,fail_idx){
   post_prob[fail_idx] <- 0
 
   post_prob <- post_prob[fineMapped_idx]
-  return(sum(1-post_prob)/length(post_prob))
+  return(mean(1-post_prob))
 }
 
 #' Calculate the empirical false discovery rate (FDR).
