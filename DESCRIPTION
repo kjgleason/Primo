@@ -23,6 +23,7 @@ Imports:
     parallel (>= 3.4.3),
     Rcpp (>= 0.12.17)
 Suggests:
+    data.table (>= 1.12.0),
     lcmix (>= 0.3),
     Rmpfr (>= 0.7.0)
 LinkingTo: Rcpp, RcppArmadillo
