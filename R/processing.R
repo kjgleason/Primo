@@ -45,3 +45,86 @@ subset_Primo_obj <- function(Primo_obj,idx){
 
   return(Primo_obj)
 }
+
+
+#' Find the lead SNP for each phenotype in each region.
+#'
+#' Subset results from Primo output based on a vector of indices.
+#'
+#' @param data A data.table. Each row will be a SNP-phenotype combination
+#' with statistics necessary to determine the lead SNP in each phenotype region.
+#' @param SNP_col Character string of the column name of the SNP.
+#' @param pheno_cols Character vector of the column names of the phenotypes.
+#' @param stat_cols Character vector of the column names of statistics to be
+#' used to determine lead SNPs.
+#' @param data_type Character string denoting type of statistics being used. Must be
+#' either "pvalue" or "tstat".
+#' @param suffices A character vector denoting suffices to use for the names of the
+#' lead SNP columns (optional). If \code{NULL}, consecutive integers will be assigned.
+#'
+#' @return A data.table containing information about the lead SNPs and
+#' associated statistics. The columns will be \code{pheno_cols} followed by two columns
+#' for each phenotype: the name of the lead SNP and the value of the statistic for
+#' that lead SNP in that phenotype.
+#'
+#' @export
+#'
+find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
+
+  setkeyv(data,pheno_cols)
+
+  if(is.null(suffices)) suffices <- 1:length(stat_cols)
+
+  if(data_type=="pvalue"){
+
+    ## find SNP with minimum p-value for the first phenotype in the region
+    leadSNPs_byRegion <- data[data[,.I[get(stat_cols[1])==min(get(stat_cols[1]))],by=key(data)]$V1]
+    leadSNPs_byRegion<- subset(leadSNPs_byRegion, select=c(pheno_cols,"SNP",stat_cols[1]))
+    colnames(leadSNPs_byRegion)[ncol(leadSNPs_byRegion)-1] <- paste0("leadSNP_",suffices[1])
+
+    ## drop duplicates if they exist (cases of perfect LD)
+    leadSNPs_byRegion <- leadSNPs_byRegion[!duplicated(leadSNPs_byRegion,by=key(leadSNPs_byRegion))]
+
+    for(i in 2:length(stat_cols)){
+
+      ## find SNP with minimum p-value for the current phenotype in the region
+      topSNP_currPheno <- data[data[,.I[get(stat_cols[i])==min(get(stat_cols[i]))],by=key(data)]$V1]
+      topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,"SNP",stat_cols[i]))
+      colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
+
+      ## drop duplicates if they exist (cases of perfect LD) and merge
+      topSNP_currPheno <- topSNP_currPheno[!duplicated(topSNP_currPheno,by=key(topSNP_currPheno))]
+      leadSNPs_byRegion <- merge(leadSNPs_byRegion,topSNP_currPheno)
+    }
+
+  } else if(data_type=="tstat"){
+
+    ## find SNP with maximum abs(t-statistic) for the first phenotype in the region
+    leadSNPs_byRegion <- data[data[,.I[get(stat_cols[1])==max(abs(get(stat_cols[1])))],by=key(data)]$V1]
+    leadSNPs_byRegion<- subset(leadSNPs_byRegion, select=c(pheno_cols,"SNP",stat_cols[1]))
+    colnames(leadSNPs_byRegion)[ncol(leadSNPs_byRegion)-1] <- paste0("leadSNP_",suffices[1])
+
+    ## drop duplicates if they exist (cases of perfect LD)
+    leadSNPs_byRegion <- leadSNPs_byRegion[!duplicated(leadSNPs_byRegion,by=key(leadSNPs_byRegion))]
+
+    for(i in 2:length(stat_cols)){
+
+      ## find SNP with maximum abs(t-statistic) for the current phenotype in the region
+      topSNP_currPheno <- data[data[,.I[get(stat_cols[i])==min(get(stat_cols[i]))],by=key(data)]$V1]
+      topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,"SNP",stat_cols[i]))
+      colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
+
+      ## drop duplicates if they exist (cases of perfect LD)
+      topSNP_currPheno <- topSNP_currPheno[!duplicated(topSNP_currPheno,by=key(topSNP_currPheno))]
+      leadSNPs_byRegion <- merge(leadSNPs_byRegion,topSNP_currPheno)
+    }
+
+  } else{
+
+    stop("data_type must be either 'pvalue' or 'tstat'.")
+
+  }
+
+
+  return(leadSNPs_byRegion)
+}
