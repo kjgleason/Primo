@@ -64,11 +64,9 @@ fine_map<-function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 #' Setup fine-mapping for a specified variant by index.
 fine_map_once <- function(Primo_res,IDs,idx,leadSNPs_byRegion,SNP_col,pheno_cols,snp.info,LDmat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
 
-  require(data.table)
-
   curr.IDs <- IDs[idx,]
   # curr.SNP <- curr.IDs[,get(SNP_col)]
-  curr.SNP <- curr.IDs[,..SNP_col][[1]]
+  curr.SNP <- curr.IDs$SNP
   curr.Region <- merge(leadSNPs_byRegion,curr.IDs,by=pheno_cols)
 
   ## subset Primo results to the current region
@@ -97,7 +95,7 @@ fine_map_once <- function(Primo_res,IDs,idx,leadSNPs_byRegion,SNP_col,pheno_cols
 
   ## index of SNP of interest
   # idx.snp <- which(IDs[,get(SNP_col)]==curr.SNP)
-  idx.snp <- which(IDs[,..SNP_col][[1]]==curr.SNP)
+  idx.snp <- which(IDs$SNP==curr.SNP)
 
   if(length(leadSNPs)==0){
     return(which.max(Primo_res$post_prob[idx.snp,]))
@@ -107,7 +105,7 @@ fine_map_once <- function(Primo_res,IDs,idx,leadSNPs_byRegion,SNP_col,pheno_cols
     idx.leadsnps <- NULL
     for(j in 1:length(leadSNPs)){
       # idx.leadsnps <- c(idx.leadsnps, which(IDs[,get(SNP_col)]==leadSNPs[j]))
-      idx.leadsnps <- c(idx.leadsnps, which(IDs[,..SNP_col][[1]]==leadSNPs[j]))
+      idx.leadsnps <- c(idx.leadsnps, which(IDs$SNP==leadSNPs[j]))
     }
 
     ## run fine-mapping
