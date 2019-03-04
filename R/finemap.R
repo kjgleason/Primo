@@ -67,13 +67,8 @@ fine_map_once <- function(Primo_res,IDs,idx,leadSNPs_byRegion,SNP_col,pheno_cols
   require(data.table)
 
   curr.IDs <- IDs[idx,]
-<<<<<<< HEAD
   # curr.SNP <- curr.IDs[,get(SNP_col)]
   curr.SNP <- curr.IDs[,..SNP_col][[1]]
-=======
-  curr.SNP <- curr.IDs[,get(SNP_col),with=T]
-  # curr.SNP <- curr.IDs$SNP
->>>>>>> f5c3f409ad29422a6a71c074c089f8246c5ce3c6
   curr.Region <- merge(leadSNPs_byRegion,curr.IDs,by=pheno_cols)
 
   ## subset Primo results to the current region
@@ -102,11 +97,7 @@ fine_map_once <- function(Primo_res,IDs,idx,leadSNPs_byRegion,SNP_col,pheno_cols
 
   ## index of SNP of interest
   # idx.snp <- which(IDs[,get(SNP_col)]==curr.SNP)
-<<<<<<< HEAD
   idx.snp <- which(IDs[,..SNP_col][[1]]==curr.SNP)
-=======
-  idx.snp <- which(IDs$SNP==curr.SNP)
->>>>>>> f5c3f409ad29422a6a71c074c089f8246c5ce3c6
 
   if(length(leadSNPs)==0){
     return(which.max(Primo_res$post_prob[idx.snp,]))
