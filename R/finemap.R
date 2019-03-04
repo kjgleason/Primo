@@ -63,6 +63,9 @@ fine_map<-function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 
 #' Setup fine-mapping for a specified variant by index.
 fine_map_once <- function(Primo_res,IDs,idx,leadSNPs_byRegion,SNP_col,pheno_cols,snp.info,LDmat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
+
+  require(data.table)
+
   curr.IDs <- IDs[idx,]
   curr.SNP <- curr.IDs[,get(SNP_col)]
   curr.Region <- merge(leadSNPs_byRegion,curr.IDs,by=pheno_cols)
