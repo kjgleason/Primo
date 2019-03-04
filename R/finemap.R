@@ -67,7 +67,8 @@ fine_map_once <- function(Primo_res,IDs,idx,leadSNPs_byRegion,SNP_col,pheno_cols
   require(data.table)
 
   curr.IDs <- IDs[idx,]
-  curr.SNP <- curr.IDs[,get(SNP_col)]
+  # curr.SNP <- curr.IDs[,get(SNP_col)]
+  curr.SNP <- curr.IDs$SNP
   curr.Region <- merge(leadSNPs_byRegion,curr.IDs,by=pheno_cols)
 
   ## subset Primo results to the current region
@@ -95,7 +96,8 @@ fine_map_once <- function(Primo_res,IDs,idx,leadSNPs_byRegion,SNP_col,pheno_cols
   leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval < pval_thresh & LD_r2 < LD_thresh)$SNP)
 
   ## index of SNP of interest
-  idx.snp <- which(IDs[,get(SNP_col)]==curr.SNP)
+  # idx.snp <- which(IDs[,get(SNP_col)]==curr.SNP)
+  idx.snp <- which(IDs$SNP==curr.SNP)
 
   if(length(leadSNPs)==0){
     return(which.max(Primo_res$post_prob[idx.snp,]))
@@ -104,8 +106,8 @@ fine_map_once <- function(Primo_res,IDs,idx,leadSNPs_byRegion,SNP_col,pheno_cols
     ## get snp_indices for other snps to adjust for
     idx.leadsnps <- NULL
     for(j in 1:length(leadSNPs)){
-      # idx.leadsnps <- c(idx.leadsnps,which(IDs$SNP==leadSNPs[j] & IDs$gene==curr.Region$gene & IDs$REF==curr.Region$REF))
-      idx.leadsnps <- c(idx.leadsnps, which(IDs[,get(SNP_col)]==leadSNPs[j]))
+      # idx.leadsnps <- c(idx.leadsnps, which(IDs[,get(SNP_col)]==leadSNPs[j]))
+      idx.leadsnps <- c(idx.leadsnps, which(IDs$SNP==leadSNPs[j]))
     }
 
     ## run fine-mapping
