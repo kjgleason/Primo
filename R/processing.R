@@ -53,7 +53,8 @@ subset_Primo_obj <- function(Primo_obj,idx){
 #'
 #' @param data A data.table. Each row will be a SNP-phenotype combination
 #' with statistics necessary to determine the lead SNP in each phenotype region.
-#' @param SNP_col Character string of the column name of the SNP.
+#' @param SNP_col Character string of the column name of the SNP (must be "SNP"
+#' for current version).
 #' @param pheno_cols Character vector of the column names of the phenotypes.
 #' @param stat_cols Character vector of the column names of statistics to be
 #' used to determine lead SNPs.
@@ -70,6 +71,10 @@ subset_Primo_obj <- function(Primo_obj,idx){
 #' @export
 #'
 find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
+
+  require(data.table)
+
+  cat("class: ", class(data))
 
   setkeyv(data,pheno_cols)
 
