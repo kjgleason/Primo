@@ -4,10 +4,70 @@
 \alias{fine_map_once}
 \title{Setup fine-mapping for a specified variant by index.}
 \usage{
-fine_map_once(Primo_res, IDs, idx, leadSNPs_byRegion, SNP_col, pheno_cols,
-  snp.info, LDmat, LD_thresh = 1, dist_thresh = 0, pval_thresh = 1,
-  suffices = 1:length(pheno_cols))
+fine_map_once(Primo_obj, IDs, idx, leadSNPs_byRegion, SNP_col = "SNP",
+  pheno_cols, snp.info, LD_mat, LD_thresh = 1, dist_thresh = 0,
+  pval_thresh = 1, suffices = 1:length(pheno_cols))
+}
+\arguments{
+\item{Primo_obj}{A list returned by running the \eqn{t}-statistic version
+of Primo (i.e. \code{\link{Primo_tstat}})}
+
+\item{IDs}{A data.table of the SNP and phenotype IDs corresponding to each row
+of the Primo results stored in \code{Primo_obj}.}
+
+\item{idx}{An integer of the index of the genetic variant (e.g. row of \code{Tstat_mod})
+on which one wants to perform fine-mapping}
+
+\item{leadSNPs_byRegion}{A data.table that stores the lead SNP of each phenotype
+in each region of the Primo results. Also includes p-values for the lead SNPs.
+See Details for format.}
+
+\item{SNP_col}{A string of the column name of SNPs (must be "SNP" in current version).}
+
+\item{pheno_cols}{A character vector of the column names of the phenotype ID columns.}
+
+\item{snp.info}{A data.table reporting the chromosome and position of each SNP.
+Columns should be: \code{SNP, CHR, POS}.}
+
+\item{LD_mat}{A matrix of LD coefficients (\eqn{r^{2}}{r^2}).
+Rows and columns should match the order of (\code{idx.snp}, \code{idx.leadsnps}).}
+
+\item{LD_thresh}{A scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
+threshold to be used for conditional analysis. Lead SNPs with \eqn{r^{2} <}{r^2 <}
+\code{LD_thresh} with the \code{idx} variant will be conditioned on,
+pending other criteria. Default value (1) signifies no consideration of LD in conditional analyses.}
+
+\item{dist_thresh}{A scalar of the minimum number of base pairs away from the \code{idx} SNP
+that a lead SNP must be in order to be considered for conditional analysis. Default value (0)
+signifies no consideration of chromosomal distance in conditional analyses.}
+
+\item{pval_thresh}{A scalar of the p-value threshold a lead SNP must be below
+with the phenotype for which it is lead SNP in order to be considered for conditional analysis.
+Default value (1) signifies no consideration of strength of effect in conditional analyses.}
+
+\item{suffices}{A character vector of the suffices corresponding to columns in
+\code{leadSNPs_byRegion}. See Details.}
+}
+\value{
+The numerical value corresponding to the association pattern
+with the highest posterior probability following fine-mapping adjustment.
+The value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
+from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
+by \code{\link{make_qmat}}.
 }
 \description{
-Setup fine-mapping for a specified variant by index.
+For a specified variant (passed by index), set-up and run fine-mapping.
+The function uses a data.table of leadSNPs to identify possible SNPs
+to be conditioned on by the fine-mapping function, and determines which SNPs
+will be conditioned on based on specified criteria. Returns the association
+pattern with the highest posterior probability after fine-mapping.
+}
+\details{
+The following are additional details describing the input data.table
+\code{leadSNPs_byRegion}. For \eqn{J} phenotypes being analyzed, the first
+\eqn{J} columns of \code{leadSNPs_byRegion} should specify phenotype IDs.
+Examples include gene symbol, CpG site name, trait name for GWAS, etc. The following
+\eqn{2J} columns should hold the name and p-value of the lead SNP for each of the
+\eqn{J} phenotypes. The column names should be of the form \code{leadSNP_x} and
+\code{p-value_x}, where \code{x} is a suffix corresponding to the phenotype.
 }
