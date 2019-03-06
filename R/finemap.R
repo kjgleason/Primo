@@ -139,9 +139,9 @@ fine_map_once <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",phen
                                                        value.name="pval")$pval)
 
   ## merge in chr and position to calculate distance between lead SNPs and SNP of interest
-  setkeyv(curr.Region_long,SNP_col)
-  setkeyv(snp.info,SNP_col)
-  curr.Region_long <- merge(curr.Region_long,snp.info)
+  # setkeyv(curr.Region_long,SNP_col)
+  # setkeyv(snp.info,SNP_col)
+  curr.Region_long <- merge(curr.Region_long,snp.info,by=SNP_col)
   curr.Region_long$dist <- abs(snp.info$POS[which(snp.info$SNP==curr.SNP)] - curr.Region_long$POS)
   ## merge in LD coefficients
   # curr.Region_long$LD_r2 <- LD_mat[curr.SNP,subset(curr.Region_long,select=SNP_col)[[1]]]
