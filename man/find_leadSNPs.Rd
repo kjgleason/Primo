@@ -11,8 +11,7 @@ find_leadSNPs(data, SNP_col, pheno_cols, stat_cols, data_type = "pvalue",
 \item{data}{A data.table. Each row will be a SNP-phenotype combination
 with statistics necessary to determine the lead SNP in each phenotype region.}
 
-\item{SNP_col}{Character string of the column name of the SNP (must be "SNP"
-for current version).}
+\item{SNP_col}{Character string of the column name of the SNP.}
 
 \item{pheno_cols}{Character vector of the column names of the phenotypes.}
 
