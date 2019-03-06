@@ -117,7 +117,8 @@ fine_map_once <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",phen
 
   curr.IDs <- IDs[idx,]
   # curr.SNP <- curr.IDs[,get(SNP_col)]
-  curr.SNP <- curr.IDs$SNP
+  # curr.SNP <- curr.IDs$SNP
+  curr.SNP <- subset(curr.IDs,select=SNP_col)[[1]]
   curr.Region <- merge(leadSNPs_byRegion,curr.IDs,by=pheno_cols)
 
   ## subset Primo results to the current region
