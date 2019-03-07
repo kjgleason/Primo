@@ -5,15 +5,14 @@
 #'
 #' @param betas vector of coefficient estimates.
 #' @param sds vector of standard errors (for coefficient estimates).
-#' @param mafs vector of minor allele frequencies (MAFs).
+#' @param mafs vector of minor allele frequencies (MAFs) (optional).
+#' If \code{NULL}, no adjustment will be made for MAF in variance calculations.
 #' @param df first degrees of freedom of the F-distribution (usually, the number of subjects/observations).
 #' @param alt_prop proportion of test-statistics used in estimating alternative densities.
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
 #' \code{Tstat_mod} \tab matrix of moderated t-statistics\cr
-#' \code{D0} \tab matrix of densities calculated under the null distribution\cr
-#' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
 #' \code{df_mod} \tab vector of the moderated degrees of freedom\cr
 #' \code{scaler} \tab vector of the scaling factors for the moderated t-statistics under the alternative\cr
 #' }

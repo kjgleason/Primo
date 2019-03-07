@@ -11,7 +11,8 @@ estimate_densities_modT(betas, sds, mafs = NULL, df, alt_prop)
 
 \item{sds}{vector of standard errors (for coefficient estimates).}
 
-\item{mafs}{vector of minor allele frequencies (MAFs).}
+\item{mafs}{vector of minor allele frequencies (MAFs) (optional).
+If \code{NULL}, no adjustment will be made for MAF in variance calculations.}
 
 \item{df}{first degrees of freedom of the F-distribution (usually, the number of subjects/observations).}
 
@@ -21,8 +22,6 @@ estimate_densities_modT(betas, sds, mafs = NULL, df, alt_prop)
 A list with the following elements:
 \tabular{ll}{
 \code{Tstat_mod} \tab matrix of moderated t-statistics\cr
-\code{D0} \tab matrix of densities calculated under the null distribution\cr
-\code{D1} \tab matrix of densities calculated under the alternative distribution\cr
 \code{df_mod} \tab vector of the moderated degrees of freedom\cr
 \code{scaler} \tab vector of the scaling factors for the moderated t-statistics under the alternative\cr
 }
