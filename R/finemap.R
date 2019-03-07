@@ -135,7 +135,7 @@ fine_map_once <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",phen
   ## melt data so each lead SNP is its own row
   curr.Region_long <- melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("leadSNP_",suffices),
                                      value.name=SNP_col)
-  curr.Region_long <- cbind(curr.Region_long,pval=melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("p.value_",suffices),
+  curr.Region_long <- cbind(curr.Region_long,pval=melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("p-value_",suffices),
                                                                  value.name="pval")$pval)
   # curr.Region_long <- reshape2::melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("leadSNP_",suffices),
   #                          value.name=SNP_col)
