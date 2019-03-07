@@ -75,17 +75,17 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
     } else d1=dfs[j]
 
     xx <- limma::fitFDist(sigma2[,j],d1)
-    s02 <- xx$scale; n0 <- xx$df2
+    s02 <- xx$scale; d0 <- xx$df2
     # rescale t-statistic (see Smyth, 2004)
-    sg_tilde <- sqrt((n0*s02+d1*sigma2[,j])/(n0+d1))
+    sg_tilde <- sqrt((d0*s02+d1*sigma2[,j])/(d0+d1))
     moderate.t <- betas[,j]/(sg_tilde*sqrt(v1))
     Tstat_mod <- cbind(Tstat_mod, moderate.t)
-    v0 <- limma::tmixture.vector(moderate.t, sqrt(v1),d1+n0,proportion=alt_props[j],v0.lim=NULL)
+    v0 <- limma::tmixture.vector(moderate.t, sqrt(v1),d1+d0,proportion=alt_props[j],v0.lim=NULL)
     V= cbind(V,sqrt(1+v0/v1))
 
     if(is.matrix(dfs)){
-      mdfs <- cbind(mdfs,d1+n0)
-    } else mdfs<-c(mdfs,d1+n0)
+      mdfs <- cbind(mdfs,d1+d0)
+    } else mdfs<-c(mdfs,d1+d0)
   }
 
   ## when degrees of freedom are the same for 1 phenotype across observations, rbind sd based on mdf into matrix format
