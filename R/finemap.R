@@ -167,7 +167,7 @@ fine_map_once <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",phen
     idx.leadsnps <- NULL
     for(j in 1:length(leadSNPs)){
       # idx.leadsnps <- c(idx.leadsnps, which(IDs[,get(SNP_col)]==leadSNPs[j]))
-      idx.leadsnps <- c(idx.leadsnps, which(subset(IDs,SNP_col)[[1]]==leadSNPs[j]))
+      idx.leadsnps <- c(idx.leadsnps, which(subset(IDs,select=SNP_col)[[1]]==leadSNPs[j]))
       # idx.leadsnps <- c(idx.leadsnps, which(IDs[,SNP_col]==leadSNPs[j]))
     }
 
