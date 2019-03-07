@@ -183,7 +183,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 }
 
 
-#' Estimate posterior probabilities of association patterns, using p-values.
+#' Estimate posterior probabilities of association patterns, using P-values.
 #'
 #' For each SNP, estimates the posterior probability for each configuration.
 #' Utilizes parallel computing, when available.
@@ -205,9 +205,8 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 #' \code{D_mat} \tab matrix of densities under each association pattern\cr
 #' \code{Gamma} \tab correlation matrix\cr
 #' \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values \cr
-#' \code{A} \tab matrix of scaling factors under the alternative distribution\cr
-#' \code{df_alt} \tab matrix of standard deviation adjustment according to
-#'  moderated degrees of freedom: df/(df-2)\cr
+#' \code{A} \tab vector of scaling factors under the alternative distribution\cr
+#' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions\cr
 #' }
 #'
 #' @details The following are additional details describing the input arguments
