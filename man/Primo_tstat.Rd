@@ -30,15 +30,15 @@ parallel computing (1 for sequential processing).}
 A list with the following elements:
 \tabular{ll}{
 \code{post_prob} \tab matrix of posterior probabilities
-(rows are SNPs; columns are association patterns)\cr
+(rows are SNPs; columns are association patterns).\cr
 \code{pis} \tab vector of estimated proportion of SNPs
-belonging to each association pattern\cr
-\code{D_mat} \tab matrix of densities under each association pattern\cr
-\code{Tstat_mod} \tab matrix of moderated t-statistics\cr
-\code{V_mat} \tab matrix of scaling factors under the alternative distribution\cr
+belonging to each association pattern.\cr
+\code{D_mat} \tab matrix of densities under each association pattern.\cr
+\code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
+\code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
 \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
- moderated degrees of freedom: df/(df-2)\cr
-\code{Gamma} \tab correlation matrix\cr
+ moderated degrees of freedom: df/(df-2).\cr
+\code{Gamma} \tab correlation matrix.\cr
 }
 }
 \description{
@@ -49,10 +49,10 @@ Utilizes parallel computing, when available.
 The following are additional details describing the input arguments
  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
 \tabular{ll}{
-\code{betas} \tab  \eqn{m} x \eqn{d} matrix\cr
-\code{sds} \tab \eqn{m} x \eqn{d} matrix\cr
-\code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix\cr
-\code{alt_props} \tab vector of length \eqn{d}\cr
+\code{betas} \tab  \eqn{m} x \eqn{d} matrix.\cr
+\code{sds} \tab \eqn{m} x \eqn{d} matrix.\cr
+\code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
+\code{alt_props} \tab vector of length \eqn{d}.\cr
 \code{mafs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
  \tab If not specified, standard errors will not be adjusted for MAF.\cr
 \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
