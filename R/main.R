@@ -205,7 +205,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 #' \code{D_mat} \tab matrix of densities under each association pattern.\cr
 #' \code{Gamma} \tab correlation matrix.\cr
 #' \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
-#' \code{A} \tab vector of scaling factors under the alternative distribution.\cr
+#' \code{A} \tab vector of scaling factors under the alternative distributions.\cr
 #' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
 #' }
 #'

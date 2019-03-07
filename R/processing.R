@@ -2,36 +2,35 @@
 #'
 #' Subset results from Primo output based on a vector of indices.
 #'
-#' @param Primo_obj A list of results returned by Primo (from the function
+#' @param Primo_obj list of results returned by Primo (from the function
 #' \code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_ModT}}).
-#' @param idx Integer vector of the indices to which to subset Primo results.
+#' @param idx integer vector of the indices to which to subset Primo results.
 #'
-#' @return List of Primo results with the following elements:
+#' @return A list of Primo results with the following elements:
 #' \tabular{ll}{
 #' \code{post_prob} \tab matrix of posterior probabilities
-#' (rows are SNPs; columns are association patterns)\cr
+#' (rows are SNPs; columns are association patterns).\cr
 #' \code{pis} \tab vector of estimated proportion of SNPs
-#' belonging to each association pattern\cr
-#' \code{D_mat} \tab matrix of densities under each association pattern\cr
-#' \code{Gamma} \tab correlation matrix\cr
+#' belonging to each association pattern.\cr
+#' \code{D_mat} \tab matrix of densities under each association pattern.\cr
+#' \code{Gamma} \tab correlation matrix.\cr
 #' }
 #'
 #' If the results were originally from the \eqn{t}-statistic version,
 #' the list will additionally contain:
 #' \tabular{ll}{
-#' \code{Tstat_mod} \tab matrix of moderated t-statistics\cr
-#' \code{V_mat} \tab matrix of scaling factors under the alternative distribution\cr
+#' \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
+#' \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
 #' \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
-#'  moderated degrees of freedom: df/(df-2)\cr
+#'  moderated degrees of freedom: df/(df-2).\cr
 #'  }
 #'
 #' If the results were originally from the \eqn{p}-value version,
 #' the list will additionally contain:
 #' \tabular{ll}{
-#' \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values \cr
-#' \code{A} \tab matrix of scaling factors under the alternative distribution\cr
-#' \code{df_alt} \tab matrix of standard deviation adjustment according to
-#'  moderated degrees of freedom: df/(df-2)\cr
+#' \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
+#' \code{A} \tab vector of scaling factors under the alternative distributions.\cr
+#' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
 #'  }
 #'
 #' @export
@@ -51,15 +50,15 @@ subset_Primo_obj <- function(Primo_obj,idx){
 #'
 #' Subset results from Primo output based on a vector of indices.
 #'
-#' @param data A data.table. Each row will be a SNP-phenotype combination
+#' @param data data.table. Each row will be a SNP-phenotype combination
 #' with statistics necessary to determine the lead SNP in each phenotype region.
-#' @param SNP_col Character string of the column name of the SNP.
-#' @param pheno_cols Character vector of the column names of the phenotypes.
-#' @param stat_cols Character vector of the column names of statistics to be
+#' @param SNP_col character string of the column name of the SNP.
+#' @param pheno_cols character vector of the column names of the phenotypes.
+#' @param stat_cols character vector of the column names of statistics to be
 #' used to determine lead SNPs.
-#' @param data_type Character string denoting type of statistics being used. Must be
+#' @param data_type character string denoting type of statistics being used. Must be
 #' either "pvalue" or "tstat".
-#' @param suffices A character vector denoting suffices to use for the names of the
+#' @param suffices character vector denoting suffices to use for the names of the
 #' lead SNP columns (optional). If \code{NULL}, consecutive integers will be assigned.
 #'
 #' @return A data.table containing information about the lead SNPs and
