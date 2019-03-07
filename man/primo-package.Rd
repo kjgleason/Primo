@@ -7,9 +7,9 @@
 \title{primo: Package in R for Integrating Multi-Omics data}
 \description{
 Implements methods to integrate multi-omics data to detect joint associations 
-              and pleiotropy effects across more than 3 eQTL and GWAS studies. 
+              and pleiotropy effects across more than 3 QTL and GWAS studies. 
               It can also be used more broadly to infer multi-way associations 
-              using omics data from more than 2 data types or sources, beyond eQTL and GWAS.
+              using omics data from more than 2 data types or sources, beyond QTL and GWAS.
 }
 \details{
 To estimate the posterior probabilities of belonging to each association pattern

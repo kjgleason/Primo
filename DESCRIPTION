@@ -1,16 +1,16 @@
 Package: primo
 Type: Package
 Title: Package in R for Integrating Multi-Omics data
-Version: 0.0.0.9005
+Version: 0.0.0.9006
 Authors@R: c(
     person("Kevin J.", "Gleason", email = "kevin.j.gleason@gmail.com", role=c("aut","cre")),
     person("Fan", "Yang", email = "FAN.3.YANG@ucdenver.edu", role="aut"),
     person("Lin S.", "Chen", email = "lchen@health.bsd.uchicago.edu", role="aut"))
 Maintainer: Kevin J. Gleason <kevin.j.gleason@gmail.com>
 Description: Implements methods to integrate multi-omics data to detect joint associations 
-              and pleiotropy effects across more than 3 eQTL and GWAS studies. 
+              and pleiotropy effects across more than 3 QTL and GWAS studies. 
               It can also be used more broadly to infer multi-way associations 
-              using omics data from more than 2 data types or sources, beyond eQTL and GWAS.
+              using omics data from more than 2 data types or sources, beyond QTL and GWAS.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
