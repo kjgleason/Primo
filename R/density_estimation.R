@@ -51,12 +51,13 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
 
   # estimate null and alternative densities
   df_mod=d0+d1
-  D0 <- dt(moderate.t, df=df_mod)
+  # D0 <- dt(moderate.t, df=df_mod)
   v0 <- limma::tmixture.vector(moderate.t, sqrt(v1),df_mod,proportion=alt_prop,v0.lim=NULL)
   scaler=sqrt(1+v0/v1)
-  D1 <- metRology::dt.scaled(moderate.t,df=df_mod,mean=0,sd=scaler)
+  # D1 <- metRology::dt.scaled(moderate.t,df=df_mod,mean=0,sd=scaler)
 
-  return(list(Tstat_mod = moderate.t, D0=D0, D1=D1, df_mod=df_mod, scaler=scaler))
+  # return(list(Tstat_mod = moderate.t, D0=D0, D1=D1, df_mod=df_mod, scaler=scaler, prior_df=d0, prior_var=s02, unscaled_var=v0))
+  return(list(Tstat_mod = moderate.t, df_mod=df_mod, scaler=scaler, prior_df=d0, prior_var=s02, unscaled_var=v0))
 }
 
 #' Estimate Densities Under the Null and Alternative Densities
