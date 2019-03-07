@@ -26,9 +26,6 @@
 #' \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
 #'  moderated degrees of freedom: df/(df-2)\cr
 #' \code{Gamma} \tab correlation matrix\cr
-#' \code{alt_props} \tab vector of the proportions of test-statistics used in
-#' estimating alternative densities\cr
-#' \code{tol} \tab numerical value; the tolerance threshold used in determining convergence
 #' }
 #'
 #' @details The following are additional details describing the input arguments
@@ -182,11 +179,11 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 
   }
 
-  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, alt_props=alt_props, tol=tol, Tstat_mod=Tstat_mod, V_mat = V, mdf_sd_mat = mdf_sd_mat))
+  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, Tstat_mod=Tstat_mod, V_mat = V, mdf_sd_mat = mdf_sd_mat))
 }
 
 
-#' Estimate posteriorp probabilities of association patterns, using p-values.
+#' Estimate posterior probabilities of association patterns, using p-values.
 #'
 #' For each SNP, estimates the posterior probability for each configuration.
 #' Utilizes parallel computing, when available.
@@ -207,9 +204,6 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 #' belonging to each association pattern\cr
 #' \code{D_mat} \tab matrix of densities under each association pattern\cr
 #' \code{Gamma} \tab correlation matrix\cr
-#' \code{alt_props} \tab vector of the proportions of test-statistics used in
-#' estimating alternative densities\cr
-#' \code{tol} \tab numerical value; the tolerance threshold used in determining convergence\cr
 #' \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values \cr
 #' \code{A} \tab matrix of scaling factors under the alternative distribution\cr
 #' \code{df_alt} \tab matrix of standard deviation adjustment according to
@@ -347,7 +341,7 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001){
 
   }
 
-  return(list(postprob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, alt_props=alt_props, tol=tol, chi_mix=chi_mix, A=A, df_alt=df_alt))
+  return(list(postprob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
 }
 
 

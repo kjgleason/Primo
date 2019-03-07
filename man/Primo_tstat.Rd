@@ -39,9 +39,6 @@ belonging to each association pattern\cr
 \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
  moderated degrees of freedom: df/(df-2)\cr
 \code{Gamma} \tab correlation matrix\cr
-\code{alt_props} \tab vector of the proportions of test-statistics used in
-estimating alternative densities\cr
-\code{tol} \tab numerical value; the tolerance threshold used in determining convergence
 }
 }
 \description{

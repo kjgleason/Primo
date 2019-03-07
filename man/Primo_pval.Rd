@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{Primo_pval}
 \alias{Primo_pval}
-\title{Estimate posteriorp probabilities of association patterns, using p-values.}
+\title{Estimate posterior probabilities of association patterns, using p-values.}
 \usage{
 Primo_pval(pvals, alt_props, Gamma = NULL, tol = 0.001)
 }
@@ -28,9 +28,6 @@ A list with the following elements:
 belonging to each association pattern\cr
 \code{D_mat} \tab matrix of densities under each association pattern\cr
 \code{Gamma} \tab correlation matrix\cr
-\code{alt_props} \tab vector of the proportions of test-statistics used in
-estimating alternative densities\cr
-\code{tol} \tab numerical value; the tolerance threshold used in determining convergence\cr
 \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values \cr
 \code{A} \tab matrix of scaling factors under the alternative distribution\cr
 \code{df_alt} \tab matrix of standard deviation adjustment according to
