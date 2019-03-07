@@ -7,19 +7,19 @@
 calc_fdr_finemap(post_prob, threshold, fail_idx)
 }
 \arguments{
-\item{post_prob}{A numeric vector of posterior probabilities.}
+\item{post_prob}{numeric vector of posterior probabilities.}
 
-\item{threshold}{Numerical value of the posterior probability threshold at which to
+\item{threshold}{numerical value of the posterior probability threshold at which to
 calculate the empirical FDR.}
 
-\item{fail_idx}{An integer vector of the indices of observations which failed
+\item{fail_idx}{integer vector of the indices of observations which failed
 fine-mapping. These are the observations where the association pattern with the
 highest posterior probability after fine-mapping changed (if using collapsed
 categories, they should have changed such they are no longer in an
 association pattern fitting the description of the collapsed category).}
 }
 \value{
-Numerical value of the empirical false discovery rate (FDR).
+A numeric value of the empirical false discovery rate (FDR).
 }
 \description{
 Calculate the empirical false discovery rate (FDR) given

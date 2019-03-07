@@ -8,20 +8,20 @@ find_leadSNPs(data, SNP_col, pheno_cols, stat_cols, data_type = "pvalue",
   suffices = NULL)
 }
 \arguments{
-\item{data}{A data.table. Each row will be a SNP-phenotype combination
+\item{data}{data.table. Each row will be a SNP-phenotype combination
 with statistics necessary to determine the lead SNP in each phenotype region.}
 
-\item{SNP_col}{Character string of the column name of the SNP.}
+\item{SNP_col}{character string of the column name of the SNP.}
 
-\item{pheno_cols}{Character vector of the column names of the phenotypes.}
+\item{pheno_cols}{character vector of the column names of the phenotypes.}
 
-\item{stat_cols}{Character vector of the column names of statistics to be
+\item{stat_cols}{character vector of the column names of statistics to be
 used to determine lead SNPs.}
 
-\item{data_type}{Character string denoting type of statistics being used. Must be
+\item{data_type}{character string denoting type of statistics being used. Must be
 either "pvalue" or "tstat".}
 
-\item{suffices}{A character vector denoting suffices to use for the names of the
+\item{suffices}{character vector denoting suffices to use for the names of the
 lead SNP columns (optional). If \code{NULL}, consecutive integers will be assigned.}
 }
 \value{

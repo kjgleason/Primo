@@ -7,13 +7,13 @@
 calc_fdr(post_prob, threshold)
 }
 \arguments{
-\item{post_prob}{A numeric vector of posterior probabilities.}
+\item{post_prob}{numeric vector of posterior probabilities.}
 
-\item{threshold}{Numerical value of the posterior probability threshold at which to
+\item{threshold}{numeric value of the posterior probability threshold at which to
 calculate the empirical FDR.}
 }
 \value{
-Numerical value of the empirical false discovery rate (FDR).
+A numeric value of the empirical false discovery rate (FDR).
 }
 \description{
 Calculate the empirical false discovery rate (FDR) given

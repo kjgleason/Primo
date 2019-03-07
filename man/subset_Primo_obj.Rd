@@ -7,38 +7,37 @@
 subset_Primo_obj(Primo_obj, idx)
 }
 \arguments{
-\item{Primo_obj}{A list of results returned by Primo (from the function
+\item{Primo_obj}{list of results returned by Primo (from the function
 \code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_ModT}}).}
 
-\item{idx}{Integer vector of the indices to which to subset Primo results.}
+\item{idx}{integer vector of the indices to which to subset Primo results.}
 }
 \value{
-List of Primo results with the following elements:
+A list of Primo results with the following elements:
 \tabular{ll}{
 \code{post_prob} \tab matrix of posterior probabilities
-(rows are SNPs; columns are association patterns)\cr
+(rows are SNPs; columns are association patterns).\cr
 \code{pis} \tab vector of estimated proportion of SNPs
-belonging to each association pattern\cr
-\code{D_mat} \tab matrix of densities under each association pattern\cr
-\code{Gamma} \tab correlation matrix\cr
+belonging to each association pattern.\cr
+\code{D_mat} \tab matrix of densities under each association pattern.\cr
+\code{Gamma} \tab correlation matrix.\cr
 }
 
 If the results were originally from the \eqn{t}-statistic version,
 the list will additionally contain:
 \tabular{ll}{
-\code{Tstat_mod} \tab matrix of moderated t-statistics\cr
-\code{V_mat} \tab matrix of scaling factors under the alternative distribution\cr
+\code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
+\code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
 \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
- moderated degrees of freedom: df/(df-2)\cr
+ moderated degrees of freedom: df/(df-2).\cr
  }
 
 If the results were originally from the \eqn{p}-value version,
 the list will additionally contain:
 \tabular{ll}{
-\code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values \cr
-\code{A} \tab matrix of scaling factors under the alternative distribution\cr
-\code{df_alt} \tab matrix of standard deviation adjustment according to
- moderated degrees of freedom: df/(df-2)\cr
+\code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
+\code{A} \tab vector of scaling factors under the alternative distributions.\cr
+\code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
  }
 }
 \description{

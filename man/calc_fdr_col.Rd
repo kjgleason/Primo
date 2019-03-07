@@ -7,17 +7,17 @@
 calc_fdr_col(post_prob, threshold, col_name = NULL, col_idx = NULL)
 }
 \arguments{
-\item{post_prob}{A numeric matrix of posterior probabilities.}
+\item{post_prob}{numeric matrix of posterior probabilities.}
 
-\item{threshold}{Numerical value of the posterior probability threshold at which to
+\item{threshold}{numeric value of the posterior probability threshold at which to
 calculate the empirical FDR.}
 
-\item{col_name}{Character string of the column name (optional).}
+\item{col_name}{character string of the column name (optional).}
 
-\item{col_idx}{Integer of the column index (optional).}
+\item{col_idx}{integer of the column index (optional).}
 }
 \value{
-Numerical value of the empirical false discovery rate (FDR).
+A numeric value of the empirical false discovery rate (FDR).
 }
 \description{
 Calculate the empirical false discovery rate (FDR) of a
