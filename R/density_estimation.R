@@ -298,7 +298,8 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
 #'
 estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NULL, alt_props, tol=1e-3, par_size=0, density_list=NULL){
 
-  warning("estimate_config() is deprecated! Function does not account for potential sample correlation.")
+  warning(paste0("estimate_config() is deprecated! Function does not account for potential sample correlation.",
+                 "\nUse Primo_tstat() or Primo_pval() instead."))
 
   # store dimensions of test statistics
   if(!is.null(betas)){
