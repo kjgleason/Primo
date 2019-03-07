@@ -115,13 +115,13 @@ fine_map<-function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 #'
 fine_map_once <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",pheno_cols,snp.info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
 
-  IDs <- data.frame(IDs)
-  leadSNPs_byRegion <- data.frame(leadSNPs_byRegion)
+  # IDs <- data.frame(IDs)
+  # leadSNPs_byRegion <- data.frame(leadSNPs_byRegion)
 
   curr.IDs <- IDs[idx,]
   # curr.SNP <- curr.IDs[,get(SNP_col)]
-  # curr.SNP <- subset(curr.IDs,select=SNP_col)[[1]]
-  curr.SNP <- curr.IDs[,SNP_col]
+  curr.SNP <- subset(curr.IDs,select=SNP_col)[[1]]
+  # curr.SNP <- curr.IDs[,SNP_col]
   curr.Region <- merge(leadSNPs_byRegion,curr.IDs,by=pheno_cols)
 
   ## subset Primo results to the current region
@@ -133,10 +133,14 @@ fine_map_once <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",phen
   IDs <- IDs[curr_Region.idx,]
 
   ## melt data so each lead SNP is its own row
-  curr.Region_long <- reshape2::melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("leadSNP_",suffices),
-                           value.name=SNP_col)
-  curr.Region_long <- cbind(curr.Region_long,pval=reshape2::melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("p.value_",suffices),
-                                                       value.name="pval")$pval)
+  curr.Region_long <- melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("leadSNP_",suffices),
+                                     value.name=SNP_col)
+  curr.Region_long <- cbind(curr.Region_long,pval=melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("p.value_",suffices),
+                                                                 value.name="pval")$pval)
+  # curr.Region_long <- reshape2::melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("leadSNP_",suffices),
+  #                          value.name=SNP_col)
+  # curr.Region_long <- cbind(curr.Region_long,pval=reshape2::melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("p.value_",suffices),
+  #                                                      value.name="pval")$pval)
 
   ## merge in chr and position to calculate distance between lead SNPs and SNP of interest
   # setkeyv(curr.Region_long,SNP_col)
@@ -144,16 +148,16 @@ fine_map_once <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",phen
   curr.Region_long <- merge(curr.Region_long,snp.info,by=SNP_col)
   curr.Region_long$dist <- abs(snp.info$POS[which(snp.info$SNP==curr.SNP)] - curr.Region_long$POS)
   ## merge in LD coefficients
-  # curr.Region_long$LD_r2 <- LD_mat[curr.SNP,subset(curr.Region_long,select=SNP_col)[[1]]]
-  curr.Region_long$LD_r2 <- LD_mat[curr.SNP,curr.Region_long[,SNP_col]]
+  curr.Region_long$LD_r2 <- LD_mat[curr.SNP,subset(curr.Region_long,select=SNP_col)[[1]]]
+  # curr.Region_long$LD_r2 <- LD_mat[curr.SNP,curr.Region_long[,SNP_col]]
 
-  # leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval < pval_thresh & LD_r2 < LD_thresh)$SNP)
-  leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval < pval_thresh & LD_r2 < LD_thresh)[,SNP_col])
+  leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval < pval_thresh & LD_r2 < LD_thresh)$SNP)
+  # leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval < pval_thresh & LD_r2 < LD_thresh)[,SNP_col])
 
   ## index of SNP of interest
   # idx.snp <- which(IDs[,get(SNP_col)]==curr.SNP)
-  # idx.snp <- which(subset(IDs,select=SNP_col)[[1]]==curr.SNP)
-  idx.snp <- which(IDs[,SNP_col]==curr.SNP)
+  idx.snp <- which(subset(IDs,select=SNP_col)[[1]]==curr.SNP)
+  # idx.snp <- which(IDs[,SNP_col]==curr.SNP)
 
   if(length(leadSNPs)==0){
     return(which.max(Primo_obj$post_prob[idx.snp,]))
@@ -163,8 +167,8 @@ fine_map_once <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",phen
     idx.leadsnps <- NULL
     for(j in 1:length(leadSNPs)){
       # idx.leadsnps <- c(idx.leadsnps, which(IDs[,get(SNP_col)]==leadSNPs[j]))
-      # idx.leadsnps <- c(idx.leadsnps, which(subset(IDs,SNP_col)[[1]]==leadSNPs[j]))
-      idx.leadsnps <- c(idx.leadsnps, which(IDs[,SNP_col]==leadSNPs[j]))
+      idx.leadsnps <- c(idx.leadsnps, which(subset(IDs,SNP_col)[[1]]==leadSNPs[j]))
+      # idx.leadsnps <- c(idx.leadsnps, which(IDs[,SNP_col]==leadSNPs[j]))
     }
 
     ## run fine-mapping
