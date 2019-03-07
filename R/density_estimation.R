@@ -47,8 +47,7 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
 
   # warn user about using low number of statistics to estimate alternative density
   pM <- alt_prop*length(betas)
-  if(pM/2 < 30) warning(paste("The specified proportion of alternative statistics yields a low count",
-                        "and may result in unstable alternative density approximation."))
+  if(pM/2 < 30) warning("The specified proportion of alternative statistics yields a low total count.")
 
   # estimate null and alternative densities
   df_mod=d0+d1
@@ -177,10 +176,8 @@ chiMix_pDiff <- function(par, data, sorted=F){
   # warn user about using low number of statistics to estimate alternative density
   if(pM/2 < 30){
     if(pM/2 >= 20){
-      warning(paste("The specified proportion of alternative statistics yields a low count",
-                    "and may result in unstable alternative density approximation."))
-    } else warning(paste("The specified proportion of alternative statistics yields a low count",
-                         "and may result in unstable alternative density approximation.",
+      warning("The specified proportion of alternative statistics yields a low total count.")
+    } else warning(paste("The specified proportion of alternative statistics yields a low total count.",
                          "\nFitting density to top 20 test-statistics."))
   }
 
@@ -300,6 +297,8 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
 #' @export
 #'
 estimate_config <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, dfs=NULL, alt_props, tol=1e-3, par_size=0, density_list=NULL){
+
+  warning("estimate_config() is deprecated! Function does not account for potential sample correlation.")
 
   # store dimensions of test statistics
   if(!is.null(betas)){
