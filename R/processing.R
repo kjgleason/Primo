@@ -70,10 +70,6 @@ subset_Primo_obj <- function(Primo_obj,idx){
 #'
 find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
 
-  require(data.table)
-
-  cat("class: ", class(data))
-
   setkeyv(data,pheno_cols)
 
   if(is.null(suffices)) suffices <- 1:length(stat_cols)
