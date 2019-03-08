@@ -427,7 +427,7 @@ Primo_ModT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
       start_time <- Sys.time()
       cat("\nIteration:",numiters)
       numiters<-numiters+1
-      curpi <- primo::em_iter_Dmat(curpi,D_mat)
+      curpi <- primo::em_iter(curpi,D_mat)
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
       Sys.time() - start_time
@@ -448,7 +448,7 @@ Primo_ModT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
       curb_colsums <- 0
       for(ch in 1:length(Drow_chunks)){
         D_rows <-  Drow_chunks[[ch]]
-        curb_colsums_temp<-primo::e_step_Dmat_withColSums(curpi, Dmat=D_mat[D_rows,])
+        curb_colsums_temp<-primo::e_step_withColSums(curpi, Dmat=D_mat[D_rows,])
         curb_colsums <- curb_colsums + curb_colsums_temp
       }
       curpi<-curb_colsums/m
