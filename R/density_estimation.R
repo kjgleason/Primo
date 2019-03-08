@@ -214,12 +214,7 @@ chiMix_pDiff <- function(par, data, sorted=F){
 #' @param use_tstats logical; when true densities are calculated using moderated t-statistics
 #' (use p-values when false)
 #'
-#' @return A list with the following elements:
-#' \tabular{ll}{
-#' \code{Tstat_mod} \tab matrix of moderated t-statistics (set to NULL for p-value method)\cr
-#' \code{D0} \tab matrix of densities calculated under the null distribution\cr
-#' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
-#' }
+#' @return See \code{\link{estimate_densities_modT}} or \code{\link{estimate_densities_pval}}.
 #'
 #' @export
 #'
@@ -235,7 +230,6 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
     } else myDens <- estimate_densities_modT(betas, sds, mafs, df, alt_prop)
   } else{
     myDens <- estimate_densities_pval(pvals, alt_prop)
-    myDens <- list(Tstat_mod=NULL,D0=myDens$D0,D1=myDens$D1)
   }
   return(myDens)
 }

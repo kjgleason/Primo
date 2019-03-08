@@ -24,12 +24,7 @@ estimate_densities(pvals = NULL, betas = NULL, sds = NULL,
 (use p-values when false)}
 }
 \value{
-A list with the following elements:
-\tabular{ll}{
-\code{Tstat_mod} \tab matrix of moderated t-statistics (set to NULL for p-value method)\cr
-\code{D0} \tab matrix of densities calculated under the null distribution\cr
-\code{D1} \tab matrix of densities calculated under the alternative distribution\cr
-}
+See \code{\link{estimate_densities_modT}} or \code{\link{estimate_densities_pval}}.
 }
 \description{
 For each observation, estimate the density under the null and under the alternative hypotheses.
