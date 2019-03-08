@@ -126,7 +126,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       ## one iteration of EM
-      curpi <- primo::em_iter_Dmat(curpi,D_mat)
+      curpi <- primo::em_iter(curpi,D_mat)
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
       Sys.time() - start_time
@@ -148,7 +148,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
       for(ch in 1:length(Drow_chunks)){
         D_rows <-  Drow_chunks[[ch]]
         # EM on current chunk
-        curb_colsums_temp<-primo::e_step_Dmat_withColSums(curpi, Dmat=D_mat[D_rows,])
+        curb_colsums_temp<-primo::e_step_withColSums(curpi, Dmat=D_mat[D_rows,])
         curb_colsums <- curb_colsums + curb_colsums_temp
       }
       curpi<-curb_colsums/m
@@ -288,7 +288,7 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001){
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       ## one iteration of EM
-      curpi <- primo::em_iter_Dmat(curpi,D_mat)
+      curpi <- primo::em_iter(curpi,D_mat)
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
       Sys.time() - start_time
@@ -310,7 +310,7 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001){
       for(ch in 1:length(Drow_chunks)){
         D_rows <-  Drow_chunks[[ch]]
         # EM on current chunk
-        curb_colsums_temp<-primo::e_step_Dmat_withColSums(curpi, Dmat=D_mat[D_rows,])
+        curb_colsums_temp<-primo::e_step_withColSums(curpi, Dmat=D_mat[D_rows,])
         curb_colsums <- curb_colsums + curb_colsums_temp
       }
       curpi<-curb_colsums/m
