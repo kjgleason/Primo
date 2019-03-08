@@ -12,13 +12,13 @@ fine_map_once(Primo_obj, IDs, idx, leadSNPs_byRegion, SNP_col = "SNP",
 \item{Primo_obj}{A list returned by running the \eqn{t}-statistic version
 of Primo (i.e. \code{\link{Primo_tstat}})}
 
-\item{IDs}{A data.table of the SNP and phenotype IDs corresponding to each row
+\item{IDs}{A data.frame of the SNP and phenotype IDs corresponding to each row
 of the Primo results stored in \code{Primo_obj}.}
 
 \item{idx}{An integer of the index of the genetic variant (e.g. row of \code{Tstat_mod})
 on which one wants to perform fine-mapping}
 
-\item{leadSNPs_byRegion}{A data.table that stores the lead SNP of each phenotype
+\item{leadSNPs_byRegion}{A data.frame that stores the lead SNP of each phenotype
 in each region of the Primo results. Also includes p-values for the lead SNPs.
 See Details for format.}
 
@@ -26,7 +26,7 @@ See Details for format.}
 
 \item{pheno_cols}{A character vector of the column names of the phenotype ID columns.}
 
-\item{snp.info}{A data.table reporting the chromosome and position of each SNP.
+\item{snp.info}{A data.frame reporting the chromosome and position of each SNP.
 Columns should be: \code{SNP, CHR, POS}.}
 
 \item{LD_mat}{A matrix of LD coefficients (\eqn{r^{2}}{r^2}).
@@ -63,7 +63,7 @@ will be conditioned on based on specified criteria. Returns the association
 pattern with the highest posterior probability after fine-mapping.
 }
 \details{
-The following are additional details describing the input data.table
+The following are additional details describing the input data.frame
 \code{leadSNPs_byRegion}. For \eqn{J} phenotypes being analyzed, the first
 \eqn{J} columns of \code{leadSNPs_byRegion} should specify phenotype IDs.
 Examples include gene symbol, CpG site name, trait name for GWAS, etc. The following

@@ -71,16 +71,16 @@ fine_map<-function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 #'
 #' @param Primo_obj A list returned by running the \eqn{t}-statistic version
 #' of Primo (i.e. \code{\link{Primo_tstat}})
-#' @param IDs A data.table of the SNP and phenotype IDs corresponding to each row
+#' @param IDs A data.frame of the SNP and phenotype IDs corresponding to each row
 #' of the Primo results stored in \code{Primo_obj}.
 #' @param idx An integer of the index of the genetic variant (e.g. row of \code{Tstat_mod})
 #' on which one wants to perform fine-mapping
-#' @param leadSNPs_byRegion A data.table that stores the lead SNP of each phenotype
+#' @param leadSNPs_byRegion A data.frame that stores the lead SNP of each phenotype
 #' in each region of the Primo results. Also includes p-values for the lead SNPs.
 #' See Details for format.
 #' @param SNP_col A string of the column name of SNPs (must be "SNP" in current version).
 #' @param pheno_cols A character vector of the column names of the phenotype ID columns.
-#' @param snp.info A data.table reporting the chromosome and position of each SNP.
+#' @param snp.info A data.frame reporting the chromosome and position of each SNP.
 #' Columns should be: \code{SNP, CHR, POS}.
 #' @param LD_mat A matrix of LD coefficients (\eqn{r^{2}}{r^2}).
 #' Rows and columns should match the order of (\code{idx.snp}, \code{idx.leadsnps}).
@@ -103,7 +103,7 @@ fine_map<-function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 #' from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
 #' by \code{\link{make_qmat}}.
 #'
-#' @details The following are additional details describing the input data.table
+#' @details The following are additional details describing the input data.frame
 #' \code{leadSNPs_byRegion}. For \eqn{J} phenotypes being analyzed, the first
 #' \eqn{J} columns of \code{leadSNPs_byRegion} should specify phenotype IDs.
 #' Examples include gene symbol, CpG site name, trait name for GWAS, etc. The following
