@@ -63,8 +63,8 @@ The following are additional details describing the input arguments
 \code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
 \code{alt_props} \tab vector of length \eqn{d}.\cr
 \code{mafs} \tab vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.\cr
- \tab If not specified, standard errors will not be adjusted for MAF.\cr
+ \tab If \code{NULL}, standard errors will not be adjusted for MAF.\cr
 \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
- \tab If not specified, will be estimated using observations where all \eqn{|t| < 5}.\cr
+ \tab If \code{NULL}, will be estimated using observations where all \eqn{|t| < 5}.\cr
 }
 }

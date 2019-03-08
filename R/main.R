@@ -45,9 +45,9 @@
 #' \code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
 #' \code{alt_props} \tab vector of length \eqn{d}.\cr
 #' \code{mafs} \tab vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.\cr
-#'  \tab If not specified, standard errors will not be adjusted for MAF.\cr
+#'  \tab If \code{NULL}, standard errors will not be adjusted for MAF.\cr
 #' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
-#'  \tab If not specified, will be estimated using observations where all \eqn{|t| < 5}.\cr
+#'  \tab If \code{NULL}, will be estimated using observations where all \eqn{|t| < 5}.\cr
 #' }
 #'
 #' @export
@@ -181,8 +181,8 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 #' @param alt_props vector of the proportions of test-statistics used in estimating
 #' alternative densities.
 #' @param Gamma correlation matrix.
-#' @param tol numerical value; specifies tolerance threshold for convergence.
-#' @param par_size numerical value; specifies the number of CPUs/cores/processors for
+#' @param tol numeric value; specifies tolerance threshold for convergence.
+#' @param par_size numeric value; specifies the number of CPUs/cores/processors for
 #' parallel computing (1 for sequential processing).
 #'
 #' @return A list with the following elements:
@@ -204,7 +204,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 #' \code{pvals} \tab  \eqn{m} x \eqn{d} matrix.\cr
 #' \code{alt_props} \tab vector of length \eqn{d}.\cr
 #' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.
-#'  If not specified, will be estimated using observations where all \eqn{p < 5.7e-7}.\cr
+#'  If \code{NULL}, will be estimated using observations where all \eqn{p < 5.7e-7}.\cr
 #' }
 #'
 #' @export

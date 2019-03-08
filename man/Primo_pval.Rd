@@ -14,9 +14,9 @@ alternative densities.}
 
 \item{Gamma}{correlation matrix.}
 
-\item{tol}{numerical value; specifies tolerance threshold for convergence.}
+\item{tol}{numeric value; specifies tolerance threshold for convergence.}
 
-\item{par_size}{numerical value; specifies the number of CPUs/cores/processors for
+\item{par_size}{numeric value; specifies the number of CPUs/cores/processors for
 parallel computing (1 for sequential processing).}
 }
 \value{
@@ -44,6 +44,6 @@ The following are additional details describing the input arguments
 \code{pvals} \tab  \eqn{m} x \eqn{d} matrix.\cr
 \code{alt_props} \tab vector of length \eqn{d}.\cr
 \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.
- If not specified, will be estimated using observations where all \eqn{p < 5.7e-7}.\cr
+ If \code{NULL}, will be estimated using observations where all \eqn{p < 5.7e-7}.\cr
 }
 }
