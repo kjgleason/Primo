@@ -21,25 +21,34 @@ alternative densities.}
 
 \item{Gamma}{correlation matrix.}
 
-\item{tol}{numerical value; specifies tolerance threshold for convergence.}
+\item{tol}{numeric value; specifies tolerance threshold for convergence.}
 
-\item{par_size}{numerical value; specifies the number of CPUs/cores/processors for
+\item{par_size}{numeric value; specifies the number of CPUs/cores/processors for
 parallel computing (1 for sequential processing).}
 }
 \value{
 A list with the following elements:
 \tabular{ll}{
 \code{post_prob} \tab matrix of posterior probabilities
-(rows are SNPs; columns are association patterns).\cr
-\code{pis} \tab vector of estimated proportion of SNPs
+(each column corresponds to an association pattern).\cr
+\code{pis} \tab vector of estimated proportion of observations
 belonging to each association pattern.\cr
 \code{D_mat} \tab matrix of densities under each association pattern.\cr
+\code{Gamma} \tab correlation matrix.\cr
 \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
 \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
 \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
  moderated degrees of freedom: df/(df-2).\cr
-\code{Gamma} \tab correlation matrix.\cr
+\code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
+\code{prior_var} \tab vector of the prior variance estimators for each marginaldistribution.\cr
+\code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
+for each marginal distribution.
 }
+
+The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
+The estimated proportion of observations belonging to each association pattern, \code{pis}, may
+also be of interest. The remaining elements are returned primarily for use by other functions --
+such as those conducting conditional association analysis.
 }
 \description{
 For each SNP, estimates the posterior probability for each configuration.
@@ -53,7 +62,7 @@ The following are additional details describing the input arguments
 \code{sds} \tab \eqn{m} x \eqn{d} matrix.\cr
 \code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
 \code{alt_props} \tab vector of length \eqn{d}.\cr
-\code{mafs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
+\code{mafs} \tab vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.\cr
  \tab If not specified, standard errors will not be adjusted for MAF.\cr
 \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
  \tab If not specified, will be estimated using observations where all \eqn{|t| < 5}.\cr

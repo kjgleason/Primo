@@ -10,23 +10,32 @@
 #' alternative densities.
 #' @param mafs vector or matrix of minor allele frequencies (MAFs).
 #' @param Gamma correlation matrix.
-#' @param tol numerical value; specifies tolerance threshold for convergence.
-#' @param par_size numerical value; specifies the number of CPUs/cores/processors for
+#' @param tol numeric value; specifies tolerance threshold for convergence.
+#' @param par_size numeric value; specifies the number of CPUs/cores/processors for
 #' parallel computing (1 for sequential processing).
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
 #' \code{post_prob} \tab matrix of posterior probabilities
-#' (rows are SNPs; columns are association patterns).\cr
-#' \code{pis} \tab vector of estimated proportion of SNPs
+#' (each column corresponds to an association pattern).\cr
+#' \code{pis} \tab vector of estimated proportion of observations
 #' belonging to each association pattern.\cr
 #' \code{D_mat} \tab matrix of densities under each association pattern.\cr
+#' \code{Gamma} \tab correlation matrix.\cr
 #' \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
 #' \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
 #' \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
 #'  moderated degrees of freedom: df/(df-2).\cr
-#' \code{Gamma} \tab correlation matrix.\cr
+#' \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
+#' \code{prior_var} \tab vector of the prior variance estimators for each marginaldistribution.\cr
+#' \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
+#' for each marginal distribution.
 #' }
+#'
+#' The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
+#' The estimated proportion of observations belonging to each association pattern, \code{pis}, may
+#' also be of interest. The remaining elements are returned primarily for use by other functions --
+#' such as those conducting conditional association analysis.
 #'
 #' @details The following are additional details describing the input arguments
 #'  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
@@ -35,7 +44,7 @@
 #' \code{sds} \tab \eqn{m} x \eqn{d} matrix.\cr
 #' \code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
 #' \code{alt_props} \tab vector of length \eqn{d}.\cr
-#' \code{mafs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
+#' \code{mafs} \tab vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.\cr
 #'  \tab If not specified, standard errors will not be adjusted for MAF.\cr
 #' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
 #'  \tab If not specified, will be estimated using observations where all \eqn{|t| < 5}.\cr
@@ -53,51 +62,8 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
     Gamma<- cor(tt,use="complete")
   }
 
-  # # account for MAF in variance calculations
-  # if (is.null(mafs)){
-  #   v1 = rep(1,m)
-  #   sigma2 <- sds^2
-  # } else{
-  #   v1 = 1/(2*mafs*(1-mafs))
-  #   sigma2 <- sds^2*(2*mafs*(1-mafs))
-  # }
-  #
-  # # estimate moments of scaled F-distribution using method of Smyth (2004)
-  #
-  # Tstat_mod <- NULL
-  # mdfs <- NULL
-  # V <- NULL
-  #
-  # ## consider parallelizing for large d
-  # for (j in 1:d){
-  #
-  #   if(is.matrix(dfs)){
-  #     d1 <- dfs[,j]
-  #   } else d1=dfs[j]
-  #
-  #   xx <- limma::fitFDist(sigma2[,j],d1)
-  #   s02 <- xx$scale; d0 <- xx$df2
-  #   # rescale t-statistic (see Smyth, 2004)
-  #   sg_tilde <- sqrt((d0*s02+d1*sigma2[,j])/(d0+d1))
-  #   moderate.t <- betas[,j]/(sg_tilde*sqrt(v1))
-  #   Tstat_mod <- cbind(Tstat_mod, moderate.t)
-  #   v0 <- limma::tmixture.vector(moderate.t, sqrt(v1),d1+d0,proportion=alt_props[j],v0.lim=NULL)
-  #   V= cbind(V,sqrt(1+v0/v1))
-  #
-  #   if(is.matrix(dfs)){
-  #     mdfs <- cbind(mdfs,d1+d0)
-  #   } else mdfs<-c(mdfs,d1+d0)
-  # }
-  #
-  # ## when degrees of freedom are the same for 1 phenotype across observations, rbind sd based on mdf into matrix format
-  # if(!is.matrix(mdfs)){
-  #   mdf_sd_mat <- matrix(rep(sqrt(mdfs/(mdfs-2)),each=m),ncol=d)
-  # } else{
-  #   mdf_sd_mat <- sqrt(mdfs/(mdfs-2))
-  # }
-
   ## estimate marginal density functions in limma framework
-  dens_list <- lapply(1:d, function(j){
+  density_list <- lapply(1:d, function(j){
     if(is.matrix(mafs)) mafs <- mafs[,j]
     if(is.matrix(dfs)) {
       dfs <- dfs[,j]
@@ -105,10 +71,14 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
     primo::estimate_densities_modT(betas=betas[,j],sds=sds[,j],mafs=mafs,df=dfs,alt_prop=alt_props[j])
   } )
 
-  ## extract parameters
-  Tstat_mod <- do.call("cbind", lapply(dens_list, function(x) x$Tstat_mod))
-  mdfs <- do.call("cbind", lapply(dens_list, function(x) x$df_mod))
-  V <- do.call("cbind", lapply(dens_list, function(x) x$scaler))
+  ## extract parameters for pattern-specific density estimation
+  Tstat_mod <- do.call("cbind", lapply(density_list, function(x) x$Tstat_mod))
+  mdfs <- do.call("cbind", lapply(density_list, function(x) x$df_mod))
+  V <- do.call("cbind", lapply(density_list, function(x) x$scaler))
+  ## extract parameters from marginal densities (can be used to estimate variables for new observations)
+  prior_df <- sapply(density_list, function(x) x$prior_df)
+  prior_var <- sapply(density_list, function(x) x$prior_var)
+  unscaled_var <- sapply(density_list, function(x) x$unscaled_var)
 
   ## create sd matrix from moderated t-statistic dfs
   mdf_sd_mat <- sqrt(mdfs/(mdfs-2))
@@ -197,7 +167,8 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 
   }
 
-  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, Tstat_mod=Tstat_mod, V_mat = V, mdf_sd_mat = mdf_sd_mat))
+  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, Tstat_mod=Tstat_mod, V_mat = V, mdf_sd_mat = mdf_sd_mat,
+              prior_df=prior_df,prior_var=prior_var,unscaled_var=unscaled_var))
 }
 
 
