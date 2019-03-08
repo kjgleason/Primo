@@ -7,9 +7,9 @@
 estimate_densities_pval(pvals, alt_prop, method_moments = F)
 }
 \arguments{
-\item{pvals}{vector of coefficient estimates.}
+\item{pvals}{vector of p-values.}
 
-\item{alt_prop}{proportion of pvalues used in estimating alternative densities.}
+\item{alt_prop}{proportion of p-values used in estimating alternative densities.}
 
 \item{method_moments}{logical, denoting whether to estimate scale and degree of freedom
 parameters using Method of Moments (\code{TRUE}) or optimization (\code{FALSE}).}
@@ -17,10 +17,9 @@ parameters using Method of Moments (\code{TRUE}) or optimization (\code{FALSE}).
 \value{
 A list with the following elements:
 \tabular{ll}{
-\code{D0} \tab matrix of densities calculated under the null distribution\cr
-\code{D1} \tab matrix of densities calculated under the alternative distribution\cr
-\code{scaler} \tab estimated scaling factor for the alternative distribution\cr
-\code{df_alt} \tab estimated degrees of freedom for the alternative distribution\cr
+\code{chi_mix} \tab vector of \code{-2*log(p)} values.\cr
+\code{scaler} \tab estimated scaling factor for the alternative distribution.\cr
+\code{df_alt} \tab estimated degrees of freedom for the alternative distribution.\cr
 }
 }
 \description{
@@ -44,5 +43,6 @@ the alternative density estimation may fail if \code{alt_prop} is small and
 \code{method_moments=TRUE}.
 
 When \code{method_moments=FALSE}, the two unknown parameters are estimated by minimizing the differences
-between the p-values given the parameters and the nominal p-values based on each statistic's rank.
+between the p-values given the parameters and the nominal p-values based on each statistic's rank,
+using optimization algorithms.
 }

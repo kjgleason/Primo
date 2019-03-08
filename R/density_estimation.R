@@ -64,17 +64,16 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
 #' For each observation, estimate the density under the null and under the alternative
 #' hypotheses using p-values.
 #'
-#' @param pvals vector of coefficient estimates.
-#' @param alt_prop proportion of pvalues used in estimating alternative densities.
+#' @param pvals vector of p-values.
+#' @param alt_prop proportion of p-values used in estimating alternative densities.
 #' @param method_moments logical, denoting whether to estimate scale and degree of freedom
 #' parameters using Method of Moments (\code{TRUE}) or optimization (\code{FALSE}).
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
-#' \code{D0} \tab matrix of densities calculated under the null distribution\cr
-#' \code{D1} \tab matrix of densities calculated under the alternative distribution\cr
-#' \code{scaler} \tab estimated scaling factor for the alternative distribution\cr
-#' \code{df_alt} \tab estimated degrees of freedom for the alternative distribution\cr
+#' \code{chi_mix} \tab vector of \code{-2*log(p)} values.\cr
+#' \code{scaler} \tab estimated scaling factor for the alternative distribution.\cr
+#' \code{df_alt} \tab estimated degrees of freedom for the alternative distribution.\cr
 #' }
 #'
 #' @details The function estimates densities under the null and under the alternative
@@ -93,38 +92,44 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
 #' \code{method_moments=TRUE}.
 #'
 #' When \code{method_moments=FALSE}, the two unknown parameters are estimated by minimizing the differences
-#' between the p-values given the parameters and the nominal p-values based on each statistic's rank.
+#' between the p-values given the parameters and the nominal p-values based on each statistic's rank,
+#' using optimization algorithms.
 #'
 #' @export
 #'
 estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
 
-  ##Transform to chi square; under the null, the transformed p-values follow a chi square distribution with df 2.
+  ## transform to chi square mixture (df=2 under null; scaled with unknown df under alternative)
   chi_mix<-(-2)*log(pvals)
 
   if(method_moments){
-    if(alt_prop < 0.02) warning("magnitude of alt_prop is small; alternative density estimation may fail")
+    if(alt_prop < 0.01) warning("magnitude of alt_prop is small; alternative density estimation may fail")
 
-    ##Using the first and second moments to solve the scale parameter and the degrees of freedom under the alternative
+    ## Use the first and second moments to solve the scale parameter and the degrees of freedom under the alternative
     prod<-(mean(chi_mix)-(1-alt_prop)*2)/alt_prop
     ## store scale parameter in a_alt
     a_alt<-(mean((chi_mix-mean(chi_mix))^2)-(1-alt_prop)*2*2-(1-alt_prop)*alt_prop*(prod-2)^2)/(alt_prop*2*prod)
     ## store degrees of freedom in df_alt
     df_alt<-prod/a_alt
+
   } else{
+
     optim_dat <- list(chi_mix=sort(chi_mix, decreasing=T), alt_prop=alt_prop)
     init1 <- 2
     init2 <- 3
+
     ## run global optimization to identify correct "neighborhood" of optimum
     global_res <- nloptr::nloptr(x0=c(init1,init2),eval_f=chiMix_pDiff,lb=c(1,2),ub=c(100,100),
                                  opts=list(algorithm="NLOPT_GN_DIRECT",maxeval=500),
                                  data=optim_dat, sorted=T)
     init1 <- global_res$solution[1]
     init2 <- global_res$solution[2]
+
     ## refine optimum using a local optimization algorithm
     optim_res <- nloptr::nloptr(x0=c(init1,init2),eval_f=chiMix_pDiff,lb=c(1,2),
                                 opts=list(algorithm="NLOPT_LN_COBYLA",maxeval=500),
                                 data=optim_dat, sorted=T)
+
     ## store scale parameter in a_alt
     a_alt<-optim_res$solution[1]
     ## store degrees of freedom in df_alt
@@ -132,11 +137,11 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
   }
 
   ##Density under the null
-  D0<-dchisq(chi_mix,df=2)
+  # D0<-dchisq(chi_mix,df=2)
   ##Density under the alternative
-  D1<-dchisq(chi_mix/a_alt,df=df_alt)/a_alt
+  # D1<-dchisq(chi_mix/a_alt,df=df_alt)/a_alt
 
-  return(list(D0=D0, D1=D1, scaler=a_alt, df_alt=df_alt))
+  return(list(chi_mix=chi_mix, scaler=a_alt, df_alt=df_alt))
 }
 
 #' Difference from nominal p-values, chi2 mixture
