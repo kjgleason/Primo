@@ -11,7 +11,7 @@ m_step(old_B)
 from an expectation (E-)step}
 }
 \value{
-Returns a vector estimating the proportion of SNPs coming from each configuration.
+Returns a row vector estimating the proportion of SNPs coming from each configuration.
 }
 \description{
 Estimates the \eqn{\pi} vector that maximizes the posterior expectation function from the E-step.

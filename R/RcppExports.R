@@ -4,7 +4,7 @@
 #' Density matrix calculation
 #'
 #' Calculate conditional joint densities for each configuration, given marginal
-#' null and alternative densities.
+#' null and alternative densities, under the assumption of independence.
 #'
 #' @param Q matrix of configurations
 #' @param D0 estimate for the null density function
@@ -48,7 +48,7 @@ e_step_Dmat <- function(old_pi, Dmat) {
 #' @param Dmat matrix of conditional joint densities under each configuration
 #'
 #' @return Returns a matrix of column sums of posterior expectations
-#' (testing computational speed up).
+#' (allows processing to be performed in chunks).
 #'
 #' @export
 #'
@@ -63,17 +63,33 @@ e_step_Dmat_withColSums <- function(old_pi, Dmat) {
 #'
 #' @param old_pi vector of configuration proportions, fit through maximization
 #' (usualy 2^J for J data types)
-#' @param Q matrix of configurations
-#' @param D0 estimate for the null density function
-#' @param D1 estimate for the alternative density function
+#' @param Dmat matrix of conditional joint densities under each configuration
 #'
 #' @return Returns a matrix estimating the posterior expectations
 #' (i.e. estimated probability of each configuration for each SNP).
 #'
 #' @export
 #'
-e_step <- function(old_pi, Q, D0, D1) {
-    .Call(`_primo_e_step`, old_pi, Q, D0, D1)
+e_step <- function(old_pi, Dmat) {
+    .Call(`_primo_e_step`, old_pi, Dmat)
+}
+
+#' E Step, using precalculated joint densities
+#'
+#' Calculate posterior expectations given maximized estimate for \eqn{\pi} (the
+#' proportion of SNPs coming from each configuration).
+#'
+#' @param old_pi vector of configuration proportions, fit through maximization
+#' (usualy 2^J for J data types)
+#' @param Dmat matrix of conditional joint densities under each configuration
+#'
+#' @return Returns a matrix of column sums of posterior expectations
+#' (allows processing to be performed in chunks).
+#'
+#' @export
+#'
+e_step_withColSums <- function(old_pi, Dmat) {
+    .Call(`_primo_e_step_withColSums`, old_pi, Dmat)
 }
 
 #' M Step
@@ -83,7 +99,7 @@ e_step <- function(old_pi, Q, D0, D1) {
 #' @param old_B matrix of posterior expectations/probabilities ; usually
 #' from an expectation (E-)step
 #'
-#' @return Returns a vector estimating the proportion of SNPs coming from each configuration.
+#' @return Returns a row vector estimating the proportion of SNPs coming from each configuration.
 #'
 #' @export
 #'
@@ -100,16 +116,14 @@ m_step <- function(old_B) {
 #'
 #' @param old_pi vector of configuration proportions, fit through maximization
 #' (usualy 2^J for J data types)
-#' @param Q matrix of configurations
-#' @param D0 estimate for the null density function
-#' @param D1 estimate for the alternative density function
+#' @param Dmat matrix of conditional joint densities under each configuration
 #'
-#' @return Returns a vector estimating the proportion of SNPs coming from each configuration.
+#' @return Returns a row vector estimating the proportion of SNPs coming from each configuration.
 #'
 #' @export
 #'
-em_iter <- function(old_pi, Q, D0, D1) {
-    .Call(`_primo_em_iter`, old_pi, Q, D0, D1)
+em_iter <- function(old_pi, Dmat) {
+    .Call(`_primo_em_iter`, old_pi, Dmat)
 }
 
 #' EM Iteration, using precalculated joint densities

@@ -4,20 +4,16 @@
 \alias{em_iter}
 \title{EM Iteration}
 \usage{
-em_iter(old_pi, Q, D0, D1)
+em_iter(old_pi, Dmat)
 }
 \arguments{
 \item{old_pi}{vector of configuration proportions, fit through maximization
 (usualy 2^J for J data types)}
 
-\item{Q}{matrix of configurations}
-
-\item{D0}{estimate for the null density function}
-
-\item{D1}{estimate for the alternative density function}
+\item{Dmat}{matrix of conditional joint densities under each configuration}
 }
 \value{
-Returns a vector estimating the proportion of SNPs coming from each configuration.
+Returns a row vector estimating the proportion of SNPs coming from each configuration.
 }
 \description{
 Complete one iteration of the EM-algorithm (combines E-step and M-step).

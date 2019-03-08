@@ -20,5 +20,5 @@ under each configuration
 }
 \description{
 Calculate conditional joint densities for each configuration, given marginal
-null and alternative densities.
+null and alternative densities, under the assumption of independence.
 }
