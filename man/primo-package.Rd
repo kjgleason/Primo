@@ -12,8 +12,9 @@ Implements methods to integrate multi-omics data to detect joint associations
               using omics data from more than 2 data types or sources, beyond QTL and GWAS.
 }
 \details{
-To estimate the posterior probabilities of belonging to each association pattern
-(i.e. configuration), use the \code{\link{estimate_config}} function.
+To estimate the posterior probabilities of belonging to each association pattern,
+either user the wrapper function \code{\link{Primo}}, or directly call
+\code{\link{Primo_tstat}} (for t-statistics) or \code{\link{Primo_pval}} (for p-values).
 }
 \author{
 \strong{Maintainer}: Kevin J. Gleason \email{kevin.j.gleason@gmail.com}
