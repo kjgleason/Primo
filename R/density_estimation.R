@@ -27,7 +27,7 @@
 estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
   m <- length(betas)
 
-  # account for MAF in variance calculations
+  ## account for MAF in variance calculations
   if (is.null(mafs)){
     v1 = rep(1,m)
     sigma2 <- sds^2
@@ -36,26 +36,27 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
     sigma2 <- sds^2*(2*mafs*(1-mafs))
   }
 
-  # estimate moments of scaled F-distribution using method of Smyth (2004)
+  ## estimate moments of scaled F-distribution using method of Smyth (2004)
   d1=df
   xx <- limma::fitFDist(sigma2,d1)
   s02 <- xx$scale; d0 <- xx$df2
-  # rescale t-statistic (see Smyth, 2004)
+  ## rescale t-statistic (see Smyth, 2004)
   sg_tilde <- sqrt((d0*s02+d1*sigma2)/(d0+d1))
   moderate.t <- betas/(sg_tilde*sqrt(v1))
 
-  # warn user about using low number of statistics to estimate alternative density
+  ## warn user about using low number of statistics to estimate alternative density
   pM <- alt_prop*length(betas)
   if(pM/2 < 30) warning("The specified proportion of alternative statistics yields a low total count.")
 
-  # estimate null and alternative densities
+  ## estimate null and alternative densities
   df_mod=d0+d1
-  # D0 <- dt(moderate.t, df=df_mod)
   v0 <- limma::tmixture.vector(moderate.t, sqrt(v1),df_mod,proportion=alt_prop,v0.lim=NULL)
   scaler=sqrt(1+v0/v1)
-  # D1 <- metRology::dt.scaled(moderate.t,df=df_mod,mean=0,sd=scaler)
 
-  # return(list(Tstat_mod = moderate.t, D0=D0, D1=D1, df_mod=df_mod, scaler=scaler, prior_df=d0, prior_var=s02, unscaled_var=v0))
+  ## methods to calculate marginal densities (placed within function for reference)
+  # D0 <- dt(moderate.t, df=df_mod)                                     ## Under the null
+  # D1 <- metRology::dt.scaled(moderate.t,df=df_mod,mean=0,sd=scaler)   ## Under the alternative
+
   return(list(Tstat_mod = moderate.t, df_mod=df_mod, scaler=scaler, prior_df=d0, prior_var=s02, unscaled_var=v0))
 }
 
@@ -136,10 +137,9 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
     df_alt<-optim_res$solution[2]
   }
 
-  ##Density under the null
-  # D0<-dchisq(chi_mix,df=2)
-  ##Density under the alternative
-  # D1<-dchisq(chi_mix/a_alt,df=df_alt)/a_alt
+  ## methods to calculate marginal densities (placed within function for reference)
+  # D0<-dchisq(chi_mix,df=2)                    ## Under the null
+  # D1<-dchisq(chi_mix/a_alt,df=df_alt)/a_alt   ## Under the alternative
 
   return(list(chi_mix=chi_mix, scaler=a_alt, df_alt=df_alt))
 }
@@ -178,7 +178,7 @@ chiMix_pDiff <- function(par, data, sorted=F){
   ## number of statistics to use in estimation
   pM <- alt_prop * M
 
-  # warn user about using low number of statistics to estimate alternative density
+  ## warn user about using low number of statistics to estimate alternative density
   if(pM/2 < 30){
     if(pM/2 >= 20){
       warning("The specified proportion of alternative statistics yields a low total count.")
@@ -193,7 +193,7 @@ chiMix_pDiff <- function(par, data, sorted=F){
   if(!sorted) chi_mix <- sort(chi_mix, decreasing=T)
   chi_mix <- chi_mix[r]
 
-  ## par[1] holds a, the scale factor; par[2] holds d, the degrees of freedom
+  ## par[1] holds A, the scale factor; par[2] holds d, the degrees of freedom
   obj_sum <- sum(abs(alt_prop*pgamma(chi_mix,shape=par[2]/2,scale=2*par[1],lower.tail=F) + (1-alt_prop)*pchisq(chi_mix,2,lower.tail=F) - (r-0.5)/M))
 
   return(obj_sum)
