@@ -23,21 +23,27 @@ belonging to each association pattern.\cr
 \code{Gamma} \tab correlation matrix.\cr
 }
 
-If the results were originally from the \eqn{t}-statistic version,
+\itemize{
+\item If the results were originally from the \eqn{t}-statistic version,
 the list will additionally contain:
 \tabular{ll}{
 \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
 \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
 \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
  moderated degrees of freedom: df/(df-2).\cr
+\code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
+\code{prior_var} \tab vector of the prior variance estimators for each marginaldistribution.\cr
+\code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
+for each marginal distribution.
  }
 
-If the results were originally from the \eqn{p}-value version,
+\item If the results were originally from the \eqn{p}-value version,
 the list will additionally contain:
 \tabular{ll}{
 \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
 \code{A} \tab vector of scaling factors under the alternative distributions.\cr
 \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
+ }
  }
 }
 \description{
