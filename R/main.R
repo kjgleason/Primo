@@ -132,7 +132,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
       Sys.time() - start_time
     }
 
-    PP<- primo::e_step_Dmat(curpi, Dmat=D_mat)
+    PP<- primo::e_step(curpi, Dmat=D_mat)
 
   } else{
 
@@ -294,7 +294,7 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001){
       Sys.time() - start_time
     }
 
-    PP<- primo::e_step_Dmat(curpi, Dmat=D_mat)
+    PP<- primo::e_step(curpi, Dmat=D_mat)
 
   } else{
 
@@ -433,7 +433,7 @@ Primo_ModT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
       Sys.time() - start_time
     }
 
-    PP<- primo::e_step_Dmat(curpi, Dmat=D_mat)
+    PP<- primo::e_step(curpi, Dmat=D_mat)
 
   } else{
 
