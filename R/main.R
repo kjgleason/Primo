@@ -251,7 +251,7 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
   } )
 
   ## extract parameters from marginal densities
-  A <- sapply(density_list, function(x) x$A)
+  A <- sapply(density_list, function(x) x$scaler)
   df_alt <- sapply(density_list, function(x) x$df_alt)
 
   ## computation of D_mat (densities under each pattern)
