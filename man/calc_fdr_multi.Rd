@@ -2,7 +2,7 @@
 % Please edit documentation in R/fdr.R
 \name{calc_fdr_multi}
 \alias{calc_fdr_multi}
-\title{Calculate the empirical false discovery rate (FDR).}
+\title{Calculate the empirical false discovery rate (FDR) for each matrix column.}
 \usage{
 calc_fdr_multi(post_prob, threshold, col_names = NULL, col_idxs = NULL)
 }

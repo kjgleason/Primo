@@ -48,7 +48,7 @@ calc_fdr_finemap <- function(post_prob,threshold,fail_idx){
   return(mean(1-post_prob))
 }
 
-#' Calculate the empirical false discovery rate (FDR).
+#' Calculate the empirical false discovery rate (FDR) for a matrix column.
 #'
 #' Calculate the empirical false discovery rate (FDR) of a
 #' column in a matrix of posterior probabilities given a specified threshold.
@@ -82,7 +82,7 @@ calc_fdr_col <- function(post_prob,threshold,col_name=NULL,col_idx=NULL){
   }
 }
 
-#' Calculate the empirical false discovery rate (FDR).
+#' Calculate the empirical false discovery rate (FDR) for each matrix column.
 #'
 #' Calculate the empirical false discovery rate (FDR) of specified
 #' columns in a matrix of posterior probabilities given a specified threshold.
