@@ -284,6 +284,7 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
   ## TO DO: develop more sophisticated handling of "zero" densities
   D_mat[which(D_mat==0)] <- min(D_mat[which(D_mat != 0)])
 
+  n_pattern <- 2^d
   curpi<- c(0.80, rep((1-0.80)/(2^d-1),2^d-1))
   diff<-1
   numiters<-1
