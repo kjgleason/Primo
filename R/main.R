@@ -209,7 +209,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 #'
 #' @export
 #'
-Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001){
+Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
   m <- nrow(pvals)
   d <- ncol(pvals)
 
@@ -244,6 +244,15 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001){
     A <- c(A,optim_res$solution[1])           ## store scale parameter
     df_alt <- c(df_alt,optim_res$solution[2]) ## store degrees of freedom
   }
+
+  # ## estimate marginal density functions in limma framework
+  # density_list <- lapply(1:d, function(j){
+  #   primo::estimate_densities_pval(pvals=pvals[,j],alt_prop=alt_props[j])
+  # } )
+  #
+  # ## extract parameters from marginal densities
+  # A <- sapply(density_list, function(x) x$A)
+  # df_alt <- sapply(density_list, function(x) x$df_alt)
 
   ## computation of D_mat (densities under each pattern)
   Q<-make_qmat(1:d)

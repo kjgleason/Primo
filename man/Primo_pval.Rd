@@ -4,7 +4,7 @@
 \alias{Primo_pval}
 \title{Estimate posterior probabilities of association patterns, using P-values.}
 \usage{
-Primo_pval(pvals, alt_props, Gamma = NULL, tol = 0.001)
+Primo_pval(pvals, alt_props, Gamma = NULL, tol = 0.001, par_size = 1)
 }
 \arguments{
 \item{pvals}{matrix of \eqn{P}-values from test statistics.}
