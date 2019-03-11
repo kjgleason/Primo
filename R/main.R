@@ -221,31 +221,7 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
     Gamma<- cor(xx,use="complete")
   }
 
-  # A <- NULL
-  # df_alt <- NULL
-  #
-  # ## consider parallelizing this step for large d
-  # ## estimate scaling factor and degrees of freedom for each alternative distribution
-  # for(j in 1:d){
-  #   optim_dat <- list(chi_mix=sort(chi_mix[,j], decreasing=T), alt_props=alt_props[j])
-  #   init1 <- 2
-  #   init2 <- 3
-  #   ## run global optimization to identify correct "neighborhood" of optimum
-  #   global_res <- nloptr::nloptr(x0=c(init1,init2),eval_f=chiMix_pDiff,lb=c(1,2),ub=c(100,100),
-  #                                opts=list(algorithm="NLOPT_GN_DIRECT",maxeval=500),
-  #                                data=optim_dat, sorted=T)
-  #   init1 <- global_res$solution[1]
-  #   init2 <- global_res$solution[2]
-  #   ## refine optimum using a local optimization algorithm
-  #   optim_res <- nloptr::nloptr(x0=c(init1,init2),eval_f=chiMix_pDiff,lb=c(1,2),
-  #                               opts=list(algorithm="NLOPT_LN_COBYLA",maxeval=500),
-  #                               data=optim_dat, sorted=T)
-  #
-  #   A <- c(A,optim_res$solution[1])           ## store scale parameter
-  #   df_alt <- c(df_alt,optim_res$solution[2]) ## store degrees of freedom
-  # }
-
-  ## estimate marginal density functions in limma framework
+  ## estimate scaling factor and degrees of freedom for each alternative distribution
   density_list <- lapply(1:d, function(j){
     primo::estimate_densities_pval(pvals=pvals[,j],alt_prop=alt_props[j])
   } )
@@ -480,6 +456,139 @@ Primo_ModT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
   return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, Tstat_mod=Tstat_mod, V_mat = V_mat, mdf_sd_mat = mdf_sd_mat))
 }
 
+#' Estimate posterior probabilities of association patterns, using mixture of chi-squared statistics.
+#'
+#' This version of the function uses a mixture of chi-squared statistics,
+#' and the parameters of the alternative distributions which were previously calculated
+#' (i.e. using \code{estimate_densities_pval}). It is useful for cases where
+#' the same statistic from one study (e.g. gene-SNP pair) may be mapped to
+#' multiple statistics from another study (e.g. multiple gene-CpG pairs).
+#' For each SNP, estimates the posterior probability for each configuration.
+#' Utilizes parallel computing, when available.
+#'
+#' @param chi_mix matrix of \eqn{-2*\log(P)}{-2*log(P)}-values from test statistics.
+#' @param A vector of scaling factors under the alternative distributions.\cr
+#' @param df_alt vector of degrees of freedom approximated for the alternative distributions.\cr
+#' @param Gamma correlation matrix.
+#' @param tol numeric value; specifies tolerance threshold for convergence.
+#' @param par_size numeric value; specifies the number of CPUs/cores/processors for
+#' parallel computing (1 for sequential processing).
+#'
+#' @return A list with the following elements:
+#' \tabular{ll}{
+#' \code{post_prob} \tab matrix of posterior probabilities
+#' (rows are SNPs; columns are association patterns).\cr
+#' \code{pis} \tab vector of estimated proportion of SNPs
+#' belonging to each association pattern.\cr
+#' \code{D_mat} \tab matrix of densities under each association pattern.\cr
+#' \code{Gamma} \tab correlation matrix.\cr
+#' \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
+#' \code{A} \tab vector of scaling factors under the alternative distributions.\cr
+#' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
+#' }
+#'
+#' @details The following are additional details describing the input arguments
+#'  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
+#' \tabular{ll}{
+#' \code{chi_mix} \tab  \eqn{m} x \eqn{d} matrix.\cr
+#' \code{A} \tab vector of length \eqn{d}.\cr
+#' \code{df_alt} \tab vector of length \eqn{d}.\cr
+#' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.
+#' }
+#'
+#' @export
+#'
+Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
+  m <- nrow(pvals)
+  d <- ncol(pvals)
+
+  ## computation of D_mat (densities under each pattern)
+  Q<-make_qmat(1:d)
+  D_mat_func_p <- function(k){
+    A_k <- A*Q[k,] + 1*(1-Q[k,])
+    df_k <- df_alt*Q[k,] + 2*(1-Q[k,])
+
+    rate_k <- 1/(2*A_k)
+    shape_k <- df_k/2
+
+    return(lcmix::dmvgamma(chi_mix, shape=shape_k, rate=rate_k, corr=Gamma))
+  }
+
+  ## parallel version
+  if(par_size > 1){
+    cl <- parallel::makeCluster(par_size)
+    parallel::clusterEvalQ(cl, library(lcmix))
+    parallel::clusterExport(cl=cl, varlist=list("D_mat_func_p","chi_mix","A","df_alt","Q","Gamma"),envir=environment())
+    D_mat_byk <- parallel::parLapply(cl, 1:2^d, function(k) D_mat_func_p(k=k))
+    parallel::stopCluster(cl)
+  }else{
+    ## sequential version
+    D_mat_byk <- lapply(1:2^d, function(k) D_mat_func_p(k=k))
+  }
+
+  D_mat <- do.call("cbind",D_mat_byk)
+  rm(D_mat_byk)
+
+  ## TO DO: develop more sophisticated handling of "zero" densities
+  D_mat[which(D_mat==0)] <- min(D_mat[which(D_mat != 0)])
+
+  n_pattern <- 2^d
+  curpi<- c(0.80, rep((1-0.80)/(2^d-1),2^d-1))
+  diff<-1
+  numiters<-1
+  itermat<-curpi
+
+  ## Rcpp has maximum vector size of 2^31-1
+  ## process large matrices in chunks
+  if(m*as.double(n_pattern) <= 2^31-1){
+    while(diff>tol){
+      start_time <- Sys.time()
+      cat("\nIteration:",numiters)
+      numiters<-numiters+1
+      ## one iteration of EM
+      curpi <- primo::em_iter(curpi,D_mat)
+      itermat<-rbind(itermat,curpi)
+      diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
+      Sys.time() - start_time
+    }
+
+    PP<- primo::e_step(curpi, Dmat=D_mat)
+
+  } else{
+
+    num_chunks <- ceiling((m*as.double(n_pattern))/(2^31-1))
+    Drow_chunks <- split(1:m, ceiling(seq_along(1:m)/(m/num_chunks)))
+
+    while(diff>tol){
+      start_time <- Sys.time()
+      cat("\nIteration:",numiters)
+      numiters<-numiters+1
+      # e-step, in chunks
+      curb_colsums <- 0
+      for(ch in 1:length(Drow_chunks)){
+        D_rows <-  Drow_chunks[[ch]]
+        # EM on current chunk
+        curb_colsums_temp<-primo::e_step_withColSums(curpi, Dmat=D_mat[D_rows,])
+        curb_colsums <- curb_colsums + curb_colsums_temp
+      }
+      curpi<-curb_colsums/m
+      itermat<-rbind(itermat,curpi)
+      diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
+      Sys.time() - start_time
+    }
+
+    ## obtain posterior probabilities
+    PP <- sweep(log(D_mat),2,log(curpi),"+")
+    # subtract maximum, then e^(B)/rowSums(B)
+    PP<-PP-matrixStats::rowMaxs(PP)
+    PP<-exp(PP)
+    # use rowSums directly since columns are recycled
+    PP<-PP/rowSums(PP)
+
+  }
+
+  return(list(postprob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
+}
 
 #' Estimate posterior probabilities of association patterns.
 #'
