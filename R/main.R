@@ -221,38 +221,38 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
     Gamma<- cor(xx,use="complete")
   }
 
-  A <- NULL
-  df_alt <- NULL
-
-  ## consider parallelizing this step for large d
-  ## estimate scaling factor and degrees of freedom for each alternative distribution
-  for(j in 1:d){
-    optim_dat <- list(chi_mix=sort(chi_mix[,j], decreasing=T), alt_props=alt_props[j])
-    init1 <- 2
-    init2 <- 3
-    ## run global optimization to identify correct "neighborhood" of optimum
-    global_res <- nloptr::nloptr(x0=c(init1,init2),eval_f=chiMix_pDiff,lb=c(1,2),ub=c(100,100),
-                                 opts=list(algorithm="NLOPT_GN_DIRECT",maxeval=500),
-                                 data=optim_dat, sorted=T)
-    init1 <- global_res$solution[1]
-    init2 <- global_res$solution[2]
-    ## refine optimum using a local optimization algorithm
-    optim_res <- nloptr::nloptr(x0=c(init1,init2),eval_f=chiMix_pDiff,lb=c(1,2),
-                                opts=list(algorithm="NLOPT_LN_COBYLA",maxeval=500),
-                                data=optim_dat, sorted=T)
-
-    A <- c(A,optim_res$solution[1])           ## store scale parameter
-    df_alt <- c(df_alt,optim_res$solution[2]) ## store degrees of freedom
-  }
-
-  # ## estimate marginal density functions in limma framework
-  # density_list <- lapply(1:d, function(j){
-  #   primo::estimate_densities_pval(pvals=pvals[,j],alt_prop=alt_props[j])
-  # } )
+  # A <- NULL
+  # df_alt <- NULL
   #
-  # ## extract parameters from marginal densities
-  # A <- sapply(density_list, function(x) x$A)
-  # df_alt <- sapply(density_list, function(x) x$df_alt)
+  # ## consider parallelizing this step for large d
+  # ## estimate scaling factor and degrees of freedom for each alternative distribution
+  # for(j in 1:d){
+  #   optim_dat <- list(chi_mix=sort(chi_mix[,j], decreasing=T), alt_props=alt_props[j])
+  #   init1 <- 2
+  #   init2 <- 3
+  #   ## run global optimization to identify correct "neighborhood" of optimum
+  #   global_res <- nloptr::nloptr(x0=c(init1,init2),eval_f=chiMix_pDiff,lb=c(1,2),ub=c(100,100),
+  #                                opts=list(algorithm="NLOPT_GN_DIRECT",maxeval=500),
+  #                                data=optim_dat, sorted=T)
+  #   init1 <- global_res$solution[1]
+  #   init2 <- global_res$solution[2]
+  #   ## refine optimum using a local optimization algorithm
+  #   optim_res <- nloptr::nloptr(x0=c(init1,init2),eval_f=chiMix_pDiff,lb=c(1,2),
+  #                               opts=list(algorithm="NLOPT_LN_COBYLA",maxeval=500),
+  #                               data=optim_dat, sorted=T)
+  #
+  #   A <- c(A,optim_res$solution[1])           ## store scale parameter
+  #   df_alt <- c(df_alt,optim_res$solution[2]) ## store degrees of freedom
+  # }
+
+  ## estimate marginal density functions in limma framework
+  density_list <- lapply(1:d, function(j){
+    primo::estimate_densities_pval(pvals=pvals[,j],alt_prop=alt_props[j])
+  } )
+
+  ## extract parameters from marginal densities
+  A <- sapply(density_list, function(x) x$A)
+  df_alt <- sapply(density_list, function(x) x$df_alt)
 
   ## computation of D_mat (densities under each pattern)
   Q<-make_qmat(1:d)
