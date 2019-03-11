@@ -2,7 +2,7 @@
 % Please edit documentation in R/density_estimation.R
 \name{chiMix_pDiff}
 \alias{chiMix_pDiff}
-\title{Difference from nominal p-values, chi2 mixture}
+\title{Difference from nominal p-values, chi-squared mixture.}
 \usage{
 chiMix_pDiff(par, data, sorted = F)
 }
@@ -20,13 +20,13 @@ Returns a scalar value of the total (absolute) difference between observed p-val
 }
 \description{
 Match observed p-values to nominal p-values by rank and calculate total difference. Objective
-function of a chi-square mixture is used. This function is optimized to estimate the unknown
-scale and degree of freedom parameters for the scaled chi-square distribution under the
+function of a chi-squared mixture is used. This function is optimized to estimate the unknown
+scale and degree of freedom parameters for the scaled chi-squared distribution under the
 alternative hypothesis.
 }
 \details{
 The argument \code{data} should be a two-element list. The first element, named \code{chi_mix}, is
-a vector of the observed values from the chi-square mixture. The second element, named \code{alt_prop},
+a vector of the observed values from the chi-squared mixture. The second element, named \code{alt_prop},
 is the proportion of statistics that come from the alternative distribution.
 
 The order of parameters is important in \code{par}. The scale parameter should be in the first position;

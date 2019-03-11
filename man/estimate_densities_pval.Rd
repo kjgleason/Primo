@@ -30,9 +30,9 @@ hypotheses using p-values.
 The function estimates densities under the null and under the alternative
 given a vector of p-values from test statistics and the marginal probability of
 coming from the alternative distribution. Under the null hypothesis,
-\code{-2*log()} transformed p-values follow a chi-square distribution with 2 degrees of freedom.
+\code{-2*log()} transformed p-values follow a chi-squared distribution with 2 degrees of freedom.
 Under the alternative, the function assumes that the \code{-2*log()} transformed p-values
-follow a scaled chi-square distribution with unknown scale parameter and
+follow a scaled chi-squared distribution with unknown scale parameter and
 unknown degrees of freedom.
 
 When \code{method_moments=TRUE}, the two unknown parameters are estimated by using the first and

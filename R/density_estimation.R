@@ -80,9 +80,9 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
 #' @details The function estimates densities under the null and under the alternative
 #' given a vector of p-values from test statistics and the marginal probability of
 #' coming from the alternative distribution. Under the null hypothesis,
-#' \code{-2*log()} transformed p-values follow a chi-square distribution with 2 degrees of freedom.
+#' \code{-2*log()} transformed p-values follow a chi-squared distribution with 2 degrees of freedom.
 #' Under the alternative, the function assumes that the \code{-2*log()} transformed p-values
-#' follow a scaled chi-square distribution with unknown scale parameter and
+#' follow a scaled chi-squared distribution with unknown scale parameter and
 #' unknown degrees of freedom.
 #'
 #' When \code{method_moments=TRUE}, the two unknown parameters are estimated by using the first and
@@ -100,7 +100,7 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
 #'
 estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
 
-  ## transform to chi square mixture (df=2 under null; scaled with unknown df under alternative)
+  ## transform to chi-squared mixture (df=2 under null; scaled with unknown df under alternative)
   chi_mix<-(-2)*log(pvals)
 
   if(method_moments){
@@ -144,11 +144,11 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
   return(list(chi_mix=chi_mix, scaler=a_alt, df_alt=df_alt))
 }
 
-#' Difference from nominal p-values, chi2 mixture
+#' Difference from nominal p-values, chi-squared mixture.
 #'
 #' Match observed p-values to nominal p-values by rank and calculate total difference. Objective
-#' function of a chi-square mixture is used. This function is optimized to estimate the unknown
-#' scale and degree of freedom parameters for the scaled chi-square distribution under the
+#' function of a chi-squared mixture is used. This function is optimized to estimate the unknown
+#' scale and degree of freedom parameters for the scaled chi-squared distribution under the
 #' alternative hypothesis.
 #'
 #' @param par vector of two parameters for the alternative distribution:
@@ -160,7 +160,7 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
 #' (given the parameters) and nominal p-values.
 #'
 #' @details The argument \code{data} should be a two-element list. The first element, named \code{chi_mix}, is
-#' a vector of the observed values from the chi-square mixture. The second element, named \code{alt_prop},
+#' a vector of the observed values from the chi-squared mixture. The second element, named \code{alt_prop},
 #' is the proportion of statistics that come from the alternative distribution.
 #'
 #' The order of parameters is important in \code{par}. The scale parameter should be in the first position;
