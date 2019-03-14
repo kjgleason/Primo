@@ -83,7 +83,8 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
   if(data_type=="pvalue"){
 
     ## find SNP with minimum p-value for the first phenotype in the region
-    leadSNPs_byRegion <- data[data[,.I[get(stat_cols[1])==min(get(stat_cols[1]))],by=key(data)]$V1]
+    curr_stat_col <- stat_cols[1]
+    leadSNPs_byRegion <- data[data[,.I[get(curr_stat_col)==min(get(curr_stat_col))],by=key(data)]$V1]
     leadSNPs_byRegion<- subset(leadSNPs_byRegion, select=c(pheno_cols,SNP_col,stat_cols[1]))
     colnames(leadSNPs_byRegion)[ncol(leadSNPs_byRegion)-1] <- paste0("leadSNP_",suffices[1])
 
