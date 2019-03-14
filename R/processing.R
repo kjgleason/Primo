@@ -115,9 +115,9 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
     # leadSNPs_byRegion <- data[data[,.I[get(stat_cols[1])==max(abs(get(stat_cols[1])))],by=key(data)]$V1]
     myCol <- stat_cols[1]
     leadSNPs_byRegion <- data %>% group_by(.dots=pheno_cols) %>% slice(which.max(get(myCol)))
-    # leadSNPs_byRegion <- data.table(leadSNPs_byRegion,key=pheno_cols)
-    # leadSNPs_byRegion<- subset(leadSNPs_byRegion, select=c(pheno_cols,SNP_col,stat_cols[1]))
-    # colnames(leadSNPs_byRegion)[ncol(leadSNPs_byRegion)-1] <- paste0("leadSNP_",suffices[1])
+    leadSNPs_byRegion <- data.table(leadSNPs_byRegion,key=pheno_cols)
+    leadSNPs_byRegion<- subset(leadSNPs_byRegion, select=c(pheno_cols,SNP_col,stat_cols[1]))
+    colnames(leadSNPs_byRegion)[ncol(leadSNPs_byRegion)-1] <- paste0("leadSNP_",suffices[1])
     #
     # ## drop duplicates if they exist (cases of perfect LD)
     # leadSNPs_byRegion <- leadSNPs_byRegion[!duplicated(leadSNPs_byRegion,by=key(leadSNPs_byRegion))]
