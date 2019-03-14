@@ -87,25 +87,27 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
 
     ## find SNP with minimum p-value for the first phenotype in the region
     # leadSNPs_byRegion <- data[data[,.I[get(stat_cols[1])==min(get(stat_cols[1]))],by=key(data)]$V1]
-    leadSNPs_byRegion <- data %>% group_by(.dots=pheno_cols) %>% slice(which.min(get(stat_cols[1])))
+    currCol <- stat_cols[1]
+    leadSNPs_byRegion <- data %>% group_by(.dots=pheno_cols) %>% slice(which.min(get(currCol)))
     leadSNPs_byRegion <- data.table(leadSNPs_byRegion,key=pheno_cols)
     leadSNPs_byRegion<- subset(leadSNPs_byRegion, select=c(pheno_cols,SNP_col,stat_cols[1]))
     colnames(leadSNPs_byRegion)[ncol(leadSNPs_byRegion)-1] <- paste0("leadSNP_",suffices[1])
 
     ## drop duplicates if they exist (cases of perfect LD)
-    leadSNPs_byRegion <- leadSNPs_byRegion[!duplicated(leadSNPs_byRegion,by=key(leadSNPs_byRegion))]
+    # leadSNPs_byRegion <- leadSNPs_byRegion[!duplicated(leadSNPs_byRegion,by=key(leadSNPs_byRegion))] ## not necessary with which.min
 
     for(i in 2:length(stat_cols)){
 
       ## find SNP with minimum p-value for the current phenotype in the region
       # topSNP_currPheno <- data[data[,.I[get(stat_cols[i])==min(get(stat_cols[i]))],by=key(data)]$V1]
-      topSNP_currPheno <- data %>% group_by(.dots=pheno_cols) %>% slice(which.min(get(stat_cols[i])))
+      currCol <- stat_cols[i]
+      topSNP_currPheno <- data %>% group_by(.dots=pheno_cols) %>% slice(which.min(get(currCol)))
       topSNP_currPheno <- data.table(topSNP_currPheno,key=pheno_cols)
       topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,SNP_col,stat_cols[i]))
       colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
 
       ## drop duplicates if they exist (cases of perfect LD) and merge
-      topSNP_currPheno <- topSNP_currPheno[!duplicated(topSNP_currPheno,by=key(topSNP_currPheno))]
+      # topSNP_currPheno <- topSNP_currPheno[!duplicated(topSNP_currPheno,by=key(topSNP_currPheno))] ## not necessary with which.min
       leadSNPs_byRegion <- merge(leadSNPs_byRegion,topSNP_currPheno)
     }
 
