@@ -76,7 +76,6 @@ subset_Primo_obj <- function(Primo_obj,idx){
 #'
 find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
 
-  library(rlang)
   library(data.table)
 
   setkeyv(data,pheno_cols)
@@ -110,7 +109,7 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
 
     ## find SNP with maximum abs(t-statistic) for the first phenotype in the region
     curr_stat_col <- stat_cols[1]
-    leadSNPs_byRegion <- data[data[,.I[get(curr_stat_col)==max(abs(get(curr_stat_col)))],by=key(data)]$V1]
+    leadSNPs_byRegion <- data[data[,.I[get(curr_stat_col,envir=environment())==max(abs(get(curr_stat_col,envir=environment())))],by=key(data)]$V1]
     leadSNPs_byRegion<- subset(leadSNPs_byRegion, select=c(pheno_cols,SNP_col,stat_cols[1]))
     colnames(leadSNPs_byRegion)[ncol(leadSNPs_byRegion)-1] <- paste0("leadSNP_",suffices[1])
 

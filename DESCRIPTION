@@ -22,8 +22,7 @@ Imports:
     mvtnorm (>= 1.0),
     nloptr(>= 1.0.4),
     parallel (>= 3.4.3),
-    Rcpp (>= 0.12.17),
-    rlang(>= 0.2.2)
+    Rcpp (>= 0.12.17)
 Suggests:
     metRology (>= 0.9.26.2)
 LinkingTo: Rcpp, RcppArmadillo
