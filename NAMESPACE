@@ -3,6 +3,7 @@
 export(Primo)
 export(Primo_ModT)
 export(Primo_chiMix)
+export(Primo_missData_tstat)
 export(Primo_pval)
 export(Primo_tstat)
 export(calc_Dmatrix)
