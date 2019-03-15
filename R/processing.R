@@ -77,7 +77,7 @@ subset_Primo_obj <- function(Primo_obj,idx){
 find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
 
   library(data.table)
-  library(dplyr)
+  library(magrittr)
 
   setkeyv(data,pheno_cols)
 
@@ -90,7 +90,7 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
     for(i in 1:length(stat_cols)){
 
       ## find SNP with minimum p-value for the current phenotype in the region
-      topSNP_currPheno <- data %>% group_by(.dots=pheno_cols) %>% slice(which.min(get(stat_cols[i])))
+      topSNP_currPheno <- data %>% dplyr::group_by(.dots=pheno_cols) %>% dplyr::slice(which.min(get(stat_cols[i])))
       topSNP_currPheno <- data.table(topSNP_currPheno,key=pheno_cols)
       topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,SNP_col,stat_cols[i]))
       colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
@@ -111,7 +111,7 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
     for(i in 1:length(stat_cols)){
 
       ## find SNP with maximum abs(t-statistic) for the current phenotype in the region
-      topSNP_currPheno <- data %>% group_by(.dots=pheno_cols) %>% slice(which.max(abs(get(stat_cols[i]))))
+      topSNP_currPheno <- data %>% dplyr::group_by(.dots=pheno_cols) %>% dplyr::slice(which.max(abs(get(stat_cols[i]))))
       topSNP_currPheno <- data.table(topSNP_currPheno,key=pheno_cols)
       topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,SNP_col,stat_cols[i]))
       colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
