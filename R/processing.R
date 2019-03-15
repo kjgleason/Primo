@@ -284,3 +284,109 @@ Primo_missData_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,pri
   return(list(post_prob=PP, pis=pis, D_mat=D_mat, Gamma=Gamma, Tstat_mod=Tstat_mod, V_mat = V, mdf_sd_mat = mdf_sd_mat,
               prior_df=prior_df,prior_var=prior_var,unscaled_var=unscaled_var))
 }
+
+
+
+#' Estimate posterior probabilities for observations missing from original Primo analysis.
+#'
+#' For each SNP, estimates the posterior probability for each configuration.
+#' Uses parameters estimated by previous runs of Primo.
+#' Utilizes parallel computing, when available.
+#'
+#' @param pvals matrix of \eqn{P}-values from test statistics.
+#' @param trait_idx integer vector of the columns corresponding to non-missing phenotypes/studies.
+#' @param pis matrix (one-row) of the estimated proportion of observations
+#' belonging to each association pattern
+#' @param Gamma correlation matrix.
+#' @param chi_mix matrix of \eqn{-2}log(\eqn{P})-values.
+#' @param A vector of scaling factors under the alternative distributions.
+#' @param df_alt vector of degrees of freedom approximated for the alternative distributions.
+#' @param par_size numeric value; specifies the number of CPUs/cores/processors for
+#' parallel computing (1 for sequential processing).
+#'
+#'
+#' @return A list with the following elements:
+#' \tabular{ll}{
+#' \code{post_prob} \tab matrix of posterior probabilities
+#' (rows are SNPs; columns are association patterns).\cr
+#' \code{pis} \tab vector of estimated proportion of SNPs
+#' belonging to each association pattern.\cr
+#' \code{D_mat} \tab matrix of densities under each association pattern.\cr
+#' \code{Gamma} \tab correlation matrix.\cr
+#' \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
+#' \code{A} \tab vector of scaling factors under the alternative distributions.\cr
+#' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
+#' }
+#'
+#' The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
+#' The estimated proportion of observations belonging to each association pattern, \code{pis}, may
+#' also be of interest. The remaining elements are returned primarily for use by other functions --
+#' such as those conducting conditional association analysis.
+#'
+#' @export
+#'
+Primo_missData_pval <- function(pvals,trait_idx,pis,Gamma,A,df_alt,par_size=1){
+  m <- nrow(pvals)
+  d <- ncol(pvals)
+  # orig_d <- log(length(pis),2)
+  orig_d <- log(ncol(pis),2)
+
+  miss_idx <- (1:orig_d)[-trait_idx]
+
+  ## convert p-values to mixture of chi-squared statistics: -2log(p)
+  chi_mix<-(-2)*log(pvals)
+
+  ## extract data for traits not missing data
+  A <- A[trait_idx]
+  df_alt <- df_alt[trait_idx]
+  Gamma <- Gamma[trait_idx,trait_idx]
+
+  ## determine which patterns to keep
+  orig_Q <- primo::make_qmat(1:orig_d)
+  if(length(miss_idx) == 1){
+    keep_patterns <- which(orig_Q[,miss_idx]==0)
+  } else{
+    keep_patterns <- which(rowSums(orig_Q[,miss_idx])==0)
+  }
+  # pis <- pis[keep_patterns]
+  pis <- pis[,keep_patterns]
+
+  ## computation of D_mat (densities under each pattern)
+  Q<-make_qmat(1:d)
+  D_mat_func_p <- function(k){
+    A_k <- A*Q[k,] + 1*(1-Q[k,])
+    df_k <- df_alt*Q[k,] + 2*(1-Q[k,])
+
+    rate_k <- 1/(2*A_k)
+    shape_k <- df_k/2
+
+    return(lcmix::dmvgamma(chi_mix, shape=shape_k, rate=rate_k, corr=Gamma))
+  }
+
+  ## parallel version
+  if(par_size > 1){
+    cl <- parallel::makeCluster(par_size)
+    parallel::clusterEvalQ(cl, library(lcmix))
+    parallel::clusterExport(cl=cl, varlist=list("D_mat_func_p","chi_mix","A","df_alt","Q","Gamma"),envir=environment())
+    D_mat_byk <- parallel::parLapply(cl, 1:2^d, function(k) D_mat_func_p(k=k))
+    parallel::stopCluster(cl)
+  }else{
+    ## sequential version
+    D_mat_byk <- lapply(1:2^d, function(k) D_mat_func_p(k=k))
+  }
+
+  ## bind densities together into matrix
+  D_mat <- do.call("cbind",D_mat_byk)
+  rm(D_mat_byk)
+
+
+  ## obtain posterior probabilities
+  PP <- sweep(log(D_mat),2,log(pis),"+")
+  # subtract maximum, then e^(B)/rowSums(B)
+  PP<-PP-matrixStats::rowMaxs(PP)
+  PP<-exp(PP)
+  # use rowSums directly since columns are recycled
+  PP<-PP/rowSums(PP)
+
+  return(list(postprob=PP, pis=pis, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
+}
