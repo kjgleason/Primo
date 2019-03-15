@@ -136,6 +136,49 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
 
 #' Estimate posterior probabilities for observations missing from original Primo analysis.
 #'
+#' For each SNP, estimates the posterior probability for each configuration.
+#' Uses parameters estimated by previous runs of Primo.
+#' Utilizes parallel computing, when available.
+#'
+#' @param betas matrix of coefficient estimates.
+#' @param sds matrix of standard errors (for coefficient estimates).
+#' @param dfs vector or matrix of degrees of freedom.
+#' @param trait_idx integer vector of the columns corresponding to non-missing phenotypes/studies.
+#' @param mafs vector or matrix of minor allele frequencies (MAFs).
+#' @param pis matrix (one-row) of the estimated proportion of observations
+#' belonging to each association pattern
+#' @param Gamma correlation matrix.
+#' @param prior_df vector of the prior degrees of freedom for each marginal distribution.
+#' @param prior_var vector of the prior variance estimators for each marginal distribution.
+#' @param unscaled_var vector of the unscaled variance priors on non-zero coefficients
+#' for each marginal distribution.
+#' @param par_size numeric value; specifies the number of CPUs/cores/processors for
+#' parallel computing (1 for sequential processing).
+#'
+#'
+#' @return A list with the following elements:
+#' \tabular{ll}{
+#' \code{post_prob} \tab matrix of posterior probabilities
+#' (each column corresponds to an association pattern).\cr
+#' \code{pis} \tab vector of estimated proportion of observations
+#' belonging to each association pattern.\cr
+#' \code{D_mat} \tab matrix of densities under each association pattern.\cr
+#' \code{Gamma} \tab correlation matrix.\cr
+#' \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
+#' \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
+#' \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
+#'  moderated degrees of freedom: df/(df-2).\cr
+#' \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
+#' \code{prior_var} \tab vector of the prior variance estimators for each marginaldistribution.\cr
+#' \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
+#' for each marginal distribution.
+#' }
+#'
+#' The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
+#' The estimated proportion of observations belonging to each association pattern, \code{pis}, may
+#' also be of interest. The remaining elements are returned primarily for use by other functions --
+#' such as those conducting conditional association analysis.
+#'
 #' @export
 #'
 Primo_missData_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,prior_df,prior_var,unscaled_var,par_size=1){
