@@ -85,13 +85,9 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
 
   if(data_type=="pvalue"){
 
-    ## find SNP with minimum p-value for the first phenotype in the region
-    leadSNPs_byRegion <- data %>% group_by(.dots=pheno_cols) %>% slice(which.min(get(stat_cols[1])))
-    leadSNPs_byRegion <- data.table(leadSNPs_byRegion,key=pheno_cols)
-    leadSNPs_byRegion<- subset(leadSNPs_byRegion, select=c(pheno_cols,SNP_col,stat_cols[1]))
-    colnames(leadSNPs_byRegion)[ncol(leadSNPs_byRegion)-1] <- paste0("leadSNP_",suffices[1])
+    leadSNPs_byRegion <- NULL
 
-    for(i in 2:length(stat_cols)){
+    for(i in 1:length(stat_cols)){
 
       ## find SNP with minimum p-value for the current phenotype in the region
       topSNP_currPheno <- data %>% group_by(.dots=pheno_cols) %>% slice(which.min(get(stat_cols[i])))
@@ -100,16 +96,16 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
       colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
 
       ## merge results
-      leadSNPs_byRegion <- merge(leadSNPs_byRegion,topSNP_currPheno)
+      if(is.null(leadSNPs_byRegion)){
+        leadSNPs_byRegion <- topSNP_currPheno
+      } else{
+        leadSNPs_byRegion <- merge(leadSNPs_byRegion,topSNP_currPheno)
+      }
+
     }
 
   } else if(data_type=="tstat"){
 
-    # ## find SNP with maximum abs(t-statistic) for the first phenotype in the region
-    # leadSNPs_byRegion <- data %>% group_by(.dots=pheno_cols) %>% slice(which.max(get(stat_cols[1])))
-    # leadSNPs_byRegion <- data.table(leadSNPs_byRegion,key=pheno_cols)
-    # leadSNPs_byRegion<- subset(leadSNPs_byRegion, select=c(pheno_cols,SNP_col,stat_cols[1]))
-    # colnames(leadSNPs_byRegion)[ncol(leadSNPs_byRegion)-1] <- paste0("leadSNP_",suffices[1])
     leadSNPs_byRegion <- NULL
 
     for(i in 1:length(stat_cols)){
@@ -126,6 +122,7 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
       } else{
         leadSNPs_byRegion <- merge(leadSNPs_byRegion,topSNP_currPheno)
       }
+
     }
 
   } else{
