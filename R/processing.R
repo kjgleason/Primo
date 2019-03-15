@@ -56,6 +56,70 @@ subset_Primo_obj <- function(Primo_obj,idx){
   return(Primo_obj)
 }
 
+#' Append a Primo object.
+#'
+#' Append two sets of Primo results. The function assumes that the two sets
+#' share marginal distribution parameters and a common correlation structure.
+#' Function may be used to append results from an initial run from Primo
+#' with a run that used the same parameters (e.g. to account for missing SNPs)
+#'
+#' @param Primo_obj1 list of results returned by Primo (from the function
+#' \code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_ModT}}).
+#' @param Primo_obj2 list of results returned by Primo.
+#'
+#' @return A list of Primo results with the following elements:
+#' \tabular{ll}{
+#' \code{post_prob} \tab matrix of posterior probabilities
+#' (rows are SNPs; columns are association patterns).\cr
+#' \code{pis} \tab vector of estimated proportion of SNPs
+#' belonging to each association pattern.\cr
+#' \code{D_mat} \tab matrix of densities under each association pattern.\cr
+#' \code{Gamma} \tab correlation matrix.\cr
+#' }
+#'
+#' \itemize{
+#' \item If the results were originally from the \eqn{t}-statistic version,
+#' the list will additionally contain:
+#' \tabular{ll}{
+#' \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
+#' \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
+#' \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
+#'  moderated degrees of freedom: df/(df-2).\cr
+#' \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
+#' \code{prior_var} \tab vector of the prior variance estimators for each marginaldistribution.\cr
+#' \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
+#' for each marginal distribution.
+#'  }
+#'
+#' \item If the results were originally from the \eqn{p}-value version,
+#' the list will additionally contain:
+#' \tabular{ll}{
+#' \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
+#' \code{A} \tab vector of scaling factors under the alternative distributions.\cr
+#' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
+#'  }
+#'  }
+#'
+#' @export
+#'
+append_Primo_obj <- function(Primo_obj1,Primo_obj2){
+
+  if(ncol(Primo_obj1$post_prob) != ncol(Primo_obj2$post_prob)) stop("Primo objects do not match (based on different numbers of studies).")
+
+  Primo_obj1$post_prob <- rbind(Primo_obj1$post_prob,Primo_obj2$post_prob)
+  Primo_obj1$D_mat <- rbind(Primo_obj1$D_mat,Primo_obj2$D_mat)
+
+  ## t-statistic version
+  if(!is.null(Primo_obj1$Tstat_mod)) Primo_obj1$Tstat_mod <- rbind(Primo_obj1$Tstat_mod,Primo_obj2$Tstat_mod)
+  if(!is.null(Primo_obj1$V_mat)) Primo_obj1$V_mat <- rbind(Primo_obj1$V_mat,Primo_obj2$V_mat)
+  if(!is.null(Primo_obj1$mdf_sd_mat)) Primo_obj1$mdf_sd_mat <- rbind(Primo_obj1$mdf_sd_mat,Primo_obj2$mdf_sd_mat)
+
+  ## p-value version
+  if(!is.null(Primo_obj1$chi_mix)) Primo_obj1$chi_mix <- rbind(Primo_obj1$chi_mix,Primo_obj2$chi_mix)
+
+  return(Primo_obj1)
+}
+
 
 #' Find the lead SNP for each phenotype in each region.
 #'
