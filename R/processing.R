@@ -111,7 +111,7 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
     for(i in 1:length(stat_cols)){
 
       ## find SNP with maximum abs(t-statistic) for the current phenotype in the region
-      topSNP_currPheno <- data %>% group_by(.dots=pheno_cols) %>% slice(which.max(get(stat_cols[i])))
+      topSNP_currPheno <- data %>% group_by(.dots=pheno_cols) %>% slice(which.max(abs(get(stat_cols[i]))))
       topSNP_currPheno <- data.table(topSNP_currPheno,key=pheno_cols)
       topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,SNP_col,stat_cols[i]))
       colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
@@ -130,7 +130,6 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
     stop("data_type must be either 'pvalue' or 'tstat'.")
 
   }
-
 
   return(leadSNPs_byRegion)
 }
