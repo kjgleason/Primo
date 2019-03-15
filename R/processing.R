@@ -42,11 +42,16 @@
 #' @export
 #'
 subset_Primo_obj <- function(Primo_obj,idx){
-  Primo_obj$Tstat_mod <- Primo_obj$Tstat_mod[idx,]
   Primo_obj$post_prob <- Primo_obj$post_prob[idx,]
   Primo_obj$D_mat <- Primo_obj$D_mat[idx,]
-  Primo_obj$V_mat <- Primo_obj$V_mat[idx,]
-  Primo_obj$mdf_sd_mat <- Primo_obj$mdf_sd_mat[idx,]
+
+  ## t-statistic version
+  if(!is.null(Primo_obj$Tstat_mod)) Primo_obj$Tstat_mod <- Primo_obj$Tstat_mod[idx,]
+  if(!is.null(Primo_obj$V_mat)) Primo_obj$V_mat <- Primo_obj$V_mat[idx,]
+  if(!is.null(Primo_obj$mdf_sd_mat)) Primo_obj$mdf_sd_mat <- Primo_obj$mdf_sd_mat[idx,]
+
+  ## p-value version
+  if(!is.null(Primo_obj$chi_mix)) Primo_obj$chi_mix <- Primo_obj$chi_mix[idx,]
 
   return(Primo_obj)
 }
