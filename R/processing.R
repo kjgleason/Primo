@@ -115,8 +115,8 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
 
     ## find SNP with maximum abs(t-statistic) for the first phenotype in the region
     # leadSNPs_byRegion <- data[data[,.I[get(stat_cols[1])==max(abs(get(stat_cols[1])))],by=key(data)]$V1]
-    currCol <- stat_cols[1]
-    leadSNPs_byRegion <- data %>% group_by(.dots=pheno_cols) %>% slice(which.max(get(currCol)))
+    # currCol <- stat_cols[1]
+    leadSNPs_byRegion <- data %>% group_by(.dots=pheno_cols) %>% slice(which.max(get(stat_cols[1])))
     leadSNPs_byRegion <- data.table(leadSNPs_byRegion,key=pheno_cols)
     leadSNPs_byRegion<- subset(leadSNPs_byRegion, select=c(pheno_cols,SNP_col,stat_cols[1]))
     colnames(leadSNPs_byRegion)[ncol(leadSNPs_byRegion)-1] <- paste0("leadSNP_",suffices[1])
@@ -128,8 +128,8 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
 
       ## find SNP with maximum abs(t-statistic) for the current phenotype in the region
       # topSNP_currPheno <- data[data[,.I[get(stat_cols[i])==min(get(stat_cols[i]))],by=key(data)]$V1]
-      currCol <- stat_cols[i]
-      topSNP_currPheno <- data %>% group_by(.dots=pheno_cols) %>% slice(which.max(get(currCol)))
+      # currCol <- stat_cols[i]
+      topSNP_currPheno <- data %>% group_by(.dots=pheno_cols) %>% slice(which.max(get(stat_cols[i])))
       topSNP_currPheno <- data.table(topSNP_currPheno,key=pheno_cols)
       topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,SNP_col,stat_cols[i]))
       colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
