@@ -137,7 +137,8 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
 #' Estimate posterior probabilities for observations missing from original Primo analysis.
 #'
 #' For each SNP, estimates the posterior probability for each configuration.
-#' Uses parameters estimated by previous runs of Primo.
+#' Uses parameters estimated by previous runs of Primoto estimate probabilities
+#' for SNPs missing in one or more studies.
 #' Utilizes parallel computing, when available.
 #'
 #' @param betas matrix of coefficient estimates.
@@ -176,7 +177,9 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
 #'
 #' The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
 #' The estimated proportion of observations belonging to each association pattern, \code{pis}, may
-#' also be of interest. The remaining elements are returned primarily for use by other functions --
+#' also be of interest. Note that the \code{pis} may not sum to 1 since they are estimated from Primo
+#' run on a larger number of studies.
+#' The remaining elements are returned primarily for use by other functions --
 #' such as those conducting conditional association analysis.
 #'
 #' @export
@@ -290,8 +293,9 @@ Primo_missData_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,pri
 #' Estimate posterior probabilities for observations missing from original Primo analysis.
 #'
 #' For each SNP, estimates the posterior probability for each configuration.
-#' Uses parameters estimated by previous runs of Primo.
-#' Utilizes parallel computing, when available.
+#' Uses parameters estimated by previous runs of Primo to estimate probabilities
+#' for SNPs missing in one or more studies. \eqn{P}-values from non-missing studies
+#' are used as input. Utilizes parallel computing, when available.
 #'
 #' @param pvals matrix of \eqn{P}-values from test statistics.
 #' @param trait_idx integer vector of the columns corresponding to non-missing phenotypes/studies.
@@ -320,7 +324,9 @@ Primo_missData_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,pri
 #'
 #' The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
 #' The estimated proportion of observations belonging to each association pattern, \code{pis}, may
-#' also be of interest. The remaining elements are returned primarily for use by other functions --
+#' also be of interest. Note that the \code{pis} may not sum to 1 since they are estimated from Primo
+#' run on a larger number of studies.
+#' The remaining elements are returned primarily for use by other functions --
 #' such as those conducting conditional association analysis.
 #'
 #' @export

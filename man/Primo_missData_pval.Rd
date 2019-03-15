@@ -42,11 +42,14 @@ belonging to each association pattern.\cr
 
 The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
 The estimated proportion of observations belonging to each association pattern, \code{pis}, may
-also be of interest. The remaining elements are returned primarily for use by other functions --
+also be of interest. Note that the \code{pis} may not sum to 1 since they are estimated from Primo
+run on a larger number of studies.
+The remaining elements are returned primarily for use by other functions --
 such as those conducting conditional association analysis.
 }
 \description{
 For each SNP, estimates the posterior probability for each configuration.
-Uses parameters estimated by previous runs of Primo.
-Utilizes parallel computing, when available.
+Uses parameters estimated by previous runs of Primo to estimate probabilities
+for SNPs missing in one or more studies. \eqn{P}-values from non-missing studies
+are used as input. Utilizes parallel computing, when available.
 }
