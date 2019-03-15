@@ -76,8 +76,8 @@ subset_Primo_obj <- function(Primo_obj,idx){
 #'
 find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
 
-  library(data.table)
-  library(magrittr)
+  require(data.table)
+  require(magrittr)
 
   setkeyv(data,pheno_cols)
 
