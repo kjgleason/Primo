@@ -315,7 +315,7 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
 
   }
 
-  return(list(postprob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
+  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
 }
 
 
@@ -587,7 +587,7 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
 
   }
 
-  return(list(postprob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
+  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
 }
 
 #' Estimate posterior probabilities of association patterns.

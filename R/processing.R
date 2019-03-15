@@ -463,5 +463,5 @@ Primo_missData_pval <- function(pvals,trait_idx,pis,Gamma,A,df_alt,par_size=1){
   # use rowSums directly since columns are recycled
   PP<-PP/rowSums(PP)
 
-  return(list(postprob=PP, pis=pis, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
+  return(list(post_prob=PP, pis=pis, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
 }
