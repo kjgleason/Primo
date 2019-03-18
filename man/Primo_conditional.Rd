@@ -2,25 +2,25 @@
 % Please edit documentation in R/conditional.R
 \name{Primo_conditional}
 \alias{Primo_conditional}
-\title{Perform fine-mapping on a specified variant.}
+\title{Perform conditional analysis for a specified variant.}
 \usage{
 Primo_conditional(idx.snp, idx.leadsnps, LD_mat, Primo_obj)
 }
 \arguments{
-\item{idx.snp}{scalar of the index of the genetic variant (e.g. row of \code{Tstat_mod})
-on which one wants to perform fine-mapping}
+\item{idx.snp}{integer matching the index of the genetic variant (e.g. row of \code{Tstat_mod})
+for which to perform conditional analysis.}
 
 \item{idx.leadsnps}{vector of indices of the leading snps (e.g. rows of \code{Tstat_mod})
-on which one wants to condition during fine-mapping}
+on which to condition.}
 
 \item{LD_mat}{matrix of LD coefficients (\eqn{r^{2}}{r^2}).
 Rows and columns should match the order of (\code{idx.snp}, \code{idx.leadsnps}).}
 
 \item{Primo_obj}{list returned by running the \eqn{t}-statistic version
-of Primo (i.e. \code{\link{Primo_tstat}})}
+of Primo (i.e. \code{\link{Primo_tstat}} or \code{\link{Primo_modT}})}
 }
 \value{
-The numerical value corresponding to the association pattern
+The integer corresponding to the association pattern
 with the highest posterior probability following fine-mapping adjustment.
 The value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
 from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
@@ -28,6 +28,7 @@ by \code{\link{make_qmat}}.
 }
 \description{
 For a specified variant, re-estimate the posterior probabilities of association
-patterns, conditioning on other specified variants. Returns the association
-pattern with the highest posterior probability after fine-mapping.
+patterns, conditioning on other specified variants (e.g. lead SNPs for phenotypes
+under analysis). Returns the association pattern with the highest
+posterior probability after conditional analysis.
 }

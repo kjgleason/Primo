@@ -1,19 +1,20 @@
-#' Perform fine-mapping on a specified variant.
+#' Perform conditional analysis for a specified variant.
 #'
 #' For a specified variant, re-estimate the posterior probabilities of association
-#' patterns, conditioning on other specified variants. Returns the association
-#' pattern with the highest posterior probability after fine-mapping.
+#' patterns, conditioning on other specified variants (e.g. lead SNPs for phenotypes
+#' under analysis). Returns the association pattern with the highest
+#' posterior probability after conditional analysis.
 #'
-#' @param idx.snp scalar of the index of the genetic variant (e.g. row of \code{Tstat_mod})
-#' on which one wants to perform fine-mapping
+#' @param idx.snp integer matching the index of the genetic variant (e.g. row of \code{Tstat_mod})
+#' for which to perform conditional analysis.
 #' @param idx.leadsnps vector of indices of the leading snps (e.g. rows of \code{Tstat_mod})
-#' on which one wants to condition during fine-mapping
+#' on which to condition.
 #' @param LD_mat matrix of LD coefficients (\eqn{r^{2}}{r^2}).
 #' Rows and columns should match the order of (\code{idx.snp}, \code{idx.leadsnps}).
 #' @param Primo_obj list returned by running the \eqn{t}-statistic version
-#' of Primo (i.e. \code{\link{Primo_tstat}})
+#' of Primo (i.e. \code{\link{Primo_tstat}} or \code{\link{Primo_modT}})
 #'
-#' @return The numerical value corresponding to the association pattern
+#' @return The integer corresponding to the association pattern
 #' with the highest posterior probability following fine-mapping adjustment.
 #' The value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
 #' from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
@@ -55,19 +56,18 @@ Primo_conditional <- function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 
   sp<-which.max(CD_mat+log(pis))
 
-  # return(list(sp = sp))
   return(sp)
 }
 
 
 
-#' Setup fine-mapping for a specified variant by index.
+#' Setup conditional analysis for a specified variant by index.
 #'
-#' For a specified variant (passed by index), set-up and run fine-mapping.
-#' The function uses a data.table of leadSNPs to identify possible SNPs
-#' to be conditioned on by the fine-mapping function, and determines which SNPs
+#' For a specified variant (passed by index), set-up and run conditional analysis.
+#' The function uses a data.frame of lead SNPs to identify possible SNPs
+#' for conditional analysis, and determines which SNPs
 #' will be conditioned on based on specified criteria. Returns the association
-#' pattern with the highest posterior probability after fine-mapping.
+#' pattern with the highest posterior probability after conditional analysis.
 #'
 #' @param Primo_obj A list returned by running the \eqn{t}-statistic version
 #' of Primo (i.e. \code{\link{Primo_tstat}})
@@ -78,7 +78,7 @@ Primo_conditional <- function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 #' @param leadSNPs_byRegion A data.frame that stores the lead SNP of each phenotype
 #' in each region of the Primo results. Also includes p-values for the lead SNPs.
 #' See Details for format.
-#' @param SNP_col A string of the column name of SNPs (must be "SNP" in current version).
+#' @param SNP_col A string of the column name of SNPs/variants.
 #' @param pheno_cols A character vector of the column names of the phenotype ID columns.
 #' @param snp.info A data.frame reporting the chromosome and position of each SNP.
 #' Columns should be: \code{SNP, CHR, POS}.
@@ -97,11 +97,7 @@ Primo_conditional <- function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 #' @param suffices A character vector of the suffices corresponding to columns in
 #' \code{leadSNPs_byRegion}. See Details.
 #'
-#' @return The numerical value corresponding to the association pattern
-#' with the highest posterior probability following fine-mapping adjustment.
-#' The value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
-#' from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
-#' by \code{\link{make_qmat}}.
+#' @inherit Primo_conditional return
 #'
 #' @details The following are additional details describing the input data.frame
 #' \code{leadSNPs_byRegion}. For \eqn{J} phenotypes being analyzed, the first
@@ -162,12 +158,13 @@ run_conditional <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",ph
 
 #' Setup fine-mapping for a specified variant by index, using data.tables.
 #'
-#' For a specified variant (passed by index), set-up and run fine-mapping.
-#' The function uses a data.table of leadSNPs to identify possible SNPs
-#' to be conditioned on by the fine-mapping function, and determines which SNPs
+#' For a specified variant (passed by index), set-up and run conditional analysis.
+#' The function uses a data.table of lead SNPs to identify possible SNPs
+#' for conditional analysis, and determines which SNPs
 #' will be conditioned on based on specified criteria. Returns the association
-#' pattern with the highest posterior probability after fine-mapping. The version utilizes
-#' data.tables for \code{IDs}, \code{leadSNPs_byRegion} and \code{snp.info} for faster processing.
+#' pattern with the highest posterior probability after conditional analysis.
+#' The version utilizes data.tables for \code{IDs}, \code{leadSNPs_byRegion}
+#' and \code{snp.info} for faster processing.
 #'
 #' @param Primo_obj A list returned by running the \eqn{t}-statistic version
 #' of Primo (i.e. \code{\link{Primo_tstat}})
@@ -178,7 +175,7 @@ run_conditional <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",ph
 #' @param leadSNPs_byRegion A data.table that stores the lead SNP of each phenotype
 #' in each region of the Primo results. Also includes p-values for the lead SNPs.
 #' See Details for format.
-#' @param SNP_col A string of the column name of SNPs (must be "SNP" in current version).
+#' @param SNP_col A string of the column name of SNPs/variants.
 #' @param pheno_cols A character vector of the column names of the phenotype ID columns.
 #' @param snp.info A data.table reporting the chromosome and position of each SNP.
 #' Columns should be: \code{SNP, CHR, POS}.
@@ -197,11 +194,7 @@ run_conditional <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",ph
 #' @param suffices A character vector of the suffices corresponding to columns in
 #' \code{leadSNPs_byRegion}. See Details.
 #'
-#' @return The numerical value corresponding to the association pattern
-#' with the highest posterior probability following fine-mapping adjustment.
-#' The value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
-#' from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
-#' by \code{\link{make_qmat}}.
+#' @inherit Primo_conditional return
 #'
 #' @details The following are additional details describing the input data.table
 #' \code{leadSNPs_byRegion}. For \eqn{J} phenotypes being analyzed, the first

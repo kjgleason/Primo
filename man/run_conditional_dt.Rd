@@ -49,7 +49,7 @@ Default value (1) signifies no consideration of strength of effect in conditiona
 \code{leadSNPs_byRegion}. See Details.}
 }
 \value{
-The numerical value corresponding to the association pattern
+The integer corresponding to the association pattern
 with the highest posterior probability following fine-mapping adjustment.
 The value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
 from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced

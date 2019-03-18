@@ -2,7 +2,7 @@
 % Please edit documentation in R/conditional.R
 \name{run_conditional}
 \alias{run_conditional}
-\title{Setup fine-mapping for a specified variant by index.}
+\title{Setup conditional analysis for a specified variant by index.}
 \usage{
 run_conditional(Primo_obj, IDs, idx, leadSNPs_byRegion, SNP_col = "SNP",
   pheno_cols, snp.info, LD_mat, LD_thresh = 1, dist_thresh = 0,
@@ -49,18 +49,18 @@ Default value (1) signifies no consideration of strength of effect in conditiona
 \code{leadSNPs_byRegion}. See Details.}
 }
 \value{
-The numerical value corresponding to the association pattern
+The integer corresponding to the association pattern
 with the highest posterior probability following fine-mapping adjustment.
 The value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
 from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
 by \code{\link{make_qmat}}.
 }
 \description{
-For a specified variant (passed by index), set-up and run fine-mapping.
-The function uses a data.table of leadSNPs to identify possible SNPs
-to be conditioned on by the fine-mapping function, and determines which SNPs
+For a specified variant (passed by index), set-up and run conditional analysis.
+The function uses a data.frame of lead SNPs to identify possible SNPs
+for conditional analysis, and determines which SNPs
 will be conditioned on based on specified criteria. Returns the association
-pattern with the highest posterior probability after fine-mapping.
+pattern with the highest posterior probability after conditional analysis.
 }
 \details{
 The following are additional details describing the input data.frame
