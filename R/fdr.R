@@ -21,14 +21,14 @@ calc_fdr <- function(post_prob,threshold){
 #'
 #' Calculate the empirical false discovery rate (FDR) given
 #' a vector of posterior probabilities and a specified threshold,
-#' adjusting for false positives identified by fine-mapping.
+#' adjusting for false positives identified by conditional analysis.
 #'
 #' @param post_prob numeric vector of posterior probabilities.
 #' @param threshold numerical value of the posterior probability threshold at which to
 #' calculate the empirical FDR.
-#' @param fail_idx integer vector of the indices of observations which failed
-#' fine-mapping. These are the observations where the association pattern with the
-#' highest posterior probability after fine-mapping changed (if using collapsed
+#' @param fail_idx integer vector of the indices of observations which "failed"
+#' conditional analysis. These are the observations where the association pattern with the
+#' highest posterior probability changed after conditioning (if using collapsed
 #' categories, they should have changed such they are no longer in an
 #' association pattern fitting the description of the collapsed category).
 #'
@@ -36,15 +36,15 @@ calc_fdr <- function(post_prob,threshold){
 #'
 #' @export
 #'
-calc_fdr_finemap <- function(post_prob,threshold,fail_idx){
+calc_fdr_conditional <- function(post_prob,threshold,fail_idx){
 
   ## store indices for observations that would have been fine-mapped according to threshold
-  fineMapped_idx <- which(post_prob > threshold)
+  conditioned_idx <- which(post_prob > threshold)
 
   ## set PP=0 for those that failed fine-mapping (considered false positives)
   post_prob[fail_idx] <- 0
 
-  post_prob <- post_prob[fineMapped_idx]
+  post_prob <- post_prob[conditioned_idx]
   return(mean(1-post_prob))
 }
 
