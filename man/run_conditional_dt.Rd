@@ -22,7 +22,7 @@ on which one wants to perform fine-mapping}
 in each region of the Primo results. Also includes p-values for the lead SNPs.
 See Details for format.}
 
-\item{SNP_col}{A string of the column name of SNPs (must be "SNP" in current version).}
+\item{SNP_col}{A string of the column name of SNPs/variants.}
 
 \item{pheno_cols}{A character vector of the column names of the phenotype ID columns.}
 
@@ -56,12 +56,13 @@ from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
 by \code{\link{make_qmat}}.
 }
 \description{
-For a specified variant (passed by index), set-up and run fine-mapping.
-The function uses a data.table of leadSNPs to identify possible SNPs
-to be conditioned on by the fine-mapping function, and determines which SNPs
+For a specified variant (passed by index), set-up and run conditional analysis.
+The function uses a data.table of lead SNPs to identify possible SNPs
+for conditional analysis, and determines which SNPs
 will be conditioned on based on specified criteria. Returns the association
-pattern with the highest posterior probability after fine-mapping. The version utilizes
-data.tables for \code{IDs}, \code{leadSNPs_byRegion} and \code{snp.info} for faster processing.
+pattern with the highest posterior probability after conditional analysis.
+The version utilizes data.tables for \code{IDs}, \code{leadSNPs_byRegion}
+and \code{snp.info} for faster processing.
 }
 \details{
 The following are additional details describing the input data.table

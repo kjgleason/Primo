@@ -22,7 +22,7 @@ on which one wants to perform fine-mapping}
 in each region of the Primo results. Also includes p-values for the lead SNPs.
 See Details for format.}
 
-\item{SNP_col}{A string of the column name of SNPs (must be "SNP" in current version).}
+\item{SNP_col}{A string of the column name of SNPs/variants.}
 
 \item{pheno_cols}{A character vector of the column names of the phenotype ID columns.}
 
