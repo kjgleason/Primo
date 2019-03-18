@@ -68,7 +68,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
     if(is.matrix(dfs)) {
       dfs <- dfs[,j]
     } else dfs <- rep(dfs[j],m)
-    primo::estimate_densities_modT(betas=betas[,j],sds=sds[,j],mafs=mafs,df=dfs,alt_prop=alt_props[j])
+    Primo::estimate_densities_modT(betas=betas[,j],sds=sds[,j],mafs=mafs,df=dfs,alt_prop=alt_props[j])
   } )
 
   ## extract parameters for pattern-specific density estimation
@@ -84,7 +84,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
   mdf_sd_mat <- sqrt(mdfs/(mdfs-2))
 
   ## computation of D_mat (densities under each pattern)
-  Q<-make_qmat(1:d)
+  Q<-Primo::make_qmat(1:d)
   D_mat_func <- function(k){
     m=nrow(V)
     d=ncol(V)
@@ -126,13 +126,13 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       ## one iteration of EM
-      curpi <- primo::em_iter(curpi,D_mat)
+      curpi <- Primo::em_iter(curpi,D_mat)
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
       Sys.time() - start_time
     }
 
-    PP<- primo::e_step(curpi, Dmat=D_mat)
+    PP<- Primo::e_step(curpi, Dmat=D_mat)
 
   } else{
 
@@ -148,7 +148,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
       for(ch in 1:length(Drow_chunks)){
         D_rows <-  Drow_chunks[[ch]]
         # EM on current chunk
-        curb_colsums_temp<-primo::e_step_withColSums(curpi, Dmat=D_mat[D_rows,])
+        curb_colsums_temp<-Primo::e_step_withColSums(curpi, Dmat=D_mat[D_rows,])
         curb_colsums <- curb_colsums + curb_colsums_temp
       }
       curpi<-curb_colsums/m
@@ -223,7 +223,7 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
 
   ## estimate scaling factor and degrees of freedom for each alternative distribution
   density_list <- lapply(1:d, function(j){
-    primo::estimate_densities_pval(pvals=pvals[,j],alt_prop=alt_props[j])
+    Primo::estimate_densities_pval(pvals=pvals[,j],alt_prop=alt_props[j])
   } )
 
   ## extract parameters from marginal densities
@@ -231,7 +231,7 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
   df_alt <- sapply(density_list, function(x) x$df_alt)
 
   ## computation of D_mat (densities under each pattern)
-  Q<-make_qmat(1:d)
+  Q<-Primo::make_qmat(1:d)
   D_mat_func_p <- function(k){
     A_k <- A*Q[k,] + 1*(1-Q[k,])
     df_k <- df_alt*Q[k,] + 2*(1-Q[k,])
@@ -274,13 +274,13 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       ## one iteration of EM
-      curpi <- primo::em_iter(curpi,D_mat)
+      curpi <- Primo::em_iter(curpi,D_mat)
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
       Sys.time() - start_time
     }
 
-    PP<- primo::e_step(curpi, Dmat=D_mat)
+    PP<- Primo::e_step(curpi, Dmat=D_mat)
 
   } else{
 
@@ -296,7 +296,7 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
       for(ch in 1:length(Drow_chunks)){
         D_rows <-  Drow_chunks[[ch]]
         # EM on current chunk
-        curb_colsums_temp<-primo::e_step_withColSums(curpi, Dmat=D_mat[D_rows,])
+        curb_colsums_temp<-Primo::e_step_withColSums(curpi, Dmat=D_mat[D_rows,])
         curb_colsums <- curb_colsums + curb_colsums_temp
       }
       curpi<-curb_colsums/m
@@ -373,7 +373,7 @@ Primo_ModT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
   }
 
   ## parallel computation of D_mat(densities under each pattern)
-  Q<-make_qmat(1:d)
+  Q<-Primo::make_qmat(1:d)
   D_mat_func <- function(k){
     m=nrow(V_mat)
     d=ncol(V_mat)
@@ -413,13 +413,13 @@ Primo_ModT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
       start_time <- Sys.time()
       cat("\nIteration:",numiters)
       numiters<-numiters+1
-      curpi <- primo::em_iter(curpi,D_mat)
+      curpi <- Primo::em_iter(curpi,D_mat)
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
       Sys.time() - start_time
     }
 
-    PP<- primo::e_step(curpi, Dmat=D_mat)
+    PP<- Primo::e_step(curpi, Dmat=D_mat)
 
   } else{
 
@@ -434,7 +434,7 @@ Primo_ModT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
       curb_colsums <- 0
       for(ch in 1:length(Drow_chunks)){
         D_rows <-  Drow_chunks[[ch]]
-        curb_colsums_temp<-primo::e_step_withColSums(curpi, Dmat=D_mat[D_rows,])
+        curb_colsums_temp<-Primo::e_step_withColSums(curpi, Dmat=D_mat[D_rows,])
         curb_colsums <- curb_colsums + curb_colsums_temp
       }
       curpi<-curb_colsums/m
@@ -503,7 +503,7 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
   d <- ncol(pvals)
 
   ## computation of D_mat (densities under each pattern)
-  Q<-make_qmat(1:d)
+  Q<-Primo::make_qmat(1:d)
   D_mat_func_p <- function(k){
     A_k <- A*Q[k,] + 1*(1-Q[k,])
     df_k <- df_alt*Q[k,] + 2*(1-Q[k,])
@@ -546,13 +546,13 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       ## one iteration of EM
-      curpi <- primo::em_iter(curpi,D_mat)
+      curpi <- Primo::em_iter(curpi,D_mat)
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
       Sys.time() - start_time
     }
 
-    PP<- primo::e_step(curpi, Dmat=D_mat)
+    PP<- Primo::e_step(curpi, Dmat=D_mat)
 
   } else{
 
@@ -568,7 +568,7 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
       for(ch in 1:length(Drow_chunks)){
         D_rows <-  Drow_chunks[[ch]]
         # EM on current chunk
-        curb_colsums_temp<-primo::e_step_withColSums(curpi, Dmat=D_mat[D_rows,])
+        curb_colsums_temp<-Primo::e_step_withColSums(curpi, Dmat=D_mat[D_rows,])
         curb_colsums <- curb_colsums + curb_colsums_temp
       }
       curpi<-curb_colsums/m

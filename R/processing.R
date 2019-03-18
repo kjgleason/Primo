@@ -267,7 +267,7 @@ Primo_missData_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,pri
   v0 <- unscaled_var[trait_idx]
   Gamma <- Gamma[trait_idx,trait_idx]
 
-  orig_Q <- primo::make_qmat(1:orig_d)
+  orig_Q <- Primo::make_qmat(1:orig_d)
   if(length(miss_idx) == 1){
     keep_patterns <- which(orig_Q[,miss_idx]==0)
   } else{
@@ -317,7 +317,7 @@ Primo_missData_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,pri
   mdf_sd_mat <- sqrt(mdfs/(mdfs-2))
 
   ## computation of D_mat (densities under each pattern)
-  Q<-make_qmat(1:d)
+  Q<-Primo::make_qmat(1:d)
   D_mat_func <- function(k){
     m=nrow(V)
     d=ncol(V)
@@ -417,7 +417,7 @@ Primo_missData_pval <- function(pvals,trait_idx,pis,Gamma,A,df_alt,par_size=1){
   Gamma <- Gamma[trait_idx,trait_idx]
 
   ## determine which patterns to keep
-  orig_Q <- primo::make_qmat(1:orig_d)
+  orig_Q <- Primo::make_qmat(1:orig_d)
   if(length(miss_idx) == 1){
     keep_patterns <- which(orig_Q[,miss_idx]==0)
   } else{
@@ -427,7 +427,7 @@ Primo_missData_pval <- function(pvals,trait_idx,pis,Gamma,A,df_alt,par_size=1){
   pis <- pis[,keep_patterns]
 
   ## computation of D_mat (densities under each pattern)
-  Q<-make_qmat(1:d)
+  Q<-Primo::make_qmat(1:d)
   D_mat_func_p <- function(k){
     A_k <- A*Q[k,] + 1*(1-Q[k,])
     df_k <- df_alt*Q[k,] + 2*(1-Q[k,])
