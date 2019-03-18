@@ -465,3 +465,106 @@ Primo_missData_pval <- function(pvals,trait_idx,pis,Gamma,A,df_alt,par_size=1){
 
   return(list(post_prob=PP, pis=pis, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
 }
+
+
+#' Collapse posterior probabilities based on number of traits of association.
+#'
+#' Combine the posterior probabilities of each individual association pattern
+#' according to the number of traits in each pattern. Provides the posterior probability of
+#' being associated with "at least x" number of traits under analysis. Can also require
+#' association with one or more traits and combine over other traits.
+#'
+#' @param post_prob matrix of posterior probabilities.
+#' @param req_idx (optional) integer vector of trait(s) whose association is required.
+#' If \code{NULL}, no traits will be required.
+#' @param prefix character string denoting prefix of column names for the results matrix.
+#'
+#' @return A numeric matrix of combined posterior probabilities.
+#'
+#' @export
+#'
+collapse_pp_num <- function(post_prob,req_idx=NULL,prefix="pp_ge_"){
+
+  ## number of traits
+  d <- log(ncol(post_prob),2)
+  ## pattern matrix
+  Q <- Primo::make_qmat(1:d)
+
+  ## columns for "at least X traits"
+  if(is.null(req_idx)){
+    cols_geX <- lapply(1:d, function(x) which(rowSums(Q) >= x))
+    names(cols_geX) <- paste0(prefix,1:d)
+  } else if(length(req_idx)==1){
+    cols_geX <- lapply(0:(d-length(req_idx)), function(x) which(Q[,req_idx]==1 & rowSums(Q[,-req_idx]) >= x))
+    names(cols_geX) <- paste0(prefix,0:(d-length(req_idx)))
+  } else {
+    cols_geX <- lapply(0:(d-length(req_idx)), function(x) which(rowSums(Q[,req_idx])==length(req_idx) & rowSums(Q[,-req_idx]) >= x))
+    names(cols_geX) <- paste0(prefix,0:(d-length(req_idx)))
+  }
+
+  ## sum over columns denoting "at least X traits" to obtain combined posterior probability
+  pp_geX <- lapply(cols_geX, function(idx){
+    if(length(idx)==1){
+      return(post_prob[,idx])
+    } else{
+      return(rowSums(post_prob[,idx]))
+    }
+  })
+
+  pp_geX <- do.call("cbind",pp_geX)
+  colnames(pp_geX) <- names(cols_geX)
+
+  return(pp_geX)
+}
+
+#' Collapse posterior probabilities of association for each individual trait.
+#'
+#' Combine the posterior probabilities for each individual trait according to the
+#' association patterns from which that trait comes from the alternative distribution.
+#' Provides the posterior probability of being associated with "at least trait x".
+#' Can also require association with one or more traits and combine patterns when that/those
+#' trait(s) are from the alternative distribution.
+#'
+#' @param post_prob matrix of posterior probabilities.
+#' @param req_idx (optional) integer vector of trait(s) whose association is required.
+#' If \code{NULL}, no traits will be required.
+#' @param prefix character string denoting prefix of column names for the results matrix.
+#'
+#' @return A numeric matrix of combined posterior probabilities.
+#'
+#' @export
+#'
+collapse_pp_trait <- function(post_prob,req_idx=NULL,prefix="pp_"){
+
+  ## total number of traits
+  d <- log(ncol(post_prob),2)
+  ## pattern matrix
+  Q <- Primo::make_qmat(1:d)
+
+  ## columns for "at least X"
+  if(is.null(req_idx)){
+    cols_X <- lapply(1:d, function(x) which(Q[,x] == 1))
+    names(cols_X) <- paste0(prefix,1:d)
+  } else if(length(req_idx)==1){
+    cols_X <- lapply((1:d)[-req_idx], function(x) which(Q[,req_idx]==1 & Q[,x] == 1))
+    names(cols_X) <- paste0(prefix,(1:d)[-req_idx])
+  } else {
+    cols_X <- lapply((1:d)[-req_idx], function(x) which(rowSums(Q[,req_idx])==length(req_idx) & Q[,x] == 1))
+    names(cols_X) <- paste0(prefix,(1:d)[-req_idx])
+  }
+
+  ## sum over columns denoting "at least X" to obtain combined posterior probability
+  pp_X <- lapply(cols_X, function(idx){
+    if(length(idx)==1){
+      return(post_prob[,idx])
+    } else{
+      return(rowSums(post_prob[,idx]))
+    }
+  })
+
+  pp_X <- do.call("cbind",pp_X)
+  colnames(pp_X) <- names(cols_X)
+
+  return(pp_X)
+}
+
