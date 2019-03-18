@@ -5,7 +5,7 @@
 #'
 "_PACKAGE"
 
-#' @useDynLib primo, .registration=TRUE
+#' @useDynLib Primo, .registration=TRUE
 #' @importFrom Rcpp evalCpp
 #' @exportPattern "^[[:alpha:]]+"
 NULL

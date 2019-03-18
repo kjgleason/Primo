@@ -17,12 +17,12 @@ Please note that this package uses functions from the `limma` package, which is 
 Once you have installed `limma` and `lcmix`, you can install and load functions from `Primo`:
 
   ```R
-  devtools::install_github("kjgleason/primo")
-  library("primo")
+  devtools::install_github("kjgleason/Primo")
+  library("Primo")
   ```
 
 ## Citation
 
 To cite `Primo` in publications, please use:
 
-Kevin J. Gleason, Fan Yang, Brandon L. Pierce, Xin He, and Lin S. Chen. Integrating GWAS and omics QTL summary statistics in mapping multiple complex and omics trait associations. Manuscript in preparation.
+Kevin J. Gleason, Fan Yang, Brandon L. Pierce, Xin He, and Lin S. Chen. Primo: integration of multiple GWAS and omics QTL summary statistics for elucidation of molecular mechanisms of trait-associated SNPs and detection of pleiotropy in complex traits. bioRxiv (2019): 579581.
