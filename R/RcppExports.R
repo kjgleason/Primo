@@ -7,8 +7,8 @@
 #' null and alternative densities, under the assumption of independence.
 #'
 #' @param Q matrix of configurations
-#' @param D0 estimate for the null density function
-#' @param D1 estimate for the alternative density function
+#' @param D0 matrix of density estimates under the null distribution
+#' @param D1 matrix of density estimates under the alternative distributions
 #'
 #' @return Returns a matrix estimating the conditional joint densities
 #' under each configuration

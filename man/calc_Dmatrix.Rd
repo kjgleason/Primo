@@ -9,9 +9,9 @@ calc_Dmatrix(Q, D0, D1)
 \arguments{
 \item{Q}{matrix of configurations}
 
-\item{D0}{estimate for the null density function}
+\item{D0}{matrix of density estimates under the null distribution}
 
-\item{D1}{estimate for the alternative density function}
+\item{D1}{matrix of density estimates under the alternative distributions}
 }
 \value{
 Returns a matrix estimating the conditional joint densities
