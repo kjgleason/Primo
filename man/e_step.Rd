@@ -2,21 +2,20 @@
 % Please edit documentation in R/RcppExports.R
 \name{e_step}
 \alias{e_step}
-\title{E Step}
+\title{E-step}
 \usage{
 e_step(old_pi, Dmat)
 }
 \arguments{
-\item{old_pi}{vector of configuration proportions, fit through maximization
-(usualy 2^J for J data types)}
+\item{old_pi}{vector of association pattern proportions, fit through maximization.}
 
-\item{Dmat}{matrix of conditional joint densities under each configuration}
+\item{Dmat}{matrix of conditional joint densities under each association pattern.}
 }
 \value{
-Returns a matrix estimating the posterior expectations
-(i.e. estimated probability of each configuration for each SNP).
+A matrix estimating the posterior expectations
+(i.e. estimated proportion of observations belonging to each association pattern).
 }
 \description{
-Calculate posterior expectations given maximized estimate for \eqn{\pi} (the
-proportion of SNPs coming from each configuration).
+Calculate posterior expectations given maximized estimate for \eqn{\pi}, the
+proportion of observations (e.g. SNPs) coming from each association pattern.
 }

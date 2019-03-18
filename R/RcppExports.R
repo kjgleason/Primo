@@ -6,13 +6,12 @@
 #' Calculate conditional joint densities for each configuration, given marginal
 #' null and alternative densities, under the assumption of independence.
 #'
-#' @param Q matrix of configurations
-#' @param D0 matrix of density estimates under the null distribution
-#' @param D1 matrix of density estimates under the alternative distributions
+#' @param Q matrix of configurations.
+#' @param D0 matrix of density estimates under the null distribution.
+#' @param D1 matrix of density estimates under the alternative distributions.
 #'
-#' @return Returns a matrix estimating the conditional joint densities
-#' under each configuration
-#' (i.e. estimated probability of each configuration for each SNP).
+#' @return A matrix estimating the conditional joint densities
+#' under each association pattern for each observation (e.g SNP).
 #'
 #' @export
 #'
@@ -20,17 +19,16 @@ calc_Dmatrix <- function(Q, D0, D1) {
     .Call(`_Primo_calc_Dmatrix`, Q, D0, D1)
 }
 
-#' E Step
+#' E-step
 #'
-#' Calculate posterior expectations given maximized estimate for \eqn{\pi} (the
-#' proportion of SNPs coming from each configuration).
+#' Calculate posterior expectations given maximized estimate for \eqn{\pi}, the
+#' proportion of observations (e.g. SNPs) coming from each association pattern.
 #'
-#' @param old_pi vector of configuration proportions, fit through maximization
-#' (usualy 2^J for J data types)
-#' @param Dmat matrix of conditional joint densities under each configuration
+#' @param old_pi vector of association pattern proportions, fit through maximization.
+#' @param Dmat matrix of conditional joint densities under each association pattern.
 #'
-#' @return Returns a matrix estimating the posterior expectations
-#' (i.e. estimated probability of each configuration for each SNP).
+#' @return A matrix estimating the posterior expectations
+#' (i.e. estimated proportion of observations belonging to each association pattern).
 #'
 #' @export
 #'
@@ -38,17 +36,20 @@ e_step <- function(old_pi, Dmat) {
     .Call(`_Primo_e_step`, old_pi, Dmat)
 }
 
-#' E Step, using precalculated joint densities
+#' E-step, with column sums of posterior probabilities
 #'
 #' Calculate posterior expectations given maximized estimate for \eqn{\pi} (the
-#' proportion of SNPs coming from each configuration).
+#' proportion of observations coming from each association pattern). Return column sums of the posterior
+#' expectations. This allows the M-step to be completed in chunks (dividing a running sum
+#' by the total number of rows at the end to obtain the mean), alleviating potential memory issues.
 #'
-#' @param old_pi vector of configuration proportions, fit through maximization
-#' (usualy 2^J for J data types)
-#' @param Dmat matrix of conditional joint densities under each configuration
+#' @param old_pi vector of configuration proportions, fit through maximization.
+#' @param Dmat matrix of conditional joint densities under each association pattern.
 #'
-#' @return Returns a matrix of column sums of posterior expectations
+#' @return A matrix of column sums of posterior expectations
 #' (allows processing to be performed in chunks).
+#'
+#' @details
 #'
 #' @export
 #'
@@ -56,14 +57,13 @@ e_step_withColSums <- function(old_pi, Dmat) {
     .Call(`_Primo_e_step_withColSums`, old_pi, Dmat)
 }
 
-#' M Step
+#' M-step
 #'
 #' Estimates the \eqn{\pi} vector that maximizes the posterior expectation function from the E-step.
 #'
-#' @param old_B matrix of posterior expectations/probabilities ; usually
-#' from an expectation (E-)step
+#' @param old_B matrix of posterior expectations/probabilities (e.g. from an E-step).
 #'
-#' @return Returns a row vector estimating the proportion of SNPs coming from each configuration.
+#' @return A row vector estimating the proportion of observations coming from each association pattern.
 #'
 #' @export
 #'
@@ -74,15 +74,16 @@ m_step <- function(old_B) {
 #' EM Iteration
 #'
 #' Complete one iteration of the EM-algorithm (combines E-step and M-step).
-#' Calculate posterior expectations given current estimate for \eqn{\pi} (the
-#' proportion of SNPs coming from each configuration; E-Step).
-#' Re-estimates the \eqn{\pi} vector that maximizes the posterior expectation function from the E-step (i.e. M-step).
+#' Calculate posterior expectations given current estimate for \eqn{\pi},the
+#' proportion of observations (e.g. SNPs) coming from each association pattern
+#' (i.e. E-Step). Re-estimate the \eqn{\pi} vector that maximizes the posterior
+#' expectations (i.e. M-step).
 #'
-#' @param old_pi vector of configuration proportions, fit through maximization
-#' (usualy 2^J for J data types)
-#' @param Dmat matrix of conditional joint densities under each configuration
+#' @param old_pi vector of configuration proportions, fit through maximization.
+#' @param Dmat matrix of conditional joint densities under each configuration.
 #'
-#' @return Returns a row vector estimating the proportion of SNPs coming from each configuration.
+#' @return A row vector estimating the proportion of observations coming from
+#' each association pattern.
 #'
 #' @export
 #'

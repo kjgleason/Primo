@@ -2,16 +2,15 @@
 % Please edit documentation in R/RcppExports.R
 \name{m_step}
 \alias{m_step}
-\title{M Step}
+\title{M-step}
 \usage{
 m_step(old_B)
 }
 \arguments{
-\item{old_B}{matrix of posterior expectations/probabilities ; usually
-from an expectation (E-)step}
+\item{old_B}{matrix of posterior expectations/probabilities (e.g. from an E-step).}
 }
 \value{
-Returns a row vector estimating the proportion of SNPs coming from each configuration.
+A row vector estimating the proportion of observations coming from each association pattern.
 }
 \description{
 Estimates the \eqn{\pi} vector that maximizes the posterior expectation function from the E-step.

@@ -7,17 +7,18 @@
 em_iter(old_pi, Dmat)
 }
 \arguments{
-\item{old_pi}{vector of configuration proportions, fit through maximization
-(usualy 2^J for J data types)}
+\item{old_pi}{vector of configuration proportions, fit through maximization.}
 
-\item{Dmat}{matrix of conditional joint densities under each configuration}
+\item{Dmat}{matrix of conditional joint densities under each configuration.}
 }
 \value{
-Returns a row vector estimating the proportion of SNPs coming from each configuration.
+A row vector estimating the proportion of observations coming from
+each association pattern.
 }
 \description{
 Complete one iteration of the EM-algorithm (combines E-step and M-step).
-Calculate posterior expectations given current estimate for \eqn{\pi} (the
-proportion of SNPs coming from each configuration; E-Step).
-Re-estimates the \eqn{\pi} vector that maximizes the posterior expectation function from the E-step (i.e. M-step).
+Calculate posterior expectations given current estimate for \eqn{\pi},the
+proportion of observations (e.g. SNPs) coming from each association pattern
+(i.e. E-Step). Re-estimate the \eqn{\pi} vector that maximizes the posterior
+expectations (i.e. M-step).
 }

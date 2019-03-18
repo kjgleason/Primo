@@ -2,21 +2,25 @@
 % Please edit documentation in R/RcppExports.R
 \name{e_step_withColSums}
 \alias{e_step_withColSums}
-\title{E Step, using precalculated joint densities}
+\title{E-step, with column sums of posterior probabilities}
 \usage{
 e_step_withColSums(old_pi, Dmat)
 }
 \arguments{
-\item{old_pi}{vector of configuration proportions, fit through maximization
-(usualy 2^J for J data types)}
+\item{old_pi}{vector of configuration proportions, fit through maximization.}
 
-\item{Dmat}{matrix of conditional joint densities under each configuration}
+\item{Dmat}{matrix of conditional joint densities under each association pattern.}
 }
 \value{
-Returns a matrix of column sums of posterior expectations
+A matrix of column sums of posterior expectations
 (allows processing to be performed in chunks).
 }
 \description{
 Calculate posterior expectations given maximized estimate for \eqn{\pi} (the
-proportion of SNPs coming from each configuration).
+proportion of observations coming from each association pattern). Return column sums of the posterior
+expectations. This allows the M-step to be completed in chunks (dividing a running sum
+by the total number of rows at the end to obtain the mean), alleviating potential memory issues.
+}
+\details{
+
 }
