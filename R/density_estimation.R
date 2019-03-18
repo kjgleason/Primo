@@ -267,6 +267,8 @@ make_qmat <- function(grp, name.cols=F){
   }
   Q <- t(Q)
 
+  dimnames(Q) <- NULL
+
   if(name.cols) colnames(Q) <- grp
 
   return(Q)
