@@ -22,7 +22,7 @@
 #'
 #' @export
 #'
-fine_map<-function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
+Primo_conditional <- function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
   n_leadsnps<-length(idx.leadsnps)
   zi<-Primo_obj$Tstat_mod[c(idx.snp,idx.leadsnps),]
   d<-ncol(zi)
@@ -113,7 +113,7 @@ fine_map<-function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 #'
 #' @export
 #'
-fine_map_once <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",pheno_cols,snp.info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
+run_conditional <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",pheno_cols,snp.info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
 
   curr.IDs <- IDs[idx,]
   curr.SNP <- curr.IDs[,SNP_col]
@@ -155,7 +155,7 @@ fine_map_once <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",phen
     }
 
     ## run fine-mapping
-    sp <- fine_map(idx.snp,idx.leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj)
+    sp <- Primo::Primo_conditional(idx.snp,idx.leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj)
     return(sp)
   }
 }
@@ -213,7 +213,7 @@ fine_map_once <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",phen
 #'
 #' @export
 #'
-fine_map_once_dt <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",pheno_cols,snp.info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
+run_conditional_dt <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",pheno_cols,snp.info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
 
   curr.IDs <- IDs[idx,]
   # curr.SNP <- curr.IDs[,get(SNP_col)]
@@ -260,7 +260,7 @@ fine_map_once_dt <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",p
     }
 
     ## run fine-mapping
-    sp <- fine_map(idx.snp,idx.leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj)
+    sp <- Primo::Primo_conditional(idx.snp,idx.leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj)
     return(sp)
   }
 }
