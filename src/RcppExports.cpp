@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // calc_Dmatrix
 arma::mat calc_Dmatrix(const arma::mat& Q, const arma::mat& D0, const arma::mat& D1);
-RcppExport SEXP _primo_calc_Dmatrix(SEXP QSEXP, SEXP D0SEXP, SEXP D1SEXP) {
+RcppExport SEXP _Primo_calc_Dmatrix(SEXP QSEXP, SEXP D0SEXP, SEXP D1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -19,33 +19,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// e_step_Dmat
-arma::mat e_step_Dmat(const arma::rowvec& old_pi, const arma::mat& Dmat);
-RcppExport SEXP _primo_e_step_Dmat(SEXP old_piSEXP, SEXP DmatSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::rowvec& >::type old_pi(old_piSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type Dmat(DmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(e_step_Dmat(old_pi, Dmat));
-    return rcpp_result_gen;
-END_RCPP
-}
-// e_step_Dmat_withColSums
-arma::mat e_step_Dmat_withColSums(const arma::rowvec& old_pi, const arma::mat& Dmat);
-RcppExport SEXP _primo_e_step_Dmat_withColSums(SEXP old_piSEXP, SEXP DmatSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::rowvec& >::type old_pi(old_piSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type Dmat(DmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(e_step_Dmat_withColSums(old_pi, Dmat));
-    return rcpp_result_gen;
-END_RCPP
-}
 // e_step
 arma::mat e_step(const arma::rowvec& old_pi, const arma::mat& Dmat);
-RcppExport SEXP _primo_e_step(SEXP old_piSEXP, SEXP DmatSEXP) {
+RcppExport SEXP _Primo_e_step(SEXP old_piSEXP, SEXP DmatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -57,7 +33,7 @@ END_RCPP
 }
 // e_step_withColSums
 arma::mat e_step_withColSums(const arma::rowvec& old_pi, const arma::mat& Dmat);
-RcppExport SEXP _primo_e_step_withColSums(SEXP old_piSEXP, SEXP DmatSEXP) {
+RcppExport SEXP _Primo_e_step_withColSums(SEXP old_piSEXP, SEXP DmatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -69,7 +45,7 @@ END_RCPP
 }
 // m_step
 arma::mat m_step(const arma::mat& old_B);
-RcppExport SEXP _primo_m_step(SEXP old_BSEXP) {
+RcppExport SEXP _Primo_m_step(SEXP old_BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -80,7 +56,7 @@ END_RCPP
 }
 // em_iter
 arma::mat em_iter(const arma::rowvec& old_pi, const arma::mat& Dmat);
-RcppExport SEXP _primo_em_iter(SEXP old_piSEXP, SEXP DmatSEXP) {
+RcppExport SEXP _Primo_em_iter(SEXP old_piSEXP, SEXP DmatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -90,32 +66,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// em_iter_Dmat
-arma::mat em_iter_Dmat(const arma::rowvec& old_pi, const arma::mat& Dmat);
-RcppExport SEXP _primo_em_iter_Dmat(SEXP old_piSEXP, SEXP DmatSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::rowvec& >::type old_pi(old_piSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type Dmat(DmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(em_iter_Dmat(old_pi, Dmat));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_primo_calc_Dmatrix", (DL_FUNC) &_primo_calc_Dmatrix, 3},
-    {"_primo_e_step_Dmat", (DL_FUNC) &_primo_e_step_Dmat, 2},
-    {"_primo_e_step_Dmat_withColSums", (DL_FUNC) &_primo_e_step_Dmat_withColSums, 2},
-    {"_primo_e_step", (DL_FUNC) &_primo_e_step, 2},
-    {"_primo_e_step_withColSums", (DL_FUNC) &_primo_e_step_withColSums, 2},
-    {"_primo_m_step", (DL_FUNC) &_primo_m_step, 1},
-    {"_primo_em_iter", (DL_FUNC) &_primo_em_iter, 2},
-    {"_primo_em_iter_Dmat", (DL_FUNC) &_primo_em_iter_Dmat, 2},
+    {"_Primo_calc_Dmatrix", (DL_FUNC) &_Primo_calc_Dmatrix, 3},
+    {"_Primo_e_step", (DL_FUNC) &_Primo_e_step, 2},
+    {"_Primo_e_step_withColSums", (DL_FUNC) &_Primo_e_step_withColSums, 2},
+    {"_Primo_m_step", (DL_FUNC) &_Primo_m_step, 1},
+    {"_Primo_em_iter", (DL_FUNC) &_Primo_em_iter, 2},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_primo(DllInfo *dll) {
+RcppExport void R_init_Primo(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
