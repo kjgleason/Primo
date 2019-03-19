@@ -207,7 +207,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
 #' Estimate posterior probabilities for observations missing from original Primo analysis.
 #'
 #' For each SNP, estimates the posterior probability for each configuration.
-#' Uses parameters estimated by previous runs of Primoto estimate probabilities
+#' Uses parameters estimated by previous runs of Primo to estimate probabilities
 #' for SNPs missing in one or more studies.
 #' Utilizes parallel computing, when available.
 #'

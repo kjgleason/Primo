@@ -61,7 +61,7 @@ such as those conducting conditional association analysis.
 }
 \description{
 For each SNP, estimates the posterior probability for each configuration.
-Uses parameters estimated by previous runs of Primoto estimate probabilities
+Uses parameters estimated by previous runs of Primo to estimate probabilities
 for SNPs missing in one or more studies.
 Utilizes parallel computing, when available.
 }
