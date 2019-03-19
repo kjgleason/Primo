@@ -8,9 +8,10 @@ subset_Primo_obj(Primo_obj, idx)
 }
 \arguments{
 \item{Primo_obj}{list of results returned by Primo (from the function
-\code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_modT}}).}
+\code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, \code{\link{Primo_modT}}
+or \code{\link{Primo_chiMix}}).}
 
-\item{idx}{integer vector of the indices to which to subset Primo results.}
+\item{idx}{integer vector of the indices to subset Primo results.}
 }
 \value{
 A list of Primo results with the following elements:
@@ -40,7 +41,7 @@ for each marginal distribution.
 \item If the results were originally from the \eqn{p}-value version,
 the list will additionally contain:
 \tabular{ll}{
-\code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
+\code{chi_mix} \tab matrix of \eqn{-2\log(P)}{-2*log(P)}-values.\cr
 \code{A} \tab vector of scaling factors under the alternative distributions.\cr
 \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
  }

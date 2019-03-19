@@ -3,8 +3,9 @@
 #' Subset results from Primo output based on a vector of indices.
 #'
 #' @param Primo_obj list of results returned by Primo (from the function
-#' \code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_modT}}).
-#' @param idx integer vector of the indices to which to subset Primo results.
+#' \code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, \code{\link{Primo_modT}}
+#' or \code{\link{Primo_chiMix}}).
+#' @param idx integer vector of the indices to subset Primo results.
 #'
 #' @return A list of Primo results with the following elements:
 #' \tabular{ll}{
@@ -33,7 +34,7 @@
 #' \item If the results were originally from the \eqn{p}-value version,
 #' the list will additionally contain:
 #' \tabular{ll}{
-#' \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
+#' \code{chi_mix} \tab matrix of \eqn{-2\log(P)}{-2*log(P)}-values.\cr
 #' \code{A} \tab vector of scaling factors under the alternative distributions.\cr
 #' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
 #'  }
@@ -143,7 +144,7 @@ append_Primo_obj <- function(Primo_obj1,Primo_obj2){
 #'
 #' @export
 #'
-find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
+find_leadsnps <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
 
   require(data.table)
   require(magrittr)
