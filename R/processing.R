@@ -154,7 +154,7 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
 
   if(data_type=="pvalue"){
 
-    leadSNPs_byRegion <- NULL
+    leadsnps_region <- NULL
 
     for(i in 1:length(stat_cols)){
 
@@ -165,17 +165,17 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
       colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
 
       ## merge results
-      if(is.null(leadSNPs_byRegion)){
-        leadSNPs_byRegion <- topSNP_currPheno
+      if(is.null(leadsnps_region)){
+        leadsnps_region <- topSNP_currPheno
       } else{
-        leadSNPs_byRegion <- merge(leadSNPs_byRegion,topSNP_currPheno)
+        leadsnps_region <- merge(leadsnps_region,topSNP_currPheno)
       }
 
     }
 
   } else if(data_type=="tstat"){
 
-    leadSNPs_byRegion <- NULL
+    leadsnps_region <- NULL
 
     for(i in 1:length(stat_cols)){
 
@@ -186,10 +186,10 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
       colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
 
       ## merge results
-      if(is.null(leadSNPs_byRegion)){
-        leadSNPs_byRegion <- topSNP_currPheno
+      if(is.null(leadsnps_region)){
+        leadsnps_region <- topSNP_currPheno
       } else{
-        leadSNPs_byRegion <- merge(leadSNPs_byRegion,topSNP_currPheno)
+        leadsnps_region <- merge(leadsnps_region,topSNP_currPheno)
       }
 
     }
@@ -200,7 +200,7 @@ find_leadSNPs <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
 
   }
 
-  return(leadSNPs_byRegion)
+  return(leadsnps_region)
 }
 
 #' Estimate posterior probabilities for observations missing from original Primo analysis.
