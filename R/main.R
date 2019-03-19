@@ -1,7 +1,7 @@
 #' Estimate posterior probabilities of association patterns, using t-statistics.
 #'
-#' For each SNP, estimates the posterior probability for each configuration.
-#' Utilizes parallel computing, when available.
+#' For each observation (e.g. SNP), estimates the posterior probability of
+#' each association pattern. Utilizes parallel computing, when available.
 #'
 #' @param betas matrix of coefficient estimates.
 #' @param sds matrix of standard errors (for coefficient estimates).
@@ -10,8 +10,8 @@
 #' alternative densities.
 #' @param mafs vector or matrix of minor allele frequencies (MAFs).
 #' @param Gamma correlation matrix.
-#' @param tol numeric value; specifies tolerance threshold for convergence.
-#' @param par_size numeric value; specifies the number of CPUs/cores/processors for
+#' @param tol numeric value specifying tolerance threshold for convergence.
+#' @param par_size numeric value specifying the number of workers for
 #' parallel computing (1 for sequential processing).
 #'
 #' @return A list with the following elements:
@@ -27,15 +27,14 @@
 #' \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
 #'  moderated degrees of freedom: df/(df-2).\cr
 #' \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
-#' \code{prior_var} \tab vector of the prior variance estimators for each marginaldistribution.\cr
+#' \code{prior_var} \tab vector of the prior variance estimators for each marginal distribution.\cr
 #' \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
 #' for each marginal distribution.
 #' }
 #'
 #' The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
 #' The estimated proportion of observations belonging to each association pattern, \code{pis}, may
-#' also be of interest. The remaining elements are returned primarily for use by other functions --
-#' such as those conducting conditional association analysis.
+#' also be of interest. The remaining elements are returned primarily for use by other functions.
 #'
 #' @details The following are additional details describing the input arguments
 #'  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
@@ -174,15 +173,14 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 
 #' Estimate posterior probabilities of association patterns, using P-values.
 #'
-#' For each SNP, estimates the posterior probability for each configuration.
-#' Utilizes parallel computing, when available.
+#' @inherit Primo_tstat description
 #'
 #' @param pvals matrix of \eqn{P}-values from test statistics.
 #' @param alt_props vector of the proportions of test-statistics used in estimating
 #' alternative densities.
 #' @param Gamma correlation matrix.
-#' @param tol numeric value; specifies tolerance threshold for convergence.
-#' @param par_size numeric value; specifies the number of CPUs/cores/processors for
+#' @param tol numeric value specifying the tolerance threshold for convergence.
+#' @param par_size numeric value specifying the number of workers for
 #' parallel computing (1 for sequential processing).
 #'
 #' @return A list with the following elements:
@@ -198,13 +196,17 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 #' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
 #' }
 #'
+#' The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
+#' The estimated proportion of observations belonging to each association pattern, \code{pis}, may
+#' also be of interest. The remaining elements are returned primarily for use by other functions.
+#'
 #' @details The following are additional details describing the input arguments
 #'  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
 #' \tabular{ll}{
 #' \code{pvals} \tab  \eqn{m} x \eqn{d} matrix.\cr
 #' \code{alt_props} \tab vector of length \eqn{d}.\cr
-#' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.
-#'  If \code{NULL}, will be estimated using observations where all \eqn{p < 5.7e-7}.\cr
+#' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
+#'  \tab If \code{NULL}, will be estimated using observations where all \eqn{p < 5.7e-7}.\cr
 #' }
 #'
 #' @export
@@ -321,19 +323,21 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
 
 #' Estimate posterior probabilities of association patterns, using moderated t-statistics.
 #'
-#' This version of the function uses moderated \eqn{t}-statistics and parameters
-#' previously calculated under the limma framework. It is useful for cases where
-#' the same statistic from one study (e.g. gene-SNP pair) may be mapped to
-#' multiple statistics from another study (e.g. multiple gene-CpG pairs).
-#' For each SNP, estimates the posterior probability for each configuration.
+#' This version of the main \code{Primo} function uses moderated \eqn{t}-statistics
+#' and parameters previously calculated under the limma framework
+#' (i.e. using \code{\link{estimate_densities_modT}}).
+#' It is useful for cases where the same statistic from one study
+#' (e.g. gene-SNP pair) may be mapped to multiple statistics from
+#' another study (e.g. multiple gene-CpG pairings). For each observation
+#' (e.g. SNP), it estimates the posterior probability for each association pattern.
 #' Utilizes parallel computing, when available.
 #'
 #' @param Tstat_mod matrix of moderated t-statistics.
 #' @param mdfs matrix of moderated degrees of freedom.
-#' @param V matrix of scaling factors.
+#' @param V_mat matrix of scaling factors.
 #' @param Gamma correlation matrix.
-#' @param tol numerical value; specifies tolerance threshold for convergence.
-#' @param par_size numerical value; specifies the number of CPUs/cores/processors for
+#' @param tol numeric value specifying the tolerance threshold for convergence.
+#' @param par_size numeric value specifying the number of workers for
 #' parallel computing (1 for sequential processing).
 #'
 #' @return A list with the following elements:
@@ -350,18 +354,22 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
 #'  moderated degrees of freedom: df/(df-2).\cr
 #' }
 #'
+#' The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
+#' The estimated proportion of observations belonging to each association pattern, \code{pis}, may
+#' also be of interest. The remaining elements are returned primarily for use by other functions.
+#'
 #' @details The following are additional details describing the input arguments
 #'  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
 #' \tabular{ll}{
 #' \code{Tstat_mod} \tab  \eqn{m} x \eqn{d} matrix.\cr
 #' \code{mdfs} \tab \eqn{m} x \eqn{d} matrix.\cr
-#' \code{V} \tab \eqn{m} x \eqn{d} matrix.\cr
+#' \code{V_mat} \tab \eqn{m} x \eqn{d} matrix.\cr
 #' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
 #' }
 #'
 #' @export
 #'
-Primo_ModT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
+Primo_modT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
   m <- nrow(Tstat_mod)
   d <- ncol(Tstat_mod)
 
@@ -460,9 +468,9 @@ Primo_ModT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
 #'
 #' This version of the function uses a mixture of chi-squared statistics,
 #' and the parameters of the alternative distributions which were previously calculated
-#' (i.e. using \code{estimate_densities_pval}). It is useful for cases where
+#' (i.e. using \code{\link{estimate_densities_pval}}). It is useful for cases where
 #' the same statistic from one study (e.g. gene-SNP pair) may be mapped to
-#' multiple statistics from another study (e.g. multiple gene-CpG pairs).
+#' multiple statistics from another study (e.g. multiple gene-CpG pairings).
 #' For each SNP, estimates the posterior probability for each configuration.
 #' Utilizes parallel computing, when available.
 #'
@@ -470,22 +478,11 @@ Primo_ModT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
 #' @param A vector of scaling factors under the alternative distributions.\cr
 #' @param df_alt vector of degrees of freedom approximated for the alternative distributions.\cr
 #' @param Gamma correlation matrix.
-#' @param tol numeric value; specifies tolerance threshold for convergence.
-#' @param par_size numeric value; specifies the number of CPUs/cores/processors for
+#' @param tol numeric value specifying tolerance threshold for convergence.
+#' @param par_size numeric value specifying the number of workers for
 #' parallel computing (1 for sequential processing).
 #'
-#' @return A list with the following elements:
-#' \tabular{ll}{
-#' \code{post_prob} \tab matrix of posterior probabilities
-#' (rows are SNPs; columns are association patterns).\cr
-#' \code{pis} \tab vector of estimated proportion of SNPs
-#' belonging to each association pattern.\cr
-#' \code{D_mat} \tab matrix of densities under each association pattern.\cr
-#' \code{Gamma} \tab correlation matrix.\cr
-#' \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
-#' \code{A} \tab vector of scaling factors under the alternative distributions.\cr
-#' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
-#' }
+#' @inherit Primo_pval return
 #'
 #' @details The following are additional details describing the input arguments
 #'  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
@@ -604,8 +601,8 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
 #' alternative densities.
 #' @param mafs vector or matrix of minor allele frequencies (MAFs).
 #' @param Gamma correlation matrix.
-#' @param tol numeric value; specifies tolerance threshold for convergence.
-#' @param par_size numeric value; specifies the number of CPUs/cores/processors for
+#' @param tol numeric value specifying the tolerance threshold for convergence.
+#' @param par_size numeric value specifying the number of workers for
 #' parallel computing (1 for sequential processing).
 #' @param use_method character string denoting which method to use.
 #' Must be one of "tstat" or "pval".
@@ -644,8 +641,7 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
 #' The primary element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
 #' The estimated proportion of observations belonging to each association pattern, \code{pis}, may
 #' also be of interest.
-#' The remaining elements are returned primarily for use by other functions --
-#' such as those conducting conditional association analysis.
+#' The remaining elements are returned primarily for use by other functions.
 #'
 #' @details The following are additional details describing the input arguments
 #'  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):

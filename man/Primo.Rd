@@ -24,9 +24,9 @@ alternative densities.}
 
 \item{Gamma}{correlation matrix.}
 
-\item{tol}{numeric value; specifies tolerance threshold for convergence.}
+\item{tol}{numeric value specifying the tolerance threshold for convergence.}
 
-\item{par_size}{numeric value; specifies the number of CPUs/cores/processors for
+\item{par_size}{numeric value specifying the number of workers for
 parallel computing (1 for sequential processing).}
 
 \item{use_method}{character string denoting which method to use.
@@ -67,8 +67,7 @@ for each marginal distribution.
 The primary element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
 The estimated proportion of observations belonging to each association pattern, \code{pis}, may
 also be of interest.
-The remaining elements are returned primarily for use by other functions --
-such as those conducting conditional association analysis.
+The remaining elements are returned primarily for use by other functions.
 }
 \description{
 For each observation (e.g. SNP), estimate the posterior probability for each association pattern.

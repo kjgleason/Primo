@@ -21,9 +21,9 @@ alternative densities.}
 
 \item{Gamma}{correlation matrix.}
 
-\item{tol}{numeric value; specifies tolerance threshold for convergence.}
+\item{tol}{numeric value specifying tolerance threshold for convergence.}
 
-\item{par_size}{numeric value; specifies the number of CPUs/cores/processors for
+\item{par_size}{numeric value specifying the number of workers for
 parallel computing (1 for sequential processing).}
 }
 \value{
@@ -40,19 +40,18 @@ belonging to each association pattern.\cr
 \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
  moderated degrees of freedom: df/(df-2).\cr
 \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
-\code{prior_var} \tab vector of the prior variance estimators for each marginaldistribution.\cr
+\code{prior_var} \tab vector of the prior variance estimators for each marginal distribution.\cr
 \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
 for each marginal distribution.
 }
 
 The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
 The estimated proportion of observations belonging to each association pattern, \code{pis}, may
-also be of interest. The remaining elements are returned primarily for use by other functions --
-such as those conducting conditional association analysis.
+also be of interest. The remaining elements are returned primarily for use by other functions.
 }
 \description{
-For each SNP, estimates the posterior probability for each configuration.
-Utilizes parallel computing, when available.
+For each observation (e.g. SNP), estimates the posterior probability of
+each association pattern. Utilizes parallel computing, when available.
 }
 \details{
 The following are additional details describing the input arguments

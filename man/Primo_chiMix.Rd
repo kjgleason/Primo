@@ -15,9 +15,9 @@ Primo_chiMix(chi_mix, A, df_alt, Gamma, tol = 0.001, par_size = 1)
 
 \item{Gamma}{correlation matrix.}
 
-\item{tol}{numeric value; specifies tolerance threshold for convergence.}
+\item{tol}{numeric value specifying tolerance threshold for convergence.}
 
-\item{par_size}{numeric value; specifies the number of CPUs/cores/processors for
+\item{par_size}{numeric value specifying the number of workers for
 parallel computing (1 for sequential processing).}
 }
 \value{
@@ -33,13 +33,17 @@ belonging to each association pattern.\cr
 \code{A} \tab vector of scaling factors under the alternative distributions.\cr
 \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
 }
+
+The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
+The estimated proportion of observations belonging to each association pattern, \code{pis}, may
+also be of interest. The remaining elements are returned primarily for use by other functions.
 }
 \description{
 This version of the function uses a mixture of chi-squared statistics,
 and the parameters of the alternative distributions which were previously calculated
-(i.e. using \code{estimate_densities_pval}). It is useful for cases where
+(i.e. using \code{\link{estimate_densities_pval}}). It is useful for cases where
 the same statistic from one study (e.g. gene-SNP pair) may be mapped to
-multiple statistics from another study (e.g. multiple gene-CpG pairs).
+multiple statistics from another study (e.g. multiple gene-CpG pairings).
 For each SNP, estimates the posterior probability for each configuration.
 Utilizes parallel computing, when available.
 }
