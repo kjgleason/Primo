@@ -254,7 +254,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
 #'
 #' @export
 #'
-Primo_missData_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,prior_df,prior_var,unscaled_var,par_size=1){
+Primo_missdata_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,prior_df,prior_var,unscaled_var,par_size=1){
   m <- nrow(betas)
   d <- ncol(betas)
   # orig_d <- log(length(pis),2)
@@ -401,7 +401,7 @@ Primo_missData_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,pri
 #'
 #' @export
 #'
-Primo_missData_pval <- function(pvals,trait_idx,pis,Gamma,A,df_alt,par_size=1){
+Primo_missdata_pval <- function(pvals,trait_idx,pis,Gamma,A,df_alt,par_size=1){
   m <- nrow(pvals)
   d <- ncol(pvals)
   # orig_d <- log(length(pis),2)
