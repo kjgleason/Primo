@@ -17,7 +17,7 @@ parameters using Method of Moments (\code{TRUE}) or optimization (\code{FALSE}).
 \value{
 A list with the following elements:
 \tabular{ll}{
-\code{chi_mix} \tab vector of \eqn{-2*log(P)}-values.\cr
+\code{chi_mix} \tab vector of \eqn{-2\log(P)}{-2*log(P)}-values.\cr
 \code{scaler} \tab estimated scaling factor for the alternative distribution.\cr
 \code{df_alt} \tab estimated degrees of freedom for the alternative distribution.\cr
 }
@@ -25,7 +25,7 @@ A list with the following elements:
 \description{
 Estimate the parameters of the alternative
 density function using a mixture of chi-squared distributions of
-\eqn{-2*\log(P)}{-2*log(P)}-values.
+\eqn{-2\log(P)}{-2*log(P)}-values.
 }
 \details{
 The function estimates densities under the null and under the alternative

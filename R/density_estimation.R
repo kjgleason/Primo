@@ -65,7 +65,7 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
 #'
 #' Estimate the parameters of the alternative
 #' density function using a mixture of chi-squared distributions of
-#' \eqn{-2*\log(P)}{-2*log(P)}-values.
+#' \eqn{-2\log(P)}{-2*log(P)}-values.
 #'
 #' @param pvals vector of \eqn{P}-values.
 #' @param alt_prop proportion of \eqn{P}-values used in estimating alternative densities.
@@ -74,7 +74,7 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
-#' \code{chi_mix} \tab vector of \eqn{-2*log(P)}-values.\cr
+#' \code{chi_mix} \tab vector of \eqn{-2\log(P)}{-2*log(P)}-values.\cr
 #' \code{scaler} \tab estimated scaling factor for the alternative distribution.\cr
 #' \code{df_alt} \tab estimated degrees of freedom for the alternative distribution.\cr
 #' }
