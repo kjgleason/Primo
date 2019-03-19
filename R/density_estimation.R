@@ -1,14 +1,15 @@
-#' Estimate Densities Under the Null and Alternative Densities
+#' Estimate parameters under the null and alternative densities
 #'
-#' For each observation, estimate the density under the null and under the alternative
-#' hypotheses using moderated t-statistics.
+#' Estimate the parameters of the null and alternative
+#' density functions using moderated \eqn{t}-statistics.
 #'
 #' @param betas vector of coefficient estimates.
 #' @param sds vector of standard errors (for coefficient estimates).
 #' @param mafs vector of minor allele frequencies (MAFs) (optional).
 #' If \code{NULL}, no adjustment will be made for MAF in variance calculations.
-#' @param df first degrees of freedom of the F-distribution (usually, the number of subjects/observations).
-#' @param alt_prop proportion of test-statistics used in estimating alternative densities.
+#' @param df scalar or vector of first degrees of freedom of the F-distribution
+#' (usually, \eqn{n-p-1}).
+#' @param alt_prop proportion of test-statistics used in estimating the alternative density.
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
@@ -17,10 +18,10 @@
 #' \code{scaler} \tab vector of the scaling factors for the moderated t-statistics under the alternative\cr
 #' }
 #'
-#' @details Following Smyth (2004), the function calculates moderated t-statistics using
-#' conditional posterior means of the variance. The moderated t-statistics are used to estimate
-#' the null density under a t-distribution with estimated degrees of freedom and
-#' the alternative density under a scaled t-distribution.
+#' @details Following Smyth (2004), the function calculates moderated \eqn{t}-statistics using
+#' conditional posterior means of the variance. The moderated \eqn{t}-statistics are used to estimate
+#' the null density under a \eqn{t}-distribution and
+#' the alternative density under a scaled \eqn{t}-distribution, each with moderated degrees of freedom.
 #'
 #' @export
 #'
@@ -60,45 +61,46 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
   return(list(Tstat_mod = moderate.t, df_mod=df_mod, scaler=scaler, prior_df=d0, prior_var=s02, unscaled_var=v0))
 }
 
-#' Estimate Densities Under the Null and Alternative Densities
+#' Estimate parameters under the alternative density
 #'
-#' For each observation, estimate the density under the null and under the alternative
-#' hypotheses using p-values.
+#' Estimate the parameters of the alternative
+#' density function using a mixture of chi-squared distributions of
+#' \eqn{-2*\log(P)}{-2*log(P)}-values.
 #'
-#' @param pvals vector of p-values.
-#' @param alt_prop proportion of p-values used in estimating alternative densities.
+#' @param pvals vector of \eqn{P}-values.
+#' @param alt_prop proportion of \eqn{P}-values used in estimating alternative densities.
 #' @param method_moments logical, denoting whether to estimate scale and degree of freedom
 #' parameters using Method of Moments (\code{TRUE}) or optimization (\code{FALSE}).
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
-#' \code{chi_mix} \tab vector of \code{-2*log(p)} values.\cr
+#' \code{chi_mix} \tab vector of \eqn{-2*log(P)}-values.\cr
 #' \code{scaler} \tab estimated scaling factor for the alternative distribution.\cr
 #' \code{df_alt} \tab estimated degrees of freedom for the alternative distribution.\cr
 #' }
 #'
 #' @details The function estimates densities under the null and under the alternative
-#' given a vector of p-values from test statistics and the marginal probability of
+#' given a vector of \eqn{P}-values from test statistics and the marginal probability of
 #' coming from the alternative distribution. Under the null hypothesis,
-#' \code{-2*log()} transformed p-values follow a chi-squared distribution with 2 degrees of freedom.
-#' Under the alternative, the function assumes that the \code{-2*log()} transformed p-values
+#' \code{-2*log()} transformed \eqn{P}-values follow a chi-squared distribution with 2 degrees of freedom.
+#' Under the alternative, the function assumes that the \code{-2*log()} transformed \eqn{P}-values
 #' follow a scaled chi-squared distribution with unknown scale parameter and
 #' unknown degrees of freedom.
 #'
 #' When \code{method_moments=TRUE}, the two unknown parameters are estimated by using the first and
-#' second moments of the transformed p-values given the known proportion of alternatives
+#' second moments of the transformed \eqn{P}-values given the known proportion of alternatives
 #' (specified in \code{alt_prop}). The function solves a theoretical formula of the first and
 #' second moments as functions of the scale parameter and degrees of freedom. Note that
 #' the alternative density estimation may fail if \code{alt_prop} is small and
 #' \code{method_moments=TRUE}.
 #'
 #' When \code{method_moments=FALSE}, the two unknown parameters are estimated by minimizing the differences
-#' between the p-values given the parameters and the nominal p-values based on each statistic's rank,
+#' between the \eqn{P}-values given the parameters and the nominal \eqn{P}-values based on each statistic's rank,
 #' using optimization algorithms.
 #'
 #' @export
 #'
-estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
+estimate_densities_pval <- function(pvals, alt_prop, method_moments=FALSE){
 
   ## transform to chi-squared mixture (df=2 under null; scaled with unknown df under alternative)
   chi_mix<-(-2)*log(pvals)
@@ -144,9 +146,9 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
   return(list(chi_mix=chi_mix, scaler=a_alt, df_alt=df_alt))
 }
 
-#' Difference from nominal p-values, chi-squared mixture.
+#' Difference from nominal \eqn{P}-values of a chi-squared mixture.
 #'
-#' Match observed p-values to nominal p-values by rank and calculate total difference. Objective
+#' Match observed \eqn{P}-values to nominal \eqn{P}-values by rank and calculate total difference. Objective
 #' function of a chi-squared mixture is used. This function is optimized to estimate the unknown
 #' scale and degree of freedom parameters for the scaled chi-squared distribution under the
 #' alternative hypothesis.
@@ -156,7 +158,7 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=F){
 #' @param data list with two elements: \code{chi_mix} (vector) and \code{alt_prop} (scalar).
 #' @param sorted logical, denoting whether \code{data$chi_mix} is sorted in decreasing order.
 #'
-#' @return Returns a scalar value of the total (absolute) difference between observed p-values
+#' @return A numeric value of the total (absolute) difference between observed p-values
 #' (given the parameters) and nominal p-values.
 #'
 #' @details The argument \code{data} should be a two-element list. The first element, named \code{chi_mix}, is
@@ -199,27 +201,29 @@ chiMix_pDiff <- function(par, data, sorted=F){
   return(obj_sum)
 }
 
-#' Estimate Densities Under the Null and Alternative Densities
+#' Estimate parameters under the null and alternative densities
 #'
-#' For each observation, estimate the density under the null and under the alternative hypotheses.
-#' This function is a wrapper to call either \code{estimate_densities_modT()}or
-#' \code{estimate_densities_pval()} for density estimation using moderated t-statistics or p-values, respectively.
+#' Estimate the parameters of the null and alternative
+#' density functions.
+#' This function calls either \code{\link{estimate_densities_modT}} or
+#' \code{\link{estimate_densities_pval}} for density estimation using
+#' moderated \eqn{t}-statistics or \eqn{P}-values, respectively.
 #'
-#' @param pvals vector of p-values.
 #' @param betas vector of coefficient estimates.
 #' @param sds vector of standard errors (for coefficient estimates).
-#' @param mafs vector of minor allele frequencies (MAFs).
-#' @param df first degrees of freedom of the F-distribution.
+#' @param df scalar or vector of first degrees of freedom of the F-distribution.
+#' @param pvals vector of \eqn{P}-values.
 #' @param alt_prop proportion of test-statistics used in estimating alternative densities.
-#' @param use_tstats logical; when true densities are calculated using moderated t-statistics
-#' (use p-values when false)
+#' @param mafs vector of minor allele frequencies (MAFs).
+#' @param use_tstats logical indicating whether to use moderated \eqn{t}-statistics (\code{TRUE})
+#' or \eqn{P}-values (\code{FALSE}).
 #'
 #' @return See \code{\link{estimate_densities_modT}} or \code{\link{estimate_densities_pval}}.
 #'
 #' @export
 #'
 #'
-estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=NULL, alt_prop, use_tstats=TRUE){
+estimate_densities <- function(betas=NULL, sds=NULL, df=NULL, pvals=NULL, alt_prop, mafs=NULL, use_tstats=TRUE){
 
   if(use_tstats){
     if(is.null(betas) | is.null(sds) | is.null(mafs) | is.null(df)){
@@ -236,20 +240,23 @@ estimate_densities <- function(pvals=NULL, betas=NULL, sds=NULL, mafs=NULL, df=N
 
 #' Make Configuration Matrix
 #'
-#' Make configuration matrix (Q) that indicates null/alternative density patterns.
+#' Make configuration matrix (\eqn{Q}) that indicates null/alternative densities
+#' in the association patterns.
 #'
-#' @param grp vector of group identifiers (common to use seq(1,N), for N groups)
-#' @param name.cols logical; whether or not to name columns using group identifiers
+#' @param grp vector of group identifiers (common to use \code{seq(1,d)}, for \eqn{d} groups).
+#' @param name_cols logical indicating whether to name columns using group identifiers
 #'
-#' @return \code{make_qmat} returns a matrix with all binary combinations of the groups
+#' @return A matrix with all binary combinations of the groups. \eqn{Q_{kj}==0}{Q_{kj}==0}
+#' or \eqn{Q_{kj}==1}{Q_{kj}==1} denote that statistics from the \eqn{j}-th study come from the null
+#' or alternative distribution, respectively, under the \eqn{k}-th association pattern.
 #'
 #' @export
 #'
-make_qmat <- function(grp, name.cols=F){
+make_qmat <- function(grp, name_cols=FALSE){
   ## expand.grid simpler, but order of groups not as logical
   # ng <- length(grp)
   # Q <- as.matrix(expand.grid(replicate(ng,0:1,simplify=F)))
-  # if(name.cols) colnames(Q) <- grp
+  # if(name_cols) colnames(Q) <- grp
   # else colnames(Q) <- NULL
 
   ng <- length(grp)
@@ -269,7 +276,7 @@ make_qmat <- function(grp, name.cols=F){
 
   dimnames(Q) <- NULL
 
-  if(name.cols) colnames(Q) <- grp
+  if(name_cols) colnames(Q) <- grp
 
   return(Q)
 }

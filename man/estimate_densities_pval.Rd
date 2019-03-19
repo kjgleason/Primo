@@ -2,14 +2,14 @@
 % Please edit documentation in R/density_estimation.R
 \name{estimate_densities_pval}
 \alias{estimate_densities_pval}
-\title{Estimate Densities Under the Null and Alternative Densities}
+\title{Estimate parameters under the alternative density}
 \usage{
-estimate_densities_pval(pvals, alt_prop, method_moments = F)
+estimate_densities_pval(pvals, alt_prop, method_moments = FALSE)
 }
 \arguments{
-\item{pvals}{vector of p-values.}
+\item{pvals}{vector of \eqn{P}-values.}
 
-\item{alt_prop}{proportion of p-values used in estimating alternative densities.}
+\item{alt_prop}{proportion of \eqn{P}-values used in estimating alternative densities.}
 
 \item{method_moments}{logical, denoting whether to estimate scale and degree of freedom
 parameters using Method of Moments (\code{TRUE}) or optimization (\code{FALSE}).}
@@ -17,32 +17,33 @@ parameters using Method of Moments (\code{TRUE}) or optimization (\code{FALSE}).
 \value{
 A list with the following elements:
 \tabular{ll}{
-\code{chi_mix} \tab vector of \code{-2*log(p)} values.\cr
+\code{chi_mix} \tab vector of \eqn{-2*log(P)}-values.\cr
 \code{scaler} \tab estimated scaling factor for the alternative distribution.\cr
 \code{df_alt} \tab estimated degrees of freedom for the alternative distribution.\cr
 }
 }
 \description{
-For each observation, estimate the density under the null and under the alternative
-hypotheses using p-values.
+Estimate the parameters of the alternative
+density function using a mixture of chi-squared distributions of
+\eqn{-2*\log(P)}{-2*log(P)}-values.
 }
 \details{
 The function estimates densities under the null and under the alternative
-given a vector of p-values from test statistics and the marginal probability of
+given a vector of \eqn{P}-values from test statistics and the marginal probability of
 coming from the alternative distribution. Under the null hypothesis,
-\code{-2*log()} transformed p-values follow a chi-squared distribution with 2 degrees of freedom.
-Under the alternative, the function assumes that the \code{-2*log()} transformed p-values
+\code{-2*log()} transformed \eqn{P}-values follow a chi-squared distribution with 2 degrees of freedom.
+Under the alternative, the function assumes that the \code{-2*log()} transformed \eqn{P}-values
 follow a scaled chi-squared distribution with unknown scale parameter and
 unknown degrees of freedom.
 
 When \code{method_moments=TRUE}, the two unknown parameters are estimated by using the first and
-second moments of the transformed p-values given the known proportion of alternatives
+second moments of the transformed \eqn{P}-values given the known proportion of alternatives
 (specified in \code{alt_prop}). The function solves a theoretical formula of the first and
 second moments as functions of the scale parameter and degrees of freedom. Note that
 the alternative density estimation may fail if \code{alt_prop} is small and
 \code{method_moments=TRUE}.
 
 When \code{method_moments=FALSE}, the two unknown parameters are estimated by minimizing the differences
-between the p-values given the parameters and the nominal p-values based on each statistic's rank,
+between the \eqn{P}-values given the parameters and the nominal \eqn{P}-values based on each statistic's rank,
 using optimization algorithms.
 }

@@ -2,32 +2,34 @@
 % Please edit documentation in R/density_estimation.R
 \name{estimate_densities}
 \alias{estimate_densities}
-\title{Estimate Densities Under the Null and Alternative Densities}
+\title{Estimate parameters under the null and alternative densities}
 \usage{
-estimate_densities(pvals = NULL, betas = NULL, sds = NULL,
-  mafs = NULL, df = NULL, alt_prop, use_tstats = TRUE)
+estimate_densities(betas = NULL, sds = NULL, df = NULL,
+  pvals = NULL, alt_prop, mafs = NULL, use_tstats = TRUE)
 }
 \arguments{
-\item{pvals}{vector of p-values.}
-
 \item{betas}{vector of coefficient estimates.}
 
 \item{sds}{vector of standard errors (for coefficient estimates).}
 
-\item{mafs}{vector of minor allele frequencies (MAFs).}
+\item{df}{scalar or vector of first degrees of freedom of the F-distribution.}
 
-\item{df}{first degrees of freedom of the F-distribution.}
+\item{pvals}{vector of \eqn{P}-values.}
 
 \item{alt_prop}{proportion of test-statistics used in estimating alternative densities.}
 
-\item{use_tstats}{logical; when true densities are calculated using moderated t-statistics
-(use p-values when false)}
+\item{mafs}{vector of minor allele frequencies (MAFs).}
+
+\item{use_tstats}{logical indicating whether to use moderated \eqn{t}-statistics (\code{TRUE})
+or \eqn{P}-values (\code{FALSE}).}
 }
 \value{
 See \code{\link{estimate_densities_modT}} or \code{\link{estimate_densities_pval}}.
 }
 \description{
-For each observation, estimate the density under the null and under the alternative hypotheses.
-This function is a wrapper to call either \code{estimate_densities_modT()}or
-\code{estimate_densities_pval()} for density estimation using moderated t-statistics or p-values, respectively.
+Estimate the parameters of the null and alternative
+density functions.
+This function calls either \code{\link{estimate_densities_modT}} or
+\code{\link{estimate_densities_pval}} for density estimation using
+moderated \eqn{t}-statistics or \eqn{P}-values, respectively.
 }

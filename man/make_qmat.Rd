@@ -4,16 +4,19 @@
 \alias{make_qmat}
 \title{Make Configuration Matrix}
 \usage{
-make_qmat(grp, name.cols = F)
+make_qmat(grp, name_cols = FALSE)
 }
 \arguments{
-\item{grp}{vector of group identifiers (common to use seq(1,N), for N groups)}
+\item{grp}{vector of group identifiers (common to use \code{seq(1,d)}, for \eqn{d} groups).}
 
-\item{name.cols}{logical; whether or not to name columns using group identifiers}
+\item{name_cols}{logical indicating whether to name columns using group identifiers}
 }
 \value{
-\code{make_qmat} returns a matrix with all binary combinations of the groups
+A matrix with all binary combinations of the groups. \eqn{Q_{kj}==0}{Q_{kj}==0}
+or \eqn{Q_{kj}==1}{Q_{kj}==1} denote that statistics from the \eqn{j}-th study come from the null
+or alternative distribution, respectively, under the \eqn{k}-th association pattern.
 }
 \description{
-Make configuration matrix (Q) that indicates null/alternative density patterns.
+Make configuration matrix (\eqn{Q}) that indicates null/alternative densities
+in the association patterns.
 }

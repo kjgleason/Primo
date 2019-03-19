@@ -2,7 +2,7 @@
 % Please edit documentation in R/density_estimation.R
 \name{estimate_densities_modT}
 \alias{estimate_densities_modT}
-\title{Estimate Densities Under the Null and Alternative Densities}
+\title{Estimate parameters under the null and alternative densities}
 \usage{
 estimate_densities_modT(betas, sds, mafs = NULL, df, alt_prop)
 }
@@ -14,9 +14,10 @@ estimate_densities_modT(betas, sds, mafs = NULL, df, alt_prop)
 \item{mafs}{vector of minor allele frequencies (MAFs) (optional).
 If \code{NULL}, no adjustment will be made for MAF in variance calculations.}
 
-\item{df}{first degrees of freedom of the F-distribution (usually, the number of subjects/observations).}
+\item{df}{scalar or vector of first degrees of freedom of the F-distribution
+(usually, \eqn{n-p-1}).}
 
-\item{alt_prop}{proportion of test-statistics used in estimating alternative densities.}
+\item{alt_prop}{proportion of test-statistics used in estimating the alternative density.}
 }
 \value{
 A list with the following elements:
@@ -27,12 +28,12 @@ A list with the following elements:
 }
 }
 \description{
-For each observation, estimate the density under the null and under the alternative
-hypotheses using moderated t-statistics.
+Estimate the parameters of the null and alternative
+density functions using moderated \eqn{t}-statistics.
 }
 \details{
-Following Smyth (2004), the function calculates moderated t-statistics using
-conditional posterior means of the variance. The moderated t-statistics are used to estimate
-the null density under a t-distribution with estimated degrees of freedom and
-the alternative density under a scaled t-distribution.
+Following Smyth (2004), the function calculates moderated \eqn{t}-statistics using
+conditional posterior means of the variance. The moderated \eqn{t}-statistics are used to estimate
+the null density under a \eqn{t}-distribution and
+the alternative density under a scaled \eqn{t}-distribution, each with moderated degrees of freedom.
 }
