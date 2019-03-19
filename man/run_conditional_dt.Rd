@@ -4,7 +4,7 @@
 \alias{run_conditional_dt}
 \title{Setup fine-mapping for a specified variant by index, using data.tables.}
 \usage{
-run_conditional_dt(Primo_obj, IDs, idx, leadsnps_region, SNP_col = "SNP",
+run_conditional_dt(Primo_obj, IDs, idx, leadsnps_region, snp_col = "SNP",
   pheno_cols, snp_info, LD_mat, LD_thresh = 1, dist_thresh = 0,
   pval_thresh = 1, suffices = 1:length(pheno_cols))
 }
@@ -22,7 +22,7 @@ on which one wants to perform fine-mapping}
 in each region of the Primo results. Also includes p-values for the lead SNPs.
 See Details for format.}
 
-\item{SNP_col}{string of the column name of SNPs/variants.}
+\item{snp_col}{string of the column name of SNPs/variants.}
 
 \item{pheno_cols}{character vector of the column names of the phenotype ID columns.}
 
@@ -30,7 +30,7 @@ See Details for format.}
 Columns should be: \code{SNP, CHR, POS}.}
 
 \item{LD_mat}{matrix of LD coefficients (\eqn{r^{2}}{r^2}). Row and column names
-should be SNP/variant names (e.g. in \code{SNP_col}).}
+should be SNP/variant names (e.g. in \code{snp_col}).}
 
 \item{LD_thresh}{scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
 threshold to be used for conditional analysis. Lead SNPs with \eqn{r^{2} <}{r^2 <}

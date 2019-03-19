@@ -4,14 +4,14 @@
 \alias{find_leadsnps}
 \title{Find the lead SNP for each phenotype in each region.}
 \usage{
-find_leadsnps(data, SNP_col, pheno_cols, stat_cols, data_type = "pvalue",
+find_leadsnps(data, snp_col, pheno_cols, stat_cols, data_type = "pvalue",
   suffices = NULL)
 }
 \arguments{
 \item{data}{data.table. Each row will be a SNP-phenotype combination
 with statistics necessary to determine the lead SNP in each phenotype region.}
 
-\item{SNP_col}{character string of the column name of the SNP.}
+\item{snp_col}{character string of the column name of the SNP.}
 
 \item{pheno_cols}{character vector of the column names of the phenotypes.}
 

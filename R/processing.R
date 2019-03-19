@@ -128,7 +128,7 @@ append_Primo_obj <- function(Primo_obj1,Primo_obj2){
 #'
 #' @param data data.table. Each row will be a SNP-phenotype combination
 #' with statistics necessary to determine the lead SNP in each phenotype region.
-#' @param SNP_col character string of the column name of the SNP.
+#' @param snp_col character string of the column name of the SNP.
 #' @param pheno_cols character vector of the column names of the phenotypes.
 #' @param stat_cols character vector of the column names of statistics to be
 #' used to determine lead SNPs.
@@ -144,7 +144,7 @@ append_Primo_obj <- function(Primo_obj1,Primo_obj2){
 #'
 #' @export
 #'
-find_leadsnps <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
+find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
 
   require(data.table)
   require(magrittr)
@@ -162,7 +162,7 @@ find_leadsnps <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
       ## find SNP with minimum p-value for the current phenotype in the region
       topSNP_currPheno <- data %>% dplyr::group_by(.dots=pheno_cols) %>% dplyr::slice(which.min(get(stat_cols[i])))
       topSNP_currPheno <- data.table(topSNP_currPheno,key=pheno_cols)
-      topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,SNP_col,stat_cols[i]))
+      topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,snp_col,stat_cols[i]))
       colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
 
       ## merge results
@@ -183,7 +183,7 @@ find_leadsnps <- function(data,SNP_col,pheno_cols,stat_cols,data_type="pvalue",s
       ## find SNP with maximum abs(t-statistic) for the current phenotype in the region
       topSNP_currPheno <- data %>% dplyr::group_by(.dots=pheno_cols) %>% dplyr::slice(which.max(abs(get(stat_cols[i]))))
       topSNP_currPheno <- data.table(topSNP_currPheno,key=pheno_cols)
-      topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,SNP_col,stat_cols[i]))
+      topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,snp_col,stat_cols[i]))
       colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
 
       ## merge results

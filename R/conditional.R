@@ -78,12 +78,12 @@ Primo_conditional <- function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 #' @param leadsnps_region data.frame detailing the lead SNP of each phenotype
 #' in each region of \code{Primo_obj} and associated \eqn{P}-values for the lead SNPs.
 #' See Details.
-#' @param SNP_col string of the column name of SNPs/variants.
+#' @param snp_col string of the column name of SNPs/variants.
 #' @param pheno_cols character vector of the column names of the phenotype ID columns.
 #' @param snp_info data.frame reporting the chromosome and position of each SNP.
 #' Columns should be: \code{SNP, CHR, POS}.
 #' @param LD_mat matrix of LD coefficients (\eqn{r^{2}}{r^2}). Row and column names
-#' should be SNP/variant names (e.g. in \code{SNP_col}).
+#' should be SNP/variant names (e.g. in \code{snp_col}).
 #' @param LD_thresh scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
 #' threshold to be used for conditional analysis. Lead SNPs with \eqn{r^{2} <}{r^2 <}
 #' \code{LD_thresh} with the \code{idx} variant will be conditioned on.
@@ -109,10 +109,10 @@ Primo_conditional <- function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 #'
 #' @export
 #'
-run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,SNP_col="SNP",pheno_cols,snp_info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
+run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",pheno_cols,snp_info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
 
   curr.IDs <- IDs[idx,]
-  curr.SNP <- curr.IDs[,SNP_col]
+  curr.SNP <- curr.IDs[,snp_col]
   curr.Region <- merge(leadsnps_region,curr.IDs,by=pheno_cols)
 
   ## subset Primo results to the current region
@@ -125,20 +125,20 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,SNP_col="SNP",phen
 
   ## melt data so each lead SNP is its own row
   curr.Region_long <- reshape2::melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("leadSNP_",suffices),
-                           value.name=SNP_col)
+                           value.name=snp_col)
   curr.Region_long <- cbind(curr.Region_long,pval=reshape2::melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("pvalue_",suffices),
                                                        value.name="pval")$pval)
 
   ## merge in chr and position to calculate distance between lead SNPs and SNP of interest
-  curr.Region_long <- merge(curr.Region_long,snp_info,by=SNP_col)
+  curr.Region_long <- merge(curr.Region_long,snp_info,by=snp_col)
   curr.Region_long$dist <- abs(snp_info$POS[which(snp_info$SNP==curr.SNP)] - curr.Region_long$POS)
   ## merge in LD coefficients
-  curr.Region_long$LD_r2 <- LD_mat[curr.SNP,curr.Region_long[,SNP_col]]
+  curr.Region_long$LD_r2 <- LD_mat[curr.SNP,curr.Region_long[,snp_col]]
 
-  leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval <= pval_thresh & LD_r2 < LD_thresh)[,SNP_col])
+  leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval <= pval_thresh & LD_r2 < LD_thresh)[,snp_col])
 
   ## index of SNP of interest
-  idx.snp <- which(IDs[,SNP_col]==curr.SNP)
+  idx.snp <- which(IDs[,snp_col]==curr.SNP)
 
   if(length(leadSNPs)==0){
     return(which.max(Primo_obj$post_prob[idx.snp,]))
@@ -147,7 +147,7 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,SNP_col="SNP",phen
     ## get snp_indices for other snps to adjust for
     idx.leadsnps <- NULL
     for(j in 1:length(leadSNPs)){
-      idx.leadsnps <- c(idx.leadsnps, which(IDs[,SNP_col]==leadSNPs[j]))
+      idx.leadsnps <- c(idx.leadsnps, which(IDs[,snp_col]==leadSNPs[j]))
     }
 
     ## run fine-mapping
@@ -175,12 +175,12 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,SNP_col="SNP",phen
 #' @param leadsnps_region data.table that stores the lead SNP of each phenotype
 #' in each region of the Primo results. Also includes p-values for the lead SNPs.
 #' See Details for format.
-#' @param SNP_col string of the column name of SNPs/variants.
+#' @param snp_col string of the column name of SNPs/variants.
 #' @param pheno_cols character vector of the column names of the phenotype ID columns.
 #' @param snp_info data.table reporting the chromosome and position of each SNP.
 #' Columns should be: \code{SNP, CHR, POS}.
 #' @param LD_mat matrix of LD coefficients (\eqn{r^{2}}{r^2}). Row and column names
-#' should be SNP/variant names (e.g. in \code{SNP_col}).
+#' should be SNP/variant names (e.g. in \code{snp_col}).
 #' @param LD_thresh scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
 #' threshold to be used for conditional analysis. Lead SNPs with \eqn{r^{2} <}{r^2 <}
 #' \code{LD_thresh} with the \code{idx} variant will be conditioned on.
@@ -200,11 +200,11 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,SNP_col="SNP",phen
 #'
 #' @export
 #'
-run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,SNP_col="SNP",pheno_cols,snp_info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
+run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",pheno_cols,snp_info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
 
   curr.IDs <- IDs[idx,]
-  # curr.SNP <- curr.IDs[,get(SNP_col)]
-  curr.SNP <- subset(curr.IDs,select=SNP_col)[[1]]
+  # curr.SNP <- curr.IDs[,get(snp_col)]
+  curr.SNP <- subset(curr.IDs,select=snp_col)[[1]]
   curr.Region <- merge(leadsnps_region,curr.IDs,by=pheno_cols)
 
   ## subset Primo results to the current region
@@ -217,23 +217,23 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,SNP_col="SNP",p
 
   ## melt data so each lead SNP is its own row
   curr.Region_long <- melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("leadSNP_",suffices),
-                                     value.name=SNP_col)
+                                     value.name=snp_col)
   curr.Region_long <- cbind(curr.Region_long,pval=melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("pvalue_",suffices),
                                                                  value.name="pval")$pval)
 
   ## merge in chr and position to calculate distance between lead SNPs and SNP of interest
-  setkeyv(curr.Region_long,SNP_col)
-  setkeyv(snp_info,SNP_col)
+  setkeyv(curr.Region_long,snp_col)
+  setkeyv(snp_info,snp_col)
   curr.Region_long <- merge(curr.Region_long,snp_info)
   curr.Region_long$dist <- abs(snp_info$POS[which(snp_info$SNP==curr.SNP)] - curr.Region_long$POS)
   ## merge in LD coefficients
-  curr.Region_long$LD_r2 <- LD_mat[curr.SNP,subset(curr.Region_long,select=SNP_col)[[1]]]
+  curr.Region_long$LD_r2 <- LD_mat[curr.SNP,subset(curr.Region_long,select=snp_col)[[1]]]
 
-  leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval < pval_thresh & LD_r2 < LD_thresh,select=SNP_col)[[1]])
+  leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval < pval_thresh & LD_r2 < LD_thresh,select=snp_col)[[1]])
 
   ## index of SNP of interest
-  # idx.snp <- which(IDs[,get(SNP_col)]==curr.SNP)
-  idx.snp <- which(subset(IDs,select=SNP_col)[[1]]==curr.SNP)
+  # idx.snp <- which(IDs[,get(snp_col)]==curr.SNP)
+  idx.snp <- which(subset(IDs,select=snp_col)[[1]]==curr.SNP)
 
   if(length(leadSNPs)==0){
     return(which.max(Primo_obj$post_prob[idx.snp,]))
@@ -242,8 +242,8 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,SNP_col="SNP",p
     ## get snp_indices for other snps to adjust for
     idx.leadsnps <- NULL
     for(j in 1:length(leadSNPs)){
-      # idx.leadsnps <- c(idx.leadsnps, which(IDs[,get(SNP_col)]==leadSNPs[j]))
-      idx.leadsnps <- c(idx.leadsnps, which(subset(IDs,select=SNP_col)[[1]]==leadSNPs[j]))
+      # idx.leadsnps <- c(idx.leadsnps, which(IDs[,get(snp_col)]==leadSNPs[j]))
+      idx.leadsnps <- c(idx.leadsnps, which(subset(IDs,select=snp_col)[[1]]==leadSNPs[j]))
     }
 
     ## run fine-mapping
