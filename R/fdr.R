@@ -28,11 +28,18 @@ calc_fdr <- function(post_prob,threshold){
 #' calculate the empirical FDR.
 #' @param fail_idx integer vector of the indices of observations which "failed"
 #' conditional analysis. These are the observations where the association pattern with the
-#' highest posterior probability changed after conditioning (if using collapsed
-#' categories, they should have changed such they are no longer in an
-#' association pattern fitting the description of the collapsed category).
+#' highest posterior probability changed after conditioning. See important Note.
 #'
-#' @return A numeric value of the empirical false discovery rate (FDR).
+#' @inherit calc_fdr return
+#'
+#' @section Note: Note that if using collapsed posterior probability categories,
+#' an observation where the association pattern with the highest posterior probability
+#' changes may not indicate "failure" if the new pattern still fits the
+#' description of the collapsed category. For example, if testing "associated
+#' with at least 1 trait," an observation that changes from "associated with 2"
+#' to "associated with 1" may not be considered failure. In such cases, the user
+#' may wish \code{fail_idx} to represent cases where the highest
+#' association pattern no longer fits the description of the collapsed category).
 #'
 #' @export
 #'
@@ -56,10 +63,10 @@ calc_fdr_conditional <- function(post_prob,threshold,fail_idx){
 #' @param post_prob numeric matrix of posterior probabilities.
 #' @param threshold numeric value of the posterior probability threshold at which to
 #' calculate the empirical FDR.
-#' @param col_name character string of the column name (optional).
-#' @param col_idx integer of the column index (optional).
+#' @param col_name character string of the column name.
+#' @param col_idx integer of the column index.
 #'
-#' @return A numeric value of the empirical false discovery rate (FDR).
+#' @inherit calc_fdr return
 #'
 #' @details At least one of \code{col_name} or \code{col_idx} must be specified.
 #'
@@ -90,10 +97,10 @@ calc_fdr_col <- function(post_prob,threshold,col_name=NULL,col_idx=NULL){
 #' @param post_prob numeric matrix of posterior probabilities.
 #' @param threshold numeric value of the posterior probability threshold at which to
 #' calculate the empirical FDR.
-#' @param col_names character vector of column names (optional).
-#' @param col_idxs integer vector of column indices (optional).
+#' @param col_names character vector of column names.
+#' @param col_idxs integer vector of column indices.
 #'
-#' @return A numeric value of the empirical false discovery rate (FDR).
+#' @inherit calc_fdr return
 #'
 #' @details At least one of \code{col_names} or \code{col_idxs} must be specified.
 #'

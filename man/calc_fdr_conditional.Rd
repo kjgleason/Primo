@@ -14,9 +14,7 @@ calculate the empirical FDR.}
 
 \item{fail_idx}{integer vector of the indices of observations which "failed"
 conditional analysis. These are the observations where the association pattern with the
-highest posterior probability changed after conditioning (if using collapsed
-categories, they should have changed such they are no longer in an
-association pattern fitting the description of the collapsed category).}
+highest posterior probability changed after conditioning. See important Note.}
 }
 \value{
 A numeric value of the empirical false discovery rate (FDR).
@@ -26,3 +24,14 @@ Calculate the empirical false discovery rate (FDR) given
 a vector of posterior probabilities and a specified threshold,
 adjusting for false positives identified by conditional analysis.
 }
+\section{Note}{
+ Note that if using collapsed posterior probability categories,
+an observation where the association pattern with the highest posterior probability
+changes may not indicate "failure" if the new pattern still fits the
+description of the collapsed category. For example, if testing "associated
+with at least 1 trait," an observation that changes from "associated with 2"
+to "associated with 1" may not be considered failure. In such cases, the user
+may wish \code{fail_idx} to represent cases where the highest
+association pattern no longer fits the description of the collapsed category).
+}
+

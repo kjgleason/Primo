@@ -12,9 +12,9 @@ calc_fdr_multi(post_prob, threshold, col_names = NULL, col_idxs = NULL)
 \item{threshold}{numeric value of the posterior probability threshold at which to
 calculate the empirical FDR.}
 
-\item{col_names}{character vector of column names (optional).}
+\item{col_names}{character vector of column names.}
 
-\item{col_idxs}{integer vector of column indices (optional).}
+\item{col_idxs}{integer vector of column indices.}
 }
 \value{
 A numeric value of the empirical false discovery rate (FDR).
