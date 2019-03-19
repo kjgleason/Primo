@@ -590,7 +590,8 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
 #' Estimate posterior probabilities of association patterns.
 #'
 #' For each observation (e.g. SNP), estimate the posterior probability for each association pattern.
-#' This function serves as a wrapper to call either the t-statistic or p-value version of Primo.
+#' This function calls either the \eqn{t}-statistic (\code{\link{Primo_tstat}}) or
+#' \eqn{p}-value (\code{\link{Primo_pval}}) version of Primo.
 #' Utilizes parallel computing, when available.
 #'
 #' @param betas matrix of coefficient estimates.

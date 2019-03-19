@@ -71,7 +71,8 @@ The remaining elements are returned primarily for use by other functions.
 }
 \description{
 For each observation (e.g. SNP), estimate the posterior probability for each association pattern.
-This function serves as a wrapper to call either the t-statistic or p-value version of Primo.
+This function calls either the \eqn{t}-statistic (\code{\link{Primo_tstat}}) or
+\eqn{p}-value (\code{\link{Primo_pval}}) version of Primo.
 Utilizes parallel computing, when available.
 }
 \details{
