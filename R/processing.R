@@ -3,7 +3,7 @@
 #' Subset results from Primo output based on a vector of indices.
 #'
 #' @param Primo_obj list of results returned by Primo (from the function
-#' \code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_ModT}}).
+#' \code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_modT}}).
 #' @param idx integer vector of the indices to which to subset Primo results.
 #'
 #' @return A list of Primo results with the following elements:
@@ -64,7 +64,7 @@ subset_Primo_obj <- function(Primo_obj,idx){
 #' with a run that used the same parameters (e.g. to account for missing SNPs)
 #'
 #' @param Primo_obj1 list of results returned by Primo (from the function
-#' \code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_ModT}}).
+#' \code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_modT}}).
 #' @param Primo_obj2 list of results returned by Primo.
 #'
 #' @return A list of Primo results with the following elements:

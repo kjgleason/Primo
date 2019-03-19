@@ -8,7 +8,7 @@ append_Primo_obj(Primo_obj1, Primo_obj2)
 }
 \arguments{
 \item{Primo_obj1}{list of results returned by Primo (from the function
-\code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_ModT}}).}
+\code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_modT}}).}
 
 \item{Primo_obj2}{list of results returned by Primo.}
 }

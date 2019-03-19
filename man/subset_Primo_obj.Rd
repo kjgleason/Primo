@@ -8,7 +8,7 @@ subset_Primo_obj(Primo_obj, idx)
 }
 \arguments{
 \item{Primo_obj}{list of results returned by Primo (from the function
-\code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_ModT}}).}
+\code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_modT}}).}
 
 \item{idx}{integer vector of the indices to which to subset Primo results.}
 }
