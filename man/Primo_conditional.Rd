@@ -21,7 +21,7 @@ of Primo (i.e. \code{\link{Primo_tstat}} or \code{\link{Primo_modT}})}
 }
 \value{
 The integer corresponding to the association pattern
-with the highest posterior probability following fine-mapping adjustment.
+with the highest posterior probability following conditional analysis.
 The value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
 from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
 by \code{\link{make_qmat}}.
@@ -29,6 +29,6 @@ by \code{\link{make_qmat}}.
 \description{
 For a specified variant, re-estimate the posterior probabilities of association
 patterns, conditioning on other specified variants (e.g. lead SNPs for phenotypes
-under analysis). Returns the association pattern with the highest
+being studied). Returns the association pattern with the highest
 posterior probability after conditional analysis.
 }

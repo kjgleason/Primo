@@ -2,7 +2,7 @@
 #'
 #' For a specified variant, re-estimate the posterior probabilities of association
 #' patterns, conditioning on other specified variants (e.g. lead SNPs for phenotypes
-#' under analysis). Returns the association pattern with the highest
+#' being studied). Returns the association pattern with the highest
 #' posterior probability after conditional analysis.
 #'
 #' @param idx.snp integer matching the index of the genetic variant (e.g. row of \code{Tstat_mod})
@@ -15,7 +15,7 @@
 #' of Primo (i.e. \code{\link{Primo_tstat}} or \code{\link{Primo_modT}})
 #'
 #' @return The integer corresponding to the association pattern
-#' with the highest posterior probability following fine-mapping adjustment.
+#' with the highest posterior probability following conditional analysis.
 #' The value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
 #' from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
 #' by \code{\link{make_qmat}}.
@@ -61,7 +61,7 @@ Primo_conditional <- function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 
 
 
-#' Setup conditional analysis for a specified variant by index.
+#' Set up conditional analysis for a specified variant by index.
 #'
 #' For a specified variant (passed by index), set-up and run conditional analysis.
 #' The function uses a data.frame of lead SNPs to identify possible SNPs
@@ -69,51 +69,51 @@ Primo_conditional <- function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
 #' will be conditioned on based on specified criteria. Returns the association
 #' pattern with the highest posterior probability after conditional analysis.
 #'
-#' @param Primo_obj A list returned by running the \eqn{t}-statistic version
+#' @param Primo_obj list returned by running the \eqn{t}-statistic version
 #' of Primo (i.e. \code{\link{Primo_tstat}})
-#' @param IDs A data.frame of the SNP and phenotype IDs corresponding to each row
-#' of the Primo results stored in \code{Primo_obj}.
-#' @param idx An integer of the index of the genetic variant (e.g. row of \code{Tstat_mod})
-#' on which one wants to perform fine-mapping
-#' @param leadSNPs_byRegion A data.frame that stores the lead SNP of each phenotype
-#' in each region of the Primo results. Also includes p-values for the lead SNPs.
-#' See Details for format.
-#' @param SNP_col A string of the column name of SNPs/variants.
-#' @param pheno_cols A character vector of the column names of the phenotype ID columns.
-#' @param snp.info A data.frame reporting the chromosome and position of each SNP.
+#' @param IDs data.frame of the SNP and phenotype IDs corresponding to each row
+#' of \code{Primo_obj}.
+#' @param idx integer specifying the index of the genetic variant (e.g. row of \code{Tstat_mod})
+#' on which one wants to perform conditional analysis.
+#' @param leadsnps_region data.frame detailing the lead SNP of each phenotype
+#' in each region of \code{Primo_obj} and associated \eqn{P}-values for the lead SNPs.
+#' See Details.
+#' @param SNP_col string of the column name of SNPs/variants.
+#' @param pheno_cols character vector of the column names of the phenotype ID columns.
+#' @param snp_info data.frame reporting the chromosome and position of each SNP.
 #' Columns should be: \code{SNP, CHR, POS}.
-#' @param LD_mat A matrix of LD coefficients (\eqn{r^{2}}{r^2}).
-#' Rows and columns should match the order of (\code{idx.snp}, \code{idx.leadsnps}).
-#' @param LD_thresh A scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
+#' @param LD_mat matrix of LD coefficients (\eqn{r^{2}}{r^2}). Row and column names
+#' should be SNP/variant names (e.g. in \code{SNP_col}).
+#' @param LD_thresh scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
 #' threshold to be used for conditional analysis. Lead SNPs with \eqn{r^{2} <}{r^2 <}
-#' \code{LD_thresh} with the \code{idx} variant will be conditioned on,
-#' pending other criteria. Default value (1) signifies no consideration of LD in conditional analyses.
-#' @param dist_thresh A scalar of the minimum number of base pairs away from the \code{idx} SNP
-#' that a lead SNP must be in order to be considered for conditional analysis. Default value (0)
+#' \code{LD_thresh} with the \code{idx} variant will be conditioned on.
+#' Default value (1) signifies no consideration of LD in conditional analyses.
+#' @param dist_thresh scalar of the minimum number of base pairs away from the \code{idx} SNP
+#' that a lead SNP must be in order to be conditioned on. Default value (0)
 #' signifies no consideration of chromosomal distance in conditional analyses.
-#' @param pval_thresh A scalar of the p-value threshold a lead SNP must be below
-#' with the phenotype for which it is lead SNP in order to be considered for conditional analysis.
+#' @param pval_thresh scalar of the \eqn{P}-value threshold a lead SNP must be below
+#' with the phenotype for which it is lead SNP in order to be conditionaed on.
 #' Default value (1) signifies no consideration of strength of effect in conditional analyses.
-#' @param suffices A character vector of the suffices corresponding to columns in
-#' \code{leadSNPs_byRegion}. See Details.
+#' @param suffices character vector of the suffices corresponding to columns in
+#' \code{leadsnps_region}. See Details.
 #'
 #' @inherit Primo_conditional return
 #'
-#' @details The following are additional details describing the input data.frame
-#' \code{leadSNPs_byRegion}. For \eqn{J} phenotypes being analyzed, the first
-#' \eqn{J} columns of \code{leadSNPs_byRegion} should specify phenotype IDs.
+#' @details The following are additional details describing the input
+#' \code{leadsnps_region}. For \eqn{J} phenotypes being analyzed, the first
+#' \eqn{J} columns of \code{leadsnps_region} should specify phenotype IDs.
 #' Examples include gene symbol, CpG site name, trait name for GWAS, etc. The following
-#' \eqn{2J} columns should hold the name and p-value of the lead SNP for each of the
+#' \eqn{2*J} columns should hold the name and p-value of the lead SNP for each of the
 #' \eqn{J} phenotypes. The column names should be of the form \code{leadSNP_x} and
 #' \code{pvalue_x}, where \code{x} is a suffix corresponding to the phenotype.
 #'
 #' @export
 #'
-run_conditional <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",pheno_cols,snp.info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
+run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,SNP_col="SNP",pheno_cols,snp_info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
 
   curr.IDs <- IDs[idx,]
   curr.SNP <- curr.IDs[,SNP_col]
-  curr.Region <- merge(leadSNPs_byRegion,curr.IDs,by=pheno_cols)
+  curr.Region <- merge(leadsnps_region,curr.IDs,by=pheno_cols)
 
   ## subset Primo results to the current region
   IDs_copy <- IDs
@@ -130,12 +130,12 @@ run_conditional <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",ph
                                                        value.name="pval")$pval)
 
   ## merge in chr and position to calculate distance between lead SNPs and SNP of interest
-  curr.Region_long <- merge(curr.Region_long,snp.info,by=SNP_col)
-  curr.Region_long$dist <- abs(snp.info$POS[which(snp.info$SNP==curr.SNP)] - curr.Region_long$POS)
+  curr.Region_long <- merge(curr.Region_long,snp_info,by=SNP_col)
+  curr.Region_long$dist <- abs(snp_info$POS[which(snp_info$SNP==curr.SNP)] - curr.Region_long$POS)
   ## merge in LD coefficients
   curr.Region_long$LD_r2 <- LD_mat[curr.SNP,curr.Region_long[,SNP_col]]
 
-  leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval < pval_thresh & LD_r2 < LD_thresh)[,SNP_col])
+  leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval <= pval_thresh & LD_r2 < LD_thresh)[,SNP_col])
 
   ## index of SNP of interest
   idx.snp <- which(IDs[,SNP_col]==curr.SNP)
@@ -163,55 +163,49 @@ run_conditional <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",ph
 #' for conditional analysis, and determines which SNPs
 #' will be conditioned on based on specified criteria. Returns the association
 #' pattern with the highest posterior probability after conditional analysis.
-#' The version utilizes data.tables for \code{IDs}, \code{leadSNPs_byRegion}
-#' and \code{snp.info} for faster processing.
+#' The version utilizes data.tables for \code{IDs}, \code{leadsnps_region}
+#' and \code{snp_info} for faster processing.
 #'
-#' @param Primo_obj A list returned by running the \eqn{t}-statistic version
+#' @param Primo_obj list returned by running the \eqn{t}-statistic version
 #' of Primo (i.e. \code{\link{Primo_tstat}})
-#' @param IDs A data.table of the SNP and phenotype IDs corresponding to each row
+#' @param IDs data.table of the SNP and phenotype IDs corresponding to each row
 #' of the Primo results stored in \code{Primo_obj}.
-#' @param idx An integer of the index of the genetic variant (e.g. row of \code{Tstat_mod})
+#' @param idx integer of the index of the genetic variant (e.g. row of \code{Tstat_mod})
 #' on which one wants to perform fine-mapping
-#' @param leadSNPs_byRegion A data.table that stores the lead SNP of each phenotype
+#' @param leadsnps_region data.table that stores the lead SNP of each phenotype
 #' in each region of the Primo results. Also includes p-values for the lead SNPs.
 #' See Details for format.
-#' @param SNP_col A string of the column name of SNPs/variants.
-#' @param pheno_cols A character vector of the column names of the phenotype ID columns.
-#' @param snp.info A data.table reporting the chromosome and position of each SNP.
+#' @param SNP_col string of the column name of SNPs/variants.
+#' @param pheno_cols character vector of the column names of the phenotype ID columns.
+#' @param snp_info data.table reporting the chromosome and position of each SNP.
 #' Columns should be: \code{SNP, CHR, POS}.
-#' @param LD_mat A matrix of LD coefficients (\eqn{r^{2}}{r^2}).
-#' Rows and columns should match the order of (\code{idx.snp}, \code{idx.leadsnps}).
-#' @param LD_thresh A scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
+#' @param LD_mat matrix of LD coefficients (\eqn{r^{2}}{r^2}). Row and column names
+#' should be SNP/variant names (e.g. in \code{SNP_col}).
+#' @param LD_thresh scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
 #' threshold to be used for conditional analysis. Lead SNPs with \eqn{r^{2} <}{r^2 <}
-#' \code{LD_thresh} with the \code{idx} variant will be conditioned on,
-#' pending other criteria. Default value (1) signifies no consideration of LD in conditional analyses.
-#' @param dist_thresh A scalar of the minimum number of base pairs away from the \code{idx} SNP
-#' that a lead SNP must be in order to be considered for conditional analysis. Default value (0)
+#' \code{LD_thresh} with the \code{idx} variant will be conditioned on.
+#' Default value (1) signifies no consideration of LD in conditional analyses.
+#' @param dist_thresh scalar of the minimum number of base pairs away from the \code{idx} SNP
+#' that a lead SNP must be in order to be conditioned on. Default value (0)
 #' signifies no consideration of chromosomal distance in conditional analyses.
-#' @param pval_thresh A scalar of the p-value threshold a lead SNP must be below
-#' with the phenotype for which it is lead SNP in order to be considered for conditional analysis.
+#' @param pval_thresh scalar of the \eqn{P}-value threshold a lead SNP must be below
+#' with the phenotype for which it is lead SNP in order to be conditionaed on.
 #' Default value (1) signifies no consideration of strength of effect in conditional analyses.
-#' @param suffices A character vector of the suffices corresponding to columns in
-#' \code{leadSNPs_byRegion}. See Details.
+#' @param suffices character vector of the suffices corresponding to columns in
+#' \code{leadsnps_region}. See Details.
 #'
 #' @inherit Primo_conditional return
 #'
-#' @details The following are additional details describing the input data.table
-#' \code{leadSNPs_byRegion}. For \eqn{J} phenotypes being analyzed, the first
-#' \eqn{J} columns of \code{leadSNPs_byRegion} should specify phenotype IDs.
-#' Examples include gene symbol, CpG site name, trait name for GWAS, etc. The following
-#' \eqn{2J} columns should hold the name and p-value of the lead SNP for each of the
-#' \eqn{J} phenotypes. The column names should be of the form \code{leadSNP_x} and
-#' \code{pvalue_x}, where \code{x} is a suffix corresponding to the phenotype.
+#' @inherit run_conditional details
 #'
 #' @export
 #'
-run_conditional_dt <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP",pheno_cols,snp.info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
+run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,SNP_col="SNP",pheno_cols,snp_info,LD_mat,LD_thresh=1,dist_thresh=0,pval_thresh=1,suffices=1:length(pheno_cols)){
 
   curr.IDs <- IDs[idx,]
   # curr.SNP <- curr.IDs[,get(SNP_col)]
   curr.SNP <- subset(curr.IDs,select=SNP_col)[[1]]
-  curr.Region <- merge(leadSNPs_byRegion,curr.IDs,by=pheno_cols)
+  curr.Region <- merge(leadsnps_region,curr.IDs,by=pheno_cols)
 
   ## subset Primo results to the current region
   IDs_copy <- IDs
@@ -229,9 +223,9 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadSNPs_byRegion,SNP_col="SNP"
 
   ## merge in chr and position to calculate distance between lead SNPs and SNP of interest
   setkeyv(curr.Region_long,SNP_col)
-  setkeyv(snp.info,SNP_col)
-  curr.Region_long <- merge(curr.Region_long,snp.info)
-  curr.Region_long$dist <- abs(snp.info$POS[which(snp.info$SNP==curr.SNP)] - curr.Region_long$POS)
+  setkeyv(snp_info,SNP_col)
+  curr.Region_long <- merge(curr.Region_long,snp_info)
+  curr.Region_long$dist <- abs(snp_info$POS[which(snp_info$SNP==curr.SNP)] - curr.Region_long$POS)
   ## merge in LD coefficients
   curr.Region_long$LD_r2 <- LD_mat[curr.SNP,subset(curr.Region_long,select=SNP_col)[[1]]]
 
