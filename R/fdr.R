@@ -114,7 +114,7 @@ calc_fdr_multi <- function(post_prob,threshold,col_names=NULL,col_idxs=NULL){
 
     fdr <- NULL
     for(i in 1:length(col_names)){
-      fdr <- c(fdr,calc_fdr_oneCol(post_prob,threshold,col_name=col_names[i]))
+      fdr <- c(fdr,calc_fdr_col(post_prob,threshold,col_name=col_names[i]))
     }
 
     names(fdr) <- col_names
@@ -123,7 +123,7 @@ calc_fdr_multi <- function(post_prob,threshold,col_names=NULL,col_idxs=NULL){
 
     fdr <- NULL
     for(i in 1:length(col_idxs)){
-      fdr <- c(fdr,calc_fdr_oneCol(post_prob,threshold,col_idx=col_idxs[i]))
+      fdr <- c(fdr,calc_fdr_col(post_prob,threshold,col_idx=col_idxs[i]))
     }
 
   }

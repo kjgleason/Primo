@@ -58,7 +58,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
   if (is.null(Gamma)) {
     tt <- betas/sds
     tt[abs(tt)>=5] <- NA
-    Gamma<- cor(tt,use="complete")
+    Gamma<- stats::cor(tt,use="complete")
   }
 
   ## estimate marginal density functions in limma framework
@@ -220,7 +220,7 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
   if (is.null(Gamma)) {
     xx <- chi_mix
     xx[pvals < 5.7e-7] <- NA ## 5.7 * 10^-7 is approx p-val for abs(t)=5
-    Gamma<- cor(xx,use="complete")
+    Gamma<- stats::cor(xx,use="complete")
   }
 
   ## estimate scaling factor and degrees of freedom for each alternative distribution

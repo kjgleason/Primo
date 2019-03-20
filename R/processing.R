@@ -118,12 +118,12 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
   base::requireNamespace(data.table)
   base::requireNamespace(magrittr)
 
-  if(!is.data.table(data)){
+  if(!data.table::is.data.table(data)){
     warning("Converting argument `data` to data.table format.")
-    data <- data.table(data)
+    data <- data.table::data.table(data)
   }
 
-  setkeyv(data,pheno_cols)
+  data.table::setkeyv(data,pheno_cols)
 
   if(is.null(suffices)) suffices <- 1:length(stat_cols)
 
@@ -135,7 +135,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
 
       ## find SNP with minimum p-value for the current phenotype in the region
       topSNP_currPheno <- data %>% dplyr::group_by(.dots=pheno_cols) %>% dplyr::slice(which.min(get(stat_cols[i])))
-      topSNP_currPheno <- data.table(topSNP_currPheno,key=pheno_cols)
+      topSNP_currPheno <- data.table::data.table(topSNP_currPheno,key=pheno_cols)
       topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,snp_col,stat_cols[i]))
       colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
 
@@ -143,7 +143,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
       if(is.null(leadsnps_region)){
         leadsnps_region <- topSNP_currPheno
       } else{
-        leadsnps_region <- merge(leadsnps_region,topSNP_currPheno)
+        leadsnps_region <- data.table::merge(leadsnps_region,topSNP_currPheno)
       }
 
     }
@@ -156,7 +156,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
 
       ## find SNP with maximum abs(t-statistic) for the current phenotype in the region
       topSNP_currPheno <- data %>% dplyr::group_by(.dots=pheno_cols) %>% dplyr::slice(which.max(abs(get(stat_cols[i]))))
-      topSNP_currPheno <- data.table(topSNP_currPheno,key=pheno_cols)
+      topSNP_currPheno <- data.table::data.table(topSNP_currPheno,key=pheno_cols)
       topSNP_currPheno<- subset(topSNP_currPheno, select=c(pheno_cols,snp_col,stat_cols[i]))
       colnames(topSNP_currPheno)[ncol(topSNP_currPheno)-1] <- paste0("leadSNP_",suffices[i])
 
@@ -164,7 +164,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
       if(is.null(leadsnps_region)){
         leadsnps_region <- topSNP_currPheno
       } else{
-        leadsnps_region <- merge(leadsnps_region,topSNP_currPheno)
+        leadsnps_region <- data.table::merge(leadsnps_region,topSNP_currPheno)
       }
 
     }

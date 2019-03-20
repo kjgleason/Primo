@@ -196,7 +196,7 @@ chiMix_pDiff <- function(par, data, sorted=F){
   chi_mix <- chi_mix[r]
 
   ## par[1] holds A, the scale factor; par[2] holds d, the degrees of freedom
-  obj_sum <- sum(abs(alt_prop*pgamma(chi_mix,shape=par[2]/2,scale=2*par[1],lower.tail=F) + (1-alt_prop)*pchisq(chi_mix,2,lower.tail=F) - (r-0.5)/M))
+  obj_sum <- sum(abs(alt_prop*stats::pgamma(chi_mix,shape=par[2]/2,scale=2*par[1],lower.tail=F) + (1-alt_prop)*stats::pchisq(chi_mix,2,lower.tail=F) - (r-0.5)/M))
 
   return(obj_sum)
 }
@@ -265,7 +265,7 @@ make_qmat <- function(grp, name_cols=FALSE){
   Q <- rep(0,ng)
 
   for (qi in 1:ng){
-    oo <- combn(1:ng,qi)
+    oo <- utils::combn(1:ng,qi)
     Q <- cbind(Q, apply(oo,2,function(x,ng,ngi) {
       vv <- rep(0,ng)
       vv[x] <- 1

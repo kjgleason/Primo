@@ -216,15 +216,15 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
   IDs <- IDs[curr_Region.idx,]
 
   ## melt data so each lead SNP is its own row
-  curr.Region_long <- melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("leadSNP_",suffices),
+  curr.Region_long <- data.table::melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("leadSNP_",suffices),
                                      value.name=snp_col)
-  curr.Region_long <- cbind(curr.Region_long,pval=melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("pvalue_",suffices),
+  curr.Region_long <- cbind(curr.Region_long,pval=data.table::melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("pvalue_",suffices),
                                                                  value.name="pval")$pval)
 
   ## merge in chr and position to calculate distance between lead SNPs and SNP of interest
-  setkeyv(curr.Region_long,snp_col)
-  setkeyv(snp_info,snp_col)
-  curr.Region_long <- merge(curr.Region_long,snp_info)
+  data.table::setkeyv(curr.Region_long,snp_col)
+  data.table::setkeyv(snp_info,snp_col)
+  curr.Region_long <- data.table::merge(curr.Region_long,snp_info)
   curr.Region_long$dist <- abs(snp_info$POS[which(snp_info$SNP==curr.SNP)] - curr.Region_long$POS)
   ## merge in LD coefficients
   curr.Region_long$LD_r2 <- LD_mat[curr.SNP,subset(curr.Region_long,select=snp_col)[[1]]]
