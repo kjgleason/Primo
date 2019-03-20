@@ -10,7 +10,7 @@
 #' @return A list of Primo results with the following elements:
 #' \tabular{ll}{
 #' \code{post_prob} \tab matrix of posterior probabilities
-#' (rows are SNPs; columns are association patterns).\cr
+#' (each column corresponds to an association pattern).\cr
 #' \code{pis} \tab vector of estimated proportion of SNPs
 #' belonging to each association pattern.\cr
 #' \code{D_mat} \tab matrix of densities under each association pattern.\cr
@@ -61,45 +61,12 @@ subset_Primo_obj <- function(Primo_obj,idx){
 #'
 #' Append two sets of Primo results. The function assumes that the two sets
 #' share marginal distribution parameters and a common correlation structure.
-#' Function may be used to append results from an initial run from Primo
-#' with a run that used the same parameters (e.g. to account for missing SNPs)
 #'
 #' @param Primo_obj1 list of results returned by Primo (from the function
 #' \code{\link{Primo_tstat}}, \code{\link{Primo_pval}}, or \code{\link{Primo_modT}}).
 #' @param Primo_obj2 list of results returned by Primo.
 #'
-#' @return A list of Primo results with the following elements:
-#' \tabular{ll}{
-#' \code{post_prob} \tab matrix of posterior probabilities
-#' (rows are SNPs; columns are association patterns).\cr
-#' \code{pis} \tab vector of estimated proportion of SNPs
-#' belonging to each association pattern.\cr
-#' \code{D_mat} \tab matrix of densities under each association pattern.\cr
-#' \code{Gamma} \tab correlation matrix.\cr
-#' }
-#'
-#' \itemize{
-#' \item If the results were originally from the \eqn{t}-statistic version,
-#' the list will additionally contain:
-#' \tabular{ll}{
-#' \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
-#' \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
-#' \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
-#'  moderated degrees of freedom: df/(df-2).\cr
-#' \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
-#' \code{prior_var} \tab vector of the prior variance estimators for each marginaldistribution.\cr
-#' \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
-#' for each marginal distribution.
-#'  }
-#'
-#' \item If the results were originally from the \eqn{p}-value version,
-#' the list will additionally contain:
-#' \tabular{ll}{
-#' \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
-#' \code{A} \tab vector of scaling factors under the alternative distributions.\cr
-#' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
-#'  }
-#'  }
+#' @inherit subset_Primo_obj return
 #'
 #' @export
 #'
@@ -124,7 +91,9 @@ append_Primo_obj <- function(Primo_obj1,Primo_obj2){
 
 #' Find the lead SNP for each phenotype in each region.
 #'
-#' Subset results from Primo output based on a vector of indices.
+#' Determine the lead SNP for each phenotype in each region
+#' based on summary statistics. A data.table will be returned
+#' containing lead SNP information for each region.
 #'
 #' @param data data.table. Each row will be a SNP-phenotype combination
 #' with statistics necessary to determine the lead SNP in each phenotype region.
@@ -206,9 +175,9 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
 
 #' Estimate posterior probabilities for observations missing from original Primo analysis.
 #'
-#' For each SNP, estimates the posterior probability for each association pattern.
-#' Uses parameters estimated by previous runs of Primo to estimate probabilities
-#' for SNPs missing in one or more studies.
+#' For each observation (e.g. SNP), estimates the posterior probability for each association pattern.
+#' Uses parameters estimated by a previous run of \code{\link{Primo_tstat}} or \code{\link{Primo_modT}}
+#' to estimate probabilities for SNPs missing in one or more studies.
 #' Utilizes parallel computing, when available.
 #'
 #' @param betas matrix of coefficient estimates.
@@ -216,41 +185,19 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
 #' @param dfs vector or matrix of degrees of freedom.
 #' @param trait_idx integer vector of the columns corresponding to non-missing phenotypes/studies.
 #' @param mafs vector or matrix of minor allele frequencies (MAFs).
+#' If \code{NULL}, standard errors will not be adjusted for MAF.
 #' @param pis matrix (one-row) of the estimated proportion of observations
-#' belonging to each association pattern
+#' belonging to each association pattern.
 #' @param Gamma correlation matrix.
 #' @param prior_df vector of the prior degrees of freedom for each marginal distribution.
 #' @param prior_var vector of the prior variance estimators for each marginal distribution.
 #' @param unscaled_var vector of the unscaled variance priors on non-zero coefficients
 #' for each marginal distribution.
-#' @param par_size numeric value; specifies the number of CPUs/cores/processors for
+#' @param par_size numeric value; specifies the number of workers for
 #' parallel computing (1 for sequential processing).
 #'
 #'
-#' @return A list with the following elements:
-#' \tabular{ll}{
-#' \code{post_prob} \tab matrix of posterior probabilities
-#' (each column corresponds to an association pattern).\cr
-#' \code{pis} \tab vector of estimated proportion of observations
-#' belonging to each association pattern.\cr
-#' \code{D_mat} \tab matrix of densities under each association pattern.\cr
-#' \code{Gamma} \tab correlation matrix.\cr
-#' \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
-#' \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
-#' \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
-#'  moderated degrees of freedom: df/(df-2).\cr
-#' \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
-#' \code{prior_var} \tab vector of the prior variance estimators for each marginaldistribution.\cr
-#' \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
-#' for each marginal distribution.
-#' }
-#'
-#' The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
-#' The estimated proportion of observations belonging to each association pattern, \code{pis}, may
-#' also be of interest. Note that the \code{pis} may not sum to 1 since they are estimated from Primo
-#' run on a larger number of studies.
-#' The remaining elements are returned primarily for use by other functions --
-#' such as those conducting conditional association analysis.
+#' @inherit Primo_tstat return
 #'
 #' @export
 #'
@@ -363,9 +310,10 @@ Primo_missdata_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,pri
 #' Estimate posterior probabilities for observations missing from original Primo analysis.
 #'
 #' For each SNP, estimates the posterior probability for each association pattern.
-#' Uses parameters estimated by previous runs of Primo to estimate probabilities
-#' for SNPs missing in one or more studies. \eqn{P}-values from non-missing studies
-#' are used as input. Utilizes parallel computing, when available.
+#' Uses parameters estimated by a previous run of \code{\link{Primo_pval}} or \code{\link{Primo_chiMix}}
+#' to estimate probabilities for SNPs missing in one or more studies.
+#' \eqn{P}-values from non-missing studies are used as input.
+#' Utilizes parallel computing, when available.
 #'
 #' @param pvals matrix of \eqn{P}-values from test statistics.
 #' @param trait_idx integer vector of the columns corresponding to non-missing phenotypes/studies.
@@ -375,29 +323,11 @@ Primo_missdata_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,pri
 #' @param chi_mix matrix of \eqn{-2}log(\eqn{P})-values.
 #' @param A vector of scaling factors under the alternative distributions.
 #' @param df_alt vector of degrees of freedom approximated for the alternative distributions.
-#' @param par_size numeric value; specifies the number of CPUs/cores/processors for
+#' @param par_size numeric value; specifies the number of workers for
 #' parallel computing (1 for sequential processing).
 #'
 #'
-#' @return A list with the following elements:
-#' \tabular{ll}{
-#' \code{post_prob} \tab matrix of posterior probabilities
-#' (rows are SNPs; columns are association patterns).\cr
-#' \code{pis} \tab vector of estimated proportion of SNPs
-#' belonging to each association pattern.\cr
-#' \code{D_mat} \tab matrix of densities under each association pattern.\cr
-#' \code{Gamma} \tab correlation matrix.\cr
-#' \code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
-#' \code{A} \tab vector of scaling factors under the alternative distributions.\cr
-#' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
-#' }
-#'
-#' The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
-#' The estimated proportion of observations belonging to each association pattern, \code{pis}, may
-#' also be of interest. Note that the \code{pis} may not sum to 1 since they are estimated from Primo
-#' run on a larger number of studies.
-#' The remaining elements are returned primarily for use by other functions --
-#' such as those conducting conditional association analysis.
+#' @inherit Primo_pval return
 #'
 #' @export
 #'
@@ -470,14 +400,16 @@ Primo_missdata_pval <- function(pvals,trait_idx,pis,Gamma,A,df_alt,par_size=1){
 
 #' Collapse posterior probabilities based on number of traits of association.
 #'
-#' Combine the posterior probabilities of each individual association pattern
+#' Combine the posterior probabilities of association patterns
 #' according to the number of traits in each pattern. Provides the posterior probability of
-#' being associated with "at least x" number of traits under analysis. Can also require
+#' being associated with "at least n" number of traits under analysis
+#' by summing over association patterns with at least "n" studies
+#' coming from the alternative distribution. Can also require non-null
 #' association with one or more traits and combine over other traits.
 #'
 #' @param post_prob matrix of posterior probabilities.
-#' @param req_idx (optional) integer vector of trait(s) whose association is required.
-#' If \code{NULL}, no traits will be required.
+#' @param req_idx (optional) scalar or integer vector of trait(s) where a non-null
+#' association is required. If \code{NULL}, no traits will be required.
 #' @param prefix character string denoting prefix of column names for the results matrix.
 #'
 #' @return A numeric matrix of combined posterior probabilities.
@@ -523,15 +455,12 @@ collapse_pp_num <- function(post_prob,req_idx=NULL,prefix="pp_ge_"){
 #' Combine the posterior probabilities for each individual trait according to the
 #' association patterns from which that trait comes from the alternative distribution.
 #' Provides the posterior probability of being associated with "at least trait x".
-#' Can also require association with one or more traits and combine patterns when that/those
-#' trait(s) are from the alternative distribution.
+#' Can also require non-null association with one or more traits and combine
+#' over patterns where both "x" and that/those trait(s) are from the alternative distribution.
 #'
-#' @param post_prob matrix of posterior probabilities.
-#' @param req_idx (optional) integer vector of trait(s) whose association is required.
-#' If \code{NULL}, no traits will be required.
-#' @param prefix character string denoting prefix of column names for the results matrix.
+#' @inheritParams collapse_pp_num
 #'
-#' @return A numeric matrix of combined posterior probabilities.
+#' @inherit collapse_pp_num return
 #'
 #' @export
 #'

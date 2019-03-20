@@ -16,7 +16,7 @@ append_Primo_obj(Primo_obj1, Primo_obj2)
 A list of Primo results with the following elements:
 \tabular{ll}{
 \code{post_prob} \tab matrix of posterior probabilities
-(rows are SNPs; columns are association patterns).\cr
+(each column corresponds to an association pattern).\cr
 \code{pis} \tab vector of estimated proportion of SNPs
 belonging to each association pattern.\cr
 \code{D_mat} \tab matrix of densities under each association pattern.\cr
@@ -40,7 +40,7 @@ for each marginal distribution.
 \item If the results were originally from the \eqn{p}-value version,
 the list will additionally contain:
 \tabular{ll}{
-\code{chi_mix} \tab matrix of \eqn{-2}log(\eqn{P})-values.\cr
+\code{chi_mix} \tab matrix of \eqn{-2\log(P)}{-2*log(P)}-values.\cr
 \code{A} \tab vector of scaling factors under the alternative distributions.\cr
 \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
  }
@@ -49,6 +49,4 @@ the list will additionally contain:
 \description{
 Append two sets of Primo results. The function assumes that the two sets
 share marginal distribution parameters and a common correlation structure.
-Function may be used to append results from an initial run from Primo
-with a run that used the same parameters (e.g. to account for missing SNPs)
 }

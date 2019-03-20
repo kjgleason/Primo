@@ -31,5 +31,7 @@ for each phenotype: the name of the lead SNP and the value of the statistic for
 that lead SNP in that phenotype.
 }
 \description{
-Subset results from Primo output based on a vector of indices.
+Determine the lead SNP for each phenotype in each region
+based on summary statistics. A data.table will be returned
+containing lead SNP information for each region.
 }

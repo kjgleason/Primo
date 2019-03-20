@@ -17,7 +17,7 @@ or \code{\link{Primo_chiMix}}).}
 A list of Primo results with the following elements:
 \tabular{ll}{
 \code{post_prob} \tab matrix of posterior probabilities
-(rows are SNPs; columns are association patterns).\cr
+(each column corresponds to an association pattern).\cr
 \code{pis} \tab vector of estimated proportion of SNPs
 belonging to each association pattern.\cr
 \code{D_mat} \tab matrix of densities under each association pattern.\cr

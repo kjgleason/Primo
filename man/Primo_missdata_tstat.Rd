@@ -16,10 +16,11 @@ Primo_missdata_tstat(betas, sds, dfs, trait_idx, mafs = NULL, pis, Gamma,
 
 \item{trait_idx}{integer vector of the columns corresponding to non-missing phenotypes/studies.}
 
-\item{mafs}{vector or matrix of minor allele frequencies (MAFs).}
+\item{mafs}{vector or matrix of minor allele frequencies (MAFs).
+If \code{NULL}, standard errors will not be adjusted for MAF.}
 
 \item{pis}{matrix (one-row) of the estimated proportion of observations
-belonging to each association pattern}
+belonging to each association pattern.}
 
 \item{Gamma}{correlation matrix.}
 
@@ -30,7 +31,7 @@ belonging to each association pattern}
 \item{unscaled_var}{vector of the unscaled variance priors on non-zero coefficients
 for each marginal distribution.}
 
-\item{par_size}{numeric value; specifies the number of CPUs/cores/processors for
+\item{par_size}{numeric value; specifies the number of workers for
 parallel computing (1 for sequential processing).}
 }
 \value{
@@ -47,21 +48,18 @@ belonging to each association pattern.\cr
 \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
  moderated degrees of freedom: df/(df-2).\cr
 \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
-\code{prior_var} \tab vector of the prior variance estimators for each marginaldistribution.\cr
+\code{prior_var} \tab vector of the prior variance estimators for each marginal distribution.\cr
 \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
 for each marginal distribution.
 }
 
 The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
 The estimated proportion of observations belonging to each association pattern, \code{pis}, may
-also be of interest. Note that the \code{pis} may not sum to 1 since they are estimated from Primo
-run on a larger number of studies.
-The remaining elements are returned primarily for use by other functions --
-such as those conducting conditional association analysis.
+also be of interest. The remaining elements are returned primarily for use by other functions.
 }
 \description{
-For each SNP, estimates the posterior probability for each association pattern.
-Uses parameters estimated by previous runs of Primo to estimate probabilities
-for SNPs missing in one or more studies.
+For each observation (e.g. SNP), estimates the posterior probability for each association pattern.
+Uses parameters estimated by a previous run of \code{\link{Primo_tstat}} or \code{\link{Primo_modT}}
+to estimate probabilities for SNPs missing in one or more studies.
 Utilizes parallel computing, when available.
 }

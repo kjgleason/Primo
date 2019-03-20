@@ -21,7 +21,7 @@ belonging to each association pattern}
 
 \item{df_alt}{vector of degrees of freedom approximated for the alternative distributions.}
 
-\item{par_size}{numeric value; specifies the number of CPUs/cores/processors for
+\item{par_size}{numeric value; specifies the number of workers for
 parallel computing (1 for sequential processing).}
 
 \item{chi_mix}{matrix of \eqn{-2}log(\eqn{P})-values.}
@@ -30,8 +30,8 @@ parallel computing (1 for sequential processing).}
 A list with the following elements:
 \tabular{ll}{
 \code{post_prob} \tab matrix of posterior probabilities
-(rows are SNPs; columns are association patterns).\cr
-\code{pis} \tab vector of estimated proportion of SNPs
+(each column corresponds to an association pattern).\cr
+\code{pis} \tab vector of estimated proportion of observations
 belonging to each association pattern.\cr
 \code{D_mat} \tab matrix of densities under each association pattern.\cr
 \code{Gamma} \tab correlation matrix.\cr
@@ -42,14 +42,12 @@ belonging to each association pattern.\cr
 
 The main element of interest for inference is the posterior probabilities matrix, \code{post_prob}.
 The estimated proportion of observations belonging to each association pattern, \code{pis}, may
-also be of interest. Note that the \code{pis} may not sum to 1 since they are estimated from Primo
-run on a larger number of studies.
-The remaining elements are returned primarily for use by other functions --
-such as those conducting conditional association analysis.
+also be of interest. The remaining elements are returned primarily for use by other functions.
 }
 \description{
 For each SNP, estimates the posterior probability for each association pattern.
-Uses parameters estimated by previous runs of Primo to estimate probabilities
-for SNPs missing in one or more studies. \eqn{P}-values from non-missing studies
-are used as input. Utilizes parallel computing, when available.
+Uses parameters estimated by a previous run of \code{\link{Primo_pval}} or \code{\link{Primo_chiMix}}
+to estimate probabilities for SNPs missing in one or more studies.
+\eqn{P}-values from non-missing studies are used as input.
+Utilizes parallel computing, when available.
 }

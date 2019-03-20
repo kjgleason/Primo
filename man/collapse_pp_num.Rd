@@ -9,8 +9,8 @@ collapse_pp_num(post_prob, req_idx = NULL, prefix = "pp_ge_")
 \arguments{
 \item{post_prob}{matrix of posterior probabilities.}
 
-\item{req_idx}{(optional) integer vector of trait(s) whose association is required.
-If \code{NULL}, no traits will be required.}
+\item{req_idx}{(optional) scalar or integer vector of trait(s) where a non-null
+association is required. If \code{NULL}, no traits will be required.}
 
 \item{prefix}{character string denoting prefix of column names for the results matrix.}
 }
@@ -18,8 +18,10 @@ If \code{NULL}, no traits will be required.}
 A numeric matrix of combined posterior probabilities.
 }
 \description{
-Combine the posterior probabilities of each individual association pattern
+Combine the posterior probabilities of association patterns
 according to the number of traits in each pattern. Provides the posterior probability of
-being associated with "at least x" number of traits under analysis. Can also require
+being associated with "at least n" number of traits under analysis
+by summing over association patterns with at least "n" studies
+coming from the alternative distribution. Can also require non-null
 association with one or more traits and combine over other traits.
 }

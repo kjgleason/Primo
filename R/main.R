@@ -186,8 +186,8 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
 #' @return A list with the following elements:
 #' \tabular{ll}{
 #' \code{post_prob} \tab matrix of posterior probabilities
-#' (rows are SNPs; columns are association patterns).\cr
-#' \code{pis} \tab vector of estimated proportion of SNPs
+#' (each column corresponds to an association pattern).\cr
+#' \code{pis} \tab vector of estimated proportion of observations
 #' belonging to each association pattern.\cr
 #' \code{D_mat} \tab matrix of densities under each association pattern.\cr
 #' \code{Gamma} \tab correlation matrix.\cr
@@ -343,8 +343,8 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
 #' @return A list with the following elements:
 #' \tabular{ll}{
 #' \code{post_prob} \tab matrix of posterior probabilities
-#' (rows are SNPs; columns are association patterns).\cr
-#' \code{pis} \tab vector of estimated proportion of SNPs
+#' (each column corresponds to an association pattern).\cr
+#' \code{pis} \tab vector of estimated proportion of observations
 #' belonging to each association pattern.\cr
 #' \code{D_mat} \tab matrix of densities under each association pattern.\cr
 #' \code{Gamma} \tab correlation matrix.\cr
