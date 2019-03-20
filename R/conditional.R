@@ -224,7 +224,7 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
   ## merge in chr and position to calculate distance between lead SNPs and SNP of interest
   data.table::setkeyv(curr.Region_long,snp_col)
   data.table::setkeyv(snp_info,snp_col)
-  curr.Region_long <- data.table::merge(curr.Region_long,snp_info)
+  curr.Region_long <- data.table::merge.data.table(curr.Region_long,snp_info)
   curr.Region_long$dist <- abs(snp_info$POS[which(snp_info$SNP==curr.SNP)] - curr.Region_long$POS)
   ## merge in LD coefficients
   curr.Region_long$LD_r2 <- LD_mat[curr.SNP,subset(curr.Region_long,select=snp_col)[[1]]]

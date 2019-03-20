@@ -143,7 +143,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
       if(is.null(leadsnps_region)){
         leadsnps_region <- topSNP_currPheno
       } else{
-        leadsnps_region <- data.table::merge(leadsnps_region,topSNP_currPheno)
+        leadsnps_region <- data.table::merge.data.table(leadsnps_region,topSNP_currPheno)
       }
 
     }
@@ -164,7 +164,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
       if(is.null(leadsnps_region)){
         leadsnps_region <- topSNP_currPheno
       } else{
-        leadsnps_region <- data.table::merge(leadsnps_region,topSNP_currPheno)
+        leadsnps_region <- data.table::merge.data.table(leadsnps_region,topSNP_currPheno)
       }
 
     }
