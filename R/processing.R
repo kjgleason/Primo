@@ -401,7 +401,8 @@ Primo_missdata_pval <- function(pvals,trait_idx,pis,Gamma,A,df_alt,par_size=1){
 #' Collapse posterior probabilities based on number of traits of association.
 #'
 #' Combine the posterior probabilities of association patterns
-#' according to the number of traits in each pattern. Provides the posterior probability of
+#' according to the number of traits with non-null associations in each pattern.
+#' Provides the posterior probability of
 #' being associated with "at least n" number of traits under analysis
 #' by summing over association patterns with at least "n" studies
 #' coming from the alternative distribution. Can also require non-null
