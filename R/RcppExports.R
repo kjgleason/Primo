@@ -48,8 +48,6 @@ e_step <- function(old_pi, Dmat) {
 #' @return A row vector of column sums of posterior expectations
 #' (allows M-step to be performed in chunks).
 #'
-#' @details
-#'
 #' @export
 #'
 e_step_withColSums <- function(old_pi, Dmat) {

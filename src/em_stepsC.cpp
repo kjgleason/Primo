@@ -77,8 +77,6 @@ arma::mat e_step(const arma::rowvec& old_pi, const arma::mat& Dmat) {
 //' @return A row vector of column sums of posterior expectations
 //' (allows M-step to be performed in chunks).
 //'
-//' @details
-//'
 //' @export
 //'
 // [[Rcpp::export]]

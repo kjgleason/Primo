@@ -21,6 +21,3 @@ proportion of observations coming from each association pattern). Return column 
 expectations. This allows the M-step to be completed in chunks (dividing a running sum
 by the total number of rows at the end to obtain the mean), alleviating potential memory issues.
 }
-\details{
-
-}
