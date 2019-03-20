@@ -73,7 +73,7 @@ The remaining elements are returned primarily for use by other functions.
 For each observation (e.g. SNP), estimate the posterior probability for each association pattern.
 This function calls either the \eqn{t}-statistic (\code{\link{Primo_tstat}}) or
 \eqn{p}-value (\code{\link{Primo_pval}}) version of Primo.
-Utilizes parallel computing, when available.
+Utilizes parallel computing, when available. For package documentation, see (\code{\link{Primo-package}})
 }
 \details{
 The following are additional details describing the input arguments

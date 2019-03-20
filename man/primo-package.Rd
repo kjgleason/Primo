@@ -2,8 +2,8 @@
 % Please edit documentation in R/Primo.R
 \docType{package}
 \name{Primo-package}
-\alias{Primo}
 \alias{Primo-package}
+\alias{_PACKAGE}
 \title{Primo: Package in R for Integrating Multi-Omics data}
 \description{
 Implements methods to integrate multi-omics data to detect joint associations 
