@@ -496,8 +496,8 @@ Primo_modT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
 #' @export
 #'
 Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
-  m <- nrow(pvals)
-  d <- ncol(pvals)
+  m <- nrow(chi_mix)
+  d <- ncol(chi_mix)
 
   ## computation of D_mat (densities under each pattern)
   Q<-Primo::make_qmat(1:d)

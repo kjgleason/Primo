@@ -115,8 +115,8 @@ append_Primo_obj <- function(Primo_obj1,Primo_obj2){
 #'
 find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
 
-  base::requireNamespace(data.table)
-  base::requireNamespace(magrittr)
+  base::requireNamespace("data.table")
+  # base::requireNamespace("magrittr")
 
   if(!data.table::is.data.table(data)){
     warning("Converting argument `data` to data.table format.")
