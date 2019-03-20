@@ -238,9 +238,9 @@ estimate_densities <- function(betas=NULL, sds=NULL, df=NULL, pvals=NULL, alt_pr
   return(myDens)
 }
 
-#' Make Configuration Matrix
+#' Create association pattern matrix
 #'
-#' Make configuration matrix (\eqn{Q}) that indicates null/alternative densities
+#' Make matrix denoting association patterns (\eqn{Q}) that indicates null/alternative densities
 #' in the association patterns.
 #'
 #' @param grp vector of group identifiers (common to use \code{seq(1,d)}, for \eqn{d} groups).

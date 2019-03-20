@@ -5,10 +5,10 @@ using namespace Rcpp;
 
 //' Density matrix calculation
 //'
-//' Calculate conditional joint densities for each configuration, given marginal
+//' Calculate conditional joint densities for each association pattern, given marginal
 //' null and alternative densities, under the assumption of independence.
 //'
-//' @param Q matrix of configurations.
+//' @param Q matrix of association patterns.
 //' @param D0 matrix of density estimates under the null distribution.
 //' @param D1 matrix of density estimates under the alternative distributions.
 //'
@@ -22,7 +22,7 @@ arma::mat calc_Dmatrix(const arma::mat& Q, const arma::mat& D0, const arma::mat&
   // transpose Q to form compatible dimensions for matrix multiplications
   arma::mat t_Q = Q.t();
 
-  // calculate log density under each configuration
+  // calculate log density under each association pattern
   arma::mat Dmat = log(D0) * (1-t_Q) + log(D1) * t_Q;
 
   // exponentiate to convert log density to density
@@ -47,10 +47,10 @@ arma::mat calc_Dmatrix(const arma::mat& Q, const arma::mat& D0, const arma::mat&
 // [[Rcpp::export]]
 arma::mat e_step(const arma::rowvec& old_pi, const arma::mat& Dmat) {
 
-  // calculate log density under each configuration
+  // calculate log density under each association pattern
   arma::mat Bmat = log(Dmat);
 
-  // factor in proportion of observations estimated to belong to each configuration
+  // factor in proportion of observations estimated to belong to each association patterns
   Bmat.each_row() += log(old_pi);
 
   // substract maximum from each row (i.e. subtract colvec of rowMaxs from each column)
@@ -72,11 +72,10 @@ arma::mat e_step(const arma::rowvec& old_pi, const arma::mat& Dmat) {
 //' expectations. This allows the M-step to be completed in chunks (dividing a running sum
 //' by the total number of rows at the end to obtain the mean), alleviating potential memory issues.
 //'
-//' @param old_pi vector of configuration proportions, fit through maximization.
-//' @param Dmat matrix of conditional joint densities under each association pattern.
+//' @inheritParams e_step
 //'
-//' @return A matrix of column sums of posterior expectations
-//' (allows processing to be performed in chunks).
+//' @return A row vector of column sums of posterior expectations
+//' (allows M-step to be performed in chunks).
 //'
 //' @details
 //'
@@ -85,9 +84,9 @@ arma::mat e_step(const arma::rowvec& old_pi, const arma::mat& Dmat) {
 // [[Rcpp::export]]
 arma::mat e_step_withColSums(const arma::rowvec& old_pi, const arma::mat& Dmat) {
 
-  // calculate log density under each configuration
+  // calculate log density under each association pattern
   arma::mat Bmat = log(Dmat);
-  // factor in proportion of observations estimated to belong to each configuration
+  // factor in proportion of observations estimated to belong to each association pattern
   Bmat.each_row() += log(old_pi);
 
   // substract maximum from each row (i.e. subtract colvec of rowMaxs from each column)
@@ -132,11 +131,9 @@ arma::mat m_step(const arma::mat& old_B){
 //' (i.e. E-Step). Re-estimate the \eqn{\pi} vector that maximizes the posterior
 //' expectations (i.e. M-step).
 //'
-//' @param old_pi vector of configuration proportions, fit through maximization.
-//' @param Dmat matrix of conditional joint densities under each configuration.
+//' @inheritParams e_step
 //'
-//' @return A row vector estimating the proportion of observations coming from
-//' each association pattern.
+//' @inherit m_step return
 //'
 //' @export
 //'
@@ -144,9 +141,9 @@ arma::mat m_step(const arma::mat& old_B){
 arma::mat em_iter(const arma::rowvec& old_pi, const arma::mat& Dmat) {
   // E-step
 
-  // calculate log density under each configuration
+  // calculate log density under each association pattern
   arma::mat Bmat = log(Dmat);
-  // factor in proportion of observations estimated to belong to each configuration
+  // factor in proportion of observations estimated to belong to each association pattern
   Bmat.each_row() += log(old_pi);
 
   // substract maximum from each row (i.e. subtract colvec of rowMins from each column)

@@ -48,7 +48,7 @@ The remaining elements are returned primarily for use by other functions --
 such as those conducting conditional association analysis.
 }
 \description{
-For each SNP, estimates the posterior probability for each configuration.
+For each SNP, estimates the posterior probability for each association pattern.
 Uses parameters estimated by previous runs of Primo to estimate probabilities
 for SNPs missing in one or more studies. \eqn{P}-values from non-missing studies
 are used as input. Utilizes parallel computing, when available.

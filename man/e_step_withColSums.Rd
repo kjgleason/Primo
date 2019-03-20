@@ -7,13 +7,13 @@
 e_step_withColSums(old_pi, Dmat)
 }
 \arguments{
-\item{old_pi}{vector of configuration proportions, fit through maximization.}
+\item{old_pi}{vector of association pattern proportions, fit through maximization.}
 
 \item{Dmat}{matrix of conditional joint densities under each association pattern.}
 }
 \value{
-A matrix of column sums of posterior expectations
-(allows processing to be performed in chunks).
+A row vector of column sums of posterior expectations
+(allows M-step to be performed in chunks).
 }
 \description{
 Calculate posterior expectations given maximized estimate for \eqn{\pi} (the

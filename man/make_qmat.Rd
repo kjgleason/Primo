@@ -2,7 +2,7 @@
 % Please edit documentation in R/density_estimation.R
 \name{make_qmat}
 \alias{make_qmat}
-\title{Make Configuration Matrix}
+\title{Create association pattern matrix}
 \usage{
 make_qmat(grp, name_cols = FALSE)
 }
@@ -18,6 +18,6 @@ the null (\eqn{0}) or alternative (\eqn{1}) distribution
 under the \eqn{k}-th association pattern.
 }
 \description{
-Make configuration matrix (\eqn{Q}) that indicates null/alternative densities
+Make matrix denoting association patterns (\eqn{Q}) that indicates null/alternative densities
 in the association patterns.
 }

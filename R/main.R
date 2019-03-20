@@ -471,7 +471,7 @@ Primo_modT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
 #' (i.e. using \code{\link{estimate_densities_pval}}). It is useful for cases where
 #' the same statistic from one study (e.g. gene-SNP pair) may be mapped to
 #' multiple statistics from another study (e.g. multiple gene-CpG pairings).
-#' For each SNP, estimates the posterior probability for each configuration.
+#' For each SNP, estimates the posterior probability for each association pattern.
 #' Utilizes parallel computing, when available.
 #'
 #' @param chi_mix matrix of \eqn{-2*\log(P)}{-2*log(P)}-values from test statistics.

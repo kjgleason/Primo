@@ -44,7 +44,7 @@ and the parameters of the alternative distributions which were previously calcul
 (i.e. using \code{\link{estimate_densities_pval}}). It is useful for cases where
 the same statistic from one study (e.g. gene-SNP pair) may be mapped to
 multiple statistics from another study (e.g. multiple gene-CpG pairings).
-For each SNP, estimates the posterior probability for each configuration.
+For each SNP, estimates the posterior probability for each association pattern.
 Utilizes parallel computing, when available.
 }
 \details{

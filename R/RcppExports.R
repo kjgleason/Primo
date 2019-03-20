@@ -3,10 +3,10 @@
 
 #' Density matrix calculation
 #'
-#' Calculate conditional joint densities for each configuration, given marginal
+#' Calculate conditional joint densities for each association pattern, given marginal
 #' null and alternative densities, under the assumption of independence.
 #'
-#' @param Q matrix of configurations.
+#' @param Q matrix of association patterns.
 #' @param D0 matrix of density estimates under the null distribution.
 #' @param D1 matrix of density estimates under the alternative distributions.
 #'
@@ -43,11 +43,10 @@ e_step <- function(old_pi, Dmat) {
 #' expectations. This allows the M-step to be completed in chunks (dividing a running sum
 #' by the total number of rows at the end to obtain the mean), alleviating potential memory issues.
 #'
-#' @param old_pi vector of configuration proportions, fit through maximization.
-#' @param Dmat matrix of conditional joint densities under each association pattern.
+#' @inheritParams e_step
 #'
-#' @return A matrix of column sums of posterior expectations
-#' (allows processing to be performed in chunks).
+#' @return A row vector of column sums of posterior expectations
+#' (allows M-step to be performed in chunks).
 #'
 #' @details
 #'
@@ -79,11 +78,9 @@ m_step <- function(old_B) {
 #' (i.e. E-Step). Re-estimate the \eqn{\pi} vector that maximizes the posterior
 #' expectations (i.e. M-step).
 #'
-#' @param old_pi vector of configuration proportions, fit through maximization.
-#' @param Dmat matrix of conditional joint densities under each configuration.
+#' @inheritParams e_step
 #'
-#' @return A row vector estimating the proportion of observations coming from
-#' each association pattern.
+#' @inherit m_step return
 #'
 #' @export
 #'

@@ -7,13 +7,12 @@
 em_iter(old_pi, Dmat)
 }
 \arguments{
-\item{old_pi}{vector of configuration proportions, fit through maximization.}
+\item{old_pi}{vector of association pattern proportions, fit through maximization.}
 
-\item{Dmat}{matrix of conditional joint densities under each configuration.}
+\item{Dmat}{matrix of conditional joint densities under each association pattern.}
 }
 \value{
-A row vector estimating the proportion of observations coming from
-each association pattern.
+A row vector estimating the proportion of observations coming from each association pattern.
 }
 \description{
 Complete one iteration of the EM-algorithm (combines E-step and M-step).

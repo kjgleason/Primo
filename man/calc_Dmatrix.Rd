@@ -7,7 +7,7 @@
 calc_Dmatrix(Q, D0, D1)
 }
 \arguments{
-\item{Q}{matrix of configurations.}
+\item{Q}{matrix of association patterns.}
 
 \item{D0}{matrix of density estimates under the null distribution.}
 
@@ -18,6 +18,6 @@ A matrix estimating the conditional joint densities
 under each association pattern for each observation (e.g SNP).
 }
 \description{
-Calculate conditional joint densities for each configuration, given marginal
+Calculate conditional joint densities for each association pattern, given marginal
 null and alternative densities, under the assumption of independence.
 }
