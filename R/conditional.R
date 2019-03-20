@@ -5,12 +5,12 @@
 #' being studied). Returns the association pattern with the highest
 #' posterior probability after conditional analysis.
 #'
-#' @param idx.snp integer matching the index of the genetic variant (e.g. row of \code{Tstat_mod})
+#' @param idx_snp integer matching the index of the genetic variant (e.g. row of \code{Tstat_mod})
 #' for which to perform conditional analysis.
-#' @param idx.leadsnps vector of indices of the leading snps (e.g. rows of \code{Tstat_mod})
+#' @param idx_leadsnps vector of indices of the leading snps (e.g. rows of \code{Tstat_mod})
 #' on which to condition.
 #' @param LD_mat matrix of LD coefficients (\eqn{r^{2}}{r^2}).
-#' Rows and columns should match the order of (\code{idx.snp}, \code{idx.leadsnps}).
+#' Rows and columns should match the order of (\code{idx_snp}, \code{idx_leadsnps}).
 #' @param Primo_obj list returned by running the \eqn{t}-statistic version
 #' of Primo (i.e. \code{\link{Primo_tstat}} or \code{\link{Primo_modT}})
 #'
@@ -23,19 +23,19 @@
 #'
 #' @export
 #'
-Primo_conditional <- function(idx.snp,idx.leadsnps,LD_mat,Primo_obj){
-  n_leadsnps<-length(idx.leadsnps)
-  zi<-Primo_obj$Tstat_mod[c(idx.snp,idx.leadsnps),]
+Primo_conditional <- function(idx_snp,idx_leadsnps,LD_mat,Primo_obj){
+  n_leadsnps<-length(idx_leadsnps)
+  zi<-Primo_obj$Tstat_mod[c(idx_snp,idx_leadsnps),]
   d<-ncol(zi)
   Q <- make_qmat(1:d)
-  V <- Primo_obj$V_mat[c(idx.snp,idx.leadsnps),]
-  mdf_sd<-Primo_obj$mdf_sd_mat[c(idx.snp,idx.leadsnps),]
+  V <- Primo_obj$V_mat[c(idx_snp,idx_leadsnps),]
+  mdf_sd<-Primo_obj$mdf_sd_mat[c(idx_snp,idx_leadsnps),]
   post_prob<-Primo_obj$post_prob
   pis<-Primo_obj$pis
   v2<-NULL
   Gamma<-Primo_obj$Gamma
   for(i in 1:n_leadsnps){
-    q2<-Q[which.max(post_prob[idx.leadsnps[i],]),]
+    q2<-Q[which.max(post_prob[idx_leadsnps[i],]),]
     v2<-rbind(v2,(V[(i+1),]%*%diag(q2)+ matrix(1, nrow=1,ncol=d)%*%diag( 1-q2))*matrix(mdf_sd[(i+1),],ncol=d))
   }
 
@@ -138,20 +138,20 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
   leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval <= pval_thresh & LD_r2 < LD_thresh)[,snp_col])
 
   ## index of SNP of interest
-  idx.snp <- which(IDs[,snp_col]==curr.SNP)
+  idx_snp <- which(IDs[,snp_col]==curr.SNP)
 
   if(length(leadSNPs)==0){
-    return(which.max(Primo_obj$post_prob[idx.snp,]))
+    return(which.max(Primo_obj$post_prob[idx_snp,]))
   } else{
 
     ## get snp_indices for other snps to adjust for
-    idx.leadsnps <- NULL
+    idx_leadsnps <- NULL
     for(j in 1:length(leadSNPs)){
-      idx.leadsnps <- c(idx.leadsnps, which(IDs[,snp_col]==leadSNPs[j]))
+      idx_leadsnps <- c(idx_leadsnps, which(IDs[,snp_col]==leadSNPs[j]))
     }
 
     ## run fine-mapping
-    sp <- Primo::Primo_conditional(idx.snp,idx.leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj)
+    sp <- Primo::Primo_conditional(idx_snp,idx_leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj)
     return(sp)
   }
 }
@@ -232,22 +232,22 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
   leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval < pval_thresh & LD_r2 < LD_thresh,select=snp_col)[[1]])
 
   ## index of SNP of interest
-  # idx.snp <- which(IDs[,get(snp_col)]==curr.SNP)
-  idx.snp <- which(subset(IDs,select=snp_col)[[1]]==curr.SNP)
+  # idx_snp <- which(IDs[,get(snp_col)]==curr.SNP)
+  idx_snp <- which(subset(IDs,select=snp_col)[[1]]==curr.SNP)
 
   if(length(leadSNPs)==0){
-    return(which.max(Primo_obj$post_prob[idx.snp,]))
+    return(which.max(Primo_obj$post_prob[idx_snp,]))
   } else{
 
     ## get snp_indices for other snps to adjust for
-    idx.leadsnps <- NULL
+    idx_leadsnps <- NULL
     for(j in 1:length(leadSNPs)){
-      # idx.leadsnps <- c(idx.leadsnps, which(IDs[,get(snp_col)]==leadSNPs[j]))
-      idx.leadsnps <- c(idx.leadsnps, which(subset(IDs,select=snp_col)[[1]]==leadSNPs[j]))
+      # idx_leadsnps <- c(idx_leadsnps, which(IDs[,get(snp_col)]==leadSNPs[j]))
+      idx_leadsnps <- c(idx_leadsnps, which(subset(IDs,select=snp_col)[[1]]==leadSNPs[j]))
     }
 
     ## run fine-mapping
-    sp <- Primo::Primo_conditional(idx.snp,idx.leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj)
+    sp <- Primo::Primo_conditional(idx_snp,idx_leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj)
     return(sp)
   }
 }
