@@ -7,5 +7,6 @@
 
 #' @useDynLib Primo, .registration=TRUE
 #' @importFrom Rcpp evalCpp
+#' @importFrom magrittr %>%
 #' @exportPattern "^[[:alpha:]]+"
 NULL
