@@ -119,7 +119,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
   require(magrittr)
 
   if(!is.data.table(data)){
-    warning("Converting argument data to data.table format.")
+    warning("Converting argument `data` to data.table format.")
     data <- data.table(data)
   }
 
