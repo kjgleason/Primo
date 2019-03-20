@@ -23,8 +23,6 @@ belonging to each association pattern}
 
 \item{par_size}{numeric value; specifies the number of workers for
 parallel computing (1 for sequential processing).}
-
-\item{chi_mix}{matrix of \eqn{-2}log(\eqn{P})-values.}
 }
 \value{
 A list with the following elements:

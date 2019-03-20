@@ -115,8 +115,8 @@ append_Primo_obj <- function(Primo_obj1,Primo_obj2){
 #'
 find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
 
-  require(data.table)
-  require(magrittr)
+  base::requireNamespace(data.table)
+  base::requireNamespace(magrittr)
 
   if(!is.data.table(data)){
     warning("Converting argument `data` to data.table format.")
@@ -325,7 +325,6 @@ Primo_missdata_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,pri
 #' @param pis matrix (one-row) of the estimated proportion of observations
 #' belonging to each association pattern
 #' @param Gamma correlation matrix.
-#' @param chi_mix matrix of \eqn{-2}log(\eqn{P})-values.
 #' @param A vector of scaling factors under the alternative distributions.
 #' @param df_alt vector of degrees of freedom approximated for the alternative distributions.
 #' @param par_size numeric value; specifies the number of workers for
