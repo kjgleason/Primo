@@ -116,7 +116,6 @@ append_Primo_obj <- function(Primo_obj1,Primo_obj2){
 find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",suffices=NULL){
 
   base::requireNamespace("data.table")
-  # base::requireNamespace("magrittr")
 
   if(!data.table::is.data.table(data)){
     warning("Converting argument `data` to data.table format.")
@@ -143,7 +142,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
       if(is.null(leadsnps_region)){
         leadsnps_region <- topSNP_currPheno
       } else{
-        leadsnps_region <- data.table::merge.data.table(leadsnps_region,topSNP_currPheno)
+        leadsnps_region <- merge(leadsnps_region,topSNP_currPheno)
       }
 
     }
@@ -164,7 +163,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
       if(is.null(leadsnps_region)){
         leadsnps_region <- topSNP_currPheno
       } else{
-        leadsnps_region <- data.table::merge.data.table(leadsnps_region,topSNP_currPheno)
+        leadsnps_region <- merge(leadsnps_region,topSNP_currPheno)
       }
 
     }
