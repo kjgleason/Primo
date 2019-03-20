@@ -135,7 +135,9 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
   ## merge in LD coefficients
   curr.Region_long$LD_r2 <- LD_mat[curr.SNP,curr.Region_long[,snp_col]]
 
-  leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval <= pval_thresh & LD_r2 < LD_thresh)[,snp_col])
+  # leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval <= pval_thresh & LD_r2 < LD_thresh)[,snp_col])
+  keep_idx <- which(curr.Region_long$dist > dist_thresh & curr.Region_long$pval <= pval_thresh & curr.Region_long$LD_r2 < LD_thresh)
+  leadSNPs <- unique(curr.Region_long[keep_idx,snp_col])
 
   ## index of SNP of interest
   idx_snp <- which(IDs[,snp_col]==curr.SNP)
