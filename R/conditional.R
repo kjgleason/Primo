@@ -215,7 +215,7 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
   IDs_copy$ObsNum <- 1:nrow(IDs_copy)
   IDs_copy <- merge(IDs_copy,curr.IDs,by=pheno_cols)
   curr_Region.idx <- IDs_copy$ObsNum
-  Primo_obj <- subset_Primo_obj(Primo_obj,curr_Region.idx)
+  Primo_obj_sub <- subset_Primo_obj(Primo_obj,curr_Region.idx)
   # IDs <- IDs[curr_Region.idx,]
 
   ## melt data so each lead SNP is its own row
@@ -242,7 +242,7 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
   idx_snp <- which(subset(IDs_copy,select=snp_col)[[1]]==curr.SNP)
 
   if(length(leadSNPs)==0){
-    return(which.max(Primo_obj$post_prob[idx_snp,]))
+    return(which.max(Primo_obj_sub$post_prob[idx_snp,]))
   } else{
 
     ## get snp_indices for other snps to adjust for
@@ -253,7 +253,7 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
     }
 
     ## run fine-mapping
-    sp <- Primo::Primo_conditional(idx_snp,idx_leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj)
+    sp <- Primo::Primo_conditional(idx_snp,idx_leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj_sub)
     return(sp)
   }
 }
