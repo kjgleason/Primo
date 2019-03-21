@@ -236,8 +236,8 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
   # leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval <= pval_thresh & LD_r2 < LD_thresh,select=snp_col)[[1]])
   keep_idx <- which(curr.Region_long$dist > dist_thresh & curr.Region_long$pval <= pval_thresh & curr.Region_long$LD_r2 < LD_thresh)
   # leadSNPs <- unique(curr.Region_long[keep_idx,..snp_col][[1]])
-  # leadSNPs <- unique(subset(curr.Region_long,select=snp_col)[[1]])
-  leadSNPs <- unique(curr.Region_long$SNP[keep_idx])
+  leadSNPs <- unique(subset(curr.Region_long[keep_idx,],select=snp_col)[[1]])
+  # leadSNPs <- unique(curr.Region_long$SNP[keep_idx])
 
   ## index of SNP of interest
   # idx_snp <- which(IDs[,get(snp_col)]==curr.SNP)
