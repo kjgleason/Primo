@@ -217,8 +217,8 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
 
   sp_vec <- NULL
 
-  # for(i in idx){
-  i<-idx
+  for(i in idx){
+    ## get current region
     curr.IDs <- IDs[i,]
     curr.SNP <- subset(curr.IDs,select=snp_col)[[1]]
     curr.Region <- merge(leadsnps_region,curr.IDs,by=pheno_cols)
@@ -253,8 +253,7 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
     idx_snp <- which(subset(IDs_copy,select=snp_col)[[1]]==curr.SNP)
 
     if(length(leadSNPs)==0){
-      # sp_vec <- c(sp_vec,which.max(Primo_obj_sub$post_prob[idx_snp,]))
-      return(which.max(Primo_obj_sub$post_prob[idx_snp,]))
+      sp_vec <- c(sp_vec,which.max(Primo_obj_sub$post_prob[idx_snp,]))
     } else{
 
       ## get snp_indices for other snps to adjust for
@@ -265,10 +264,10 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
 
       ## run conditional analysis
       sp <- Primo::Primo_conditional(idx_snp,idx_leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj_sub)
-      # sp_vec <- c(sp_vec,sp)
-      return(sp)
+      sp_vec <- c(sp_vec,sp)
     }
-  # }
+  }
 
+  return(sp_vec)
 }
 
