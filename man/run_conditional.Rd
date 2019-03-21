@@ -2,7 +2,7 @@
 % Please edit documentation in R/conditional.R
 \name{run_conditional}
 \alias{run_conditional}
-\title{Set up conditional analysis for a specified variant by index.}
+\title{Set up conditional analysis for specified variant(s) by index.}
 \usage{
 run_conditional(Primo_obj, IDs, idx, leadsnps_region, snp_col = "SNP",
   pheno_cols, snp_info, LD_mat, LD_thresh = 1, dist_thresh = 0,
@@ -12,22 +12,22 @@ run_conditional(Primo_obj, IDs, idx, leadsnps_region, snp_col = "SNP",
 \item{Primo_obj}{list returned by running the \eqn{t}-statistic version
 of Primo (i.e. \code{\link{Primo_tstat}})}
 
-\item{IDs}{data.frame of the SNP and phenotype IDs corresponding to each row
-of \code{Primo_obj}.}
+\item{IDs}{data.table of the SNP and phenotype IDs corresponding to each row
+of the Primo results stored in \code{Primo_obj}.}
 
-\item{idx}{integer specifying the index of the genetic variant (e.g. row of \code{Tstat_mod})
-on which one wants to perform conditional analysis.}
+\item{idx}{integer of the index of the genetic variant (e.g. row of \code{Tstat_mod})
+on which one wants to perform fine-mapping}
 
-\item{leadsnps_region}{data.frame detailing the lead SNP of each phenotype
-in each region of \code{Primo_obj} and associated \eqn{P}-values for the lead SNPs.
-See Details.}
+\item{leadsnps_region}{data.table that stores the lead SNP of each phenotype
+in each region of the Primo results. Also includes p-values for the lead SNPs.
+See Details for format.}
 
 \item{snp_col}{string of the column name of SNPs/variants.}
 
 \item{pheno_cols}{character vector of the column names of the phenotype ID columns.}
 
-\item{snp_info}{data.frame reporting the chromosome and position of each SNP.
-Columns should be: \code{SNP, CHR, POS}.}
+\item{snp_info}{data.table reporting the chromosome and position of each SNP.
+Columns must include: \code{SNP, CHR, POS}.}
 
 \item{LD_mat}{matrix of LD coefficients (\eqn{r^{2}}{r^2}). Row and column names
 should be SNP/variant names (e.g. in \code{snp_col}).}
@@ -49,25 +49,18 @@ Default value (1) signifies no consideration of strength of effect in conditiona
 \code{leadsnps_region}. See Details.}
 }
 \value{
-The integer corresponding to the association pattern
-with the highest posterior probability following conditional analysis.
-The value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
+An integer vector corresponding to the association pattern
+with the highest posterior probabilities for each SNP variant
+represented by \code{idx}, following conditional analysis.
+Each value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
 from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
 by \code{\link{make_qmat}}.
 }
 \description{
-For a specified variant (passed by index), set-up and run conditional analysis.
-The function uses a data.frame of lead SNPs to identify possible SNPs
+For specified variant(s) (passed by index), set-up and run conditional analysis.
+The function uses a data.table of lead SNPs to identify possible SNPs
 for conditional analysis, and determines which SNPs
 will be conditioned on based on specified criteria. Returns the association
-pattern with the highest posterior probability after conditional analysis.
-}
-\details{
-The following are additional details describing the input
-\code{leadsnps_region}. For \eqn{J} phenotypes being analyzed, the first
-\eqn{J} columns of \code{leadsnps_region} should specify phenotype IDs.
-Examples include gene symbol, CpG site name, trait name for GWAS, etc. The following
-\eqn{2*J} columns should hold the name and p-value of the lead SNP for each of the
-\eqn{J} phenotypes. The column names should be of the form \code{leadSNP_x} and
-\code{pvalue_x}, where \code{x} is a suffix corresponding to the phenotype.
+pattern with the highest posterior probability for each specified variant
+after conditional analysis.
 }
