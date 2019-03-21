@@ -208,8 +208,7 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
 
   sp_vec <- NULL
 
-  # for(i in idx){
-  i<-idx
+  for(i in idx){
     curr.IDs <- IDs[i,]
     curr.SNP <- subset(curr.IDs,select=snp_col)[[1]]
     curr.Region <- merge(leadsnps_region,curr.IDs,by=pheno_cols)
@@ -217,10 +216,10 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
     ## subset Primo results to the current region
     IDs_copy <- IDs
     IDs_copy$ObsNum <- 1:nrow(IDs_copy)
-    IDs_copy <- merge(IDs_copy,curr.IDs,by=c(snp_col,pheno_cols))
+    IDs_copy <- merge(IDs_copy,curr.IDs,by=pheno_cols)
     curr_Region.idx <- IDs_copy$ObsNum
     Primo_obj_sub <- subset_Primo_obj(Primo_obj,curr_Region.idx)
-    # IDs <- IDs[curr_Region.idx,]
+    IDs_copy <- IDs[curr_Region.idx,]
 
     ## melt data so each lead SNP is its own row
     curr.Region_long <- data.table::melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("leadSNP_",suffices),
@@ -238,31 +237,26 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
 
     ## determine which lead SNPs meet criteria
     keep_idx <- which(curr.Region_long$dist > dist_thresh & curr.Region_long$pval <= pval_thresh & curr.Region_long$LD_r2 < LD_thresh)
-    # leadSNPs <- unique(curr.Region_long[keep_idx,..snp_col][[1]])
     leadSNPs <- unique(subset(curr.Region_long[keep_idx,],select=snp_col)[[1]])
 
     ## index of SNP of interest
-    # idx_snp <- which(IDs[,..snp_col][[1]]==curr.SNP)
     idx_snp <- which(subset(IDs_copy,select=snp_col)[[1]]==curr.SNP)
 
     if(length(leadSNPs)==0){
-      # sp_vec <- c(sp_vec,which.max(Primo_obj_sub$post_prob[idx_snp,]))
-      return(which.max(Primo_obj_sub$post_prob[idx_snp,]))
+      sp_vec <- c(sp_vec,which.max(Primo_obj_sub$post_prob[idx_snp,]))
     } else{
 
       ## get snp_indices for other snps to adjust for
       idx_leadsnps <- NULL
       for(j in 1:length(leadSNPs)){
-        # idx_leadsnps <- c(idx_leadsnps, which(IDs[,..snp_col][[1]]==leadSNPs[j]))
         idx_leadsnps <- c(idx_leadsnps, which(subset(IDs_copy,select=snp_col)[[1]]==leadSNPs[j]))
       }
 
-      ## run fine-mapping
+      ## run conditional analysis
       sp <- Primo::Primo_conditional(idx_snp,idx_leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj_sub)
-      # sp_vec <- c(sp_vec,sp)
-      return(sp)
+      sp_vec <- c(sp_vec,sp)
     }
-  # }
+  }
 
 }
 
