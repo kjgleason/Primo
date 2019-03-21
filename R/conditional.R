@@ -209,6 +209,7 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
   sp_vec <- NULL
 
   # for(i in idx){
+  i<-idx
     curr.IDs <- IDs[i,]
     curr.SNP <- subset(curr.IDs,select=snp_col)[[1]]
     curr.Region <- merge(leadsnps_region,curr.IDs,by=pheno_cols)
