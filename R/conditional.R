@@ -217,10 +217,10 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
     ## subset Primo results to the current region
     IDs_copy <- IDs
     IDs_copy$ObsNum <- 1:nrow(IDs_copy)
-    IDs_copy <- merge(IDs_copy,curr.IDs,by=pheno_cols)
+    IDs_copy <- merge(IDs_copy,curr.IDs,by=c(snp_col,pheno_cols))
     curr_Region.idx <- IDs_copy$ObsNum
     Primo_obj_sub <- subset_Primo_obj(Primo_obj,curr_Region.idx)
-    IDs <- IDs[curr_Region.idx,]
+    # IDs <- IDs[curr_Region.idx,]
 
     ## melt data so each lead SNP is its own row
     curr.Region_long <- data.table::melt(curr.Region,id.vars=pheno_cols,measure.vars = paste0("leadSNP_",suffices),
@@ -243,7 +243,7 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
 
     ## index of SNP of interest
     # idx_snp <- which(IDs[,..snp_col][[1]]==curr.SNP)
-    idx_snp <- which(subset(IDs,select=snp_col)[[1]]==curr.SNP)
+    idx_snp <- which(subset(IDs_copy,select=snp_col)[[1]]==curr.SNP)
 
     if(length(leadSNPs)==0){
       # sp_vec <- c(sp_vec,which.max(Primo_obj_sub$post_prob[idx_snp,]))
@@ -254,7 +254,7 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
       idx_leadsnps <- NULL
       for(j in 1:length(leadSNPs)){
         # idx_leadsnps <- c(idx_leadsnps, which(IDs[,..snp_col][[1]]==leadSNPs[j]))
-        idx_leadsnps <- c(idx_leadsnps, which(subset(IDs,select=snp_col)[[1]]==leadSNPs[j]))
+        idx_leadsnps <- c(idx_leadsnps, which(subset(IDs_copy,select=snp_col)[[1]]==leadSNPs[j]))
       }
 
       ## run fine-mapping
