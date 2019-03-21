@@ -235,12 +235,13 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
 
   # leadSNPs <- unique(subset(curr.Region_long, dist > dist_thresh & pval < pval_thresh & LD_r2 < LD_thresh,select=snp_col)[[1]])
   keep_idx <- which(curr.Region_long$dist > dist_thresh & curr.Region_long$pval <= pval_thresh & curr.Region_long$LD_r2 < LD_thresh)
-  leadSNPs <- unique(curr.Region_long[keep_idx,..snp_col][[1]])
+  # leadSNPs <- unique(curr.Region_long[keep_idx,..snp_col][[1]])
+  leadSNPs <- unique(subset(curr.Region_long,select=snp_col)[[1]])
 
   ## index of SNP of interest
   # idx_snp <- which(IDs[,get(snp_col)]==curr.SNP)
-  # idx_snp <- which(subset(IDs,select=snp_col)[[1]]==curr.SNP)
-  idx_snp <- which(IDs[,..snp_col][[1]]==curr.SNP)
+  idx_snp <- which(subset(IDs,select=snp_col)[[1]]==curr.SNP)
+  # idx_snp <- which(IDs[,..snp_col][[1]]==curr.SNP)
 
   if(length(leadSNPs)==0){
     return(which.max(Primo_obj$post_prob[idx_snp,]))
@@ -250,8 +251,8 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
     idx_leadsnps <- NULL
     for(j in 1:length(leadSNPs)){
       # idx_leadsnps <- c(idx_leadsnps, which(IDs[,get(snp_col)]==leadSNPs[j]))
-      # idx_leadsnps <- c(idx_leadsnps, which(subset(IDs,select=snp_col)[[1]]==leadSNPs[j]))
-      idx_leadsnps <- c(idx_leadsnps, which(IDs[,..snp_col][[1]]==leadSNPs[j]))
+      idx_leadsnps <- c(idx_leadsnps, which(subset(IDs,select=snp_col)[[1]]==leadSNPs[j]))
+      # idx_leadsnps <- c(idx_leadsnps, which(IDs[,..snp_col][[1]]==leadSNPs[j]))
     }
 
     ## run fine-mapping
