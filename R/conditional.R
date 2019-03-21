@@ -180,7 +180,7 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
 #' @param snp_col string of the column name of SNPs/variants.
 #' @param pheno_cols character vector of the column names of the phenotype ID columns.
 #' @param snp_info data.table reporting the chromosome and position of each SNP.
-#' Columns should be: \code{SNP, CHR, POS}.
+#' Columns must include: \code{SNP, CHR, POS}.
 #' @param LD_mat matrix of LD coefficients (\eqn{r^{2}}{r^2}). Row and column names
 #' should be SNP/variant names (e.g. in \code{snp_col}).
 #' @param LD_thresh scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
@@ -198,7 +198,12 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
 #'
 #' @inherit Primo_conditional return
 #'
-#' @inherit run_conditional details
+#' @return An integer vector corresponding to the association pattern
+#' with the highest posterior probabilities for each SNP variant
+#' represented by \code{idx}, following conditional analysis.
+#' Each value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
+#' from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
+#' by \code{\link{make_qmat}}.
 #'
 #' @export
 #'
@@ -206,9 +211,14 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
 
   base::requireNamespace("data.table")
 
+  if(!data.table::is.data.table(IDs)) IDs <- data.table(IDs)
+  if(!data.table::is.data.table(leadsnps_region)) IDs <- data.table(leadsnps_region)
+  if(!data.table::is.data.table(snp_info)) IDs <- data.table(snp_info)
+
   sp_vec <- NULL
 
-  for(i in idx){
+  # for(i in idx){
+  i<-idx
     curr.IDs <- IDs[i,]
     curr.SNP <- subset(curr.IDs,select=snp_col)[[1]]
     curr.Region <- merge(leadsnps_region,curr.IDs,by=pheno_cols)
@@ -243,7 +253,8 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
     idx_snp <- which(subset(IDs_copy,select=snp_col)[[1]]==curr.SNP)
 
     if(length(leadSNPs)==0){
-      sp_vec <- c(sp_vec,which.max(Primo_obj_sub$post_prob[idx_snp,]))
+      # sp_vec <- c(sp_vec,which.max(Primo_obj_sub$post_prob[idx_snp,]))
+      return(which.max(Primo_obj_sub$post_prob[idx_snp,]))
     } else{
 
       ## get snp_indices for other snps to adjust for
@@ -254,9 +265,10 @@ run_conditional_dt <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",p
 
       ## run conditional analysis
       sp <- Primo::Primo_conditional(idx_snp,idx_leadsnps,LD_mat[c(curr.SNP,leadSNPs),c(curr.SNP,leadSNPs)],Primo_obj_sub)
-      sp_vec <- c(sp_vec,sp)
+      # sp_vec <- c(sp_vec,sp)
+      return(sp)
     }
-  }
+  # }
 
 }
 
