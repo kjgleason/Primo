@@ -54,10 +54,6 @@ estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
   v0 <- limma::tmixture.vector(moderate.t, sqrt(v1),df_mod,proportion=alt_prop,v0.lim=NULL)
   scaler=sqrt(1+v0/v1)
 
-  ## methods to calculate marginal densities (placed within function for reference)
-  # D0 <- dt(moderate.t, df=df_mod)                                     ## Under the null
-  # D1 <- metRology::dt.scaled(moderate.t,df=df_mod,mean=0,sd=scaler)   ## Under the alternative
-
   return(list(Tstat_mod = moderate.t, df_mod=df_mod, scaler=scaler, prior_df=d0, prior_var=s02, unscaled_var=v0))
 }
 
@@ -138,10 +134,6 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=FALSE){
     ## store degrees of freedom in df_alt
     df_alt<-optim_res$solution[2]
   }
-
-  ## methods to calculate marginal densities (placed within function for reference)
-  # D0<-dchisq(chi_mix,df=2)                    ## Under the null
-  # D1<-dchisq(chi_mix/a_alt,df=df_alt)/a_alt   ## Under the alternative
 
   return(list(chi_mix=chi_mix, scaler=a_alt, df_alt=df_alt))
 }
@@ -254,11 +246,6 @@ estimate_densities <- function(betas=NULL, sds=NULL, df=NULL, pvals=NULL, alt_pr
 #' @export
 #'
 make_qmat <- function(grp, name_cols=FALSE){
-  ## expand.grid simpler, but order of groups not as logical
-  # ng <- length(grp)
-  # Q <- as.matrix(expand.grid(replicate(ng,0:1,simplify=F)))
-  # if(name_cols) colnames(Q) <- grp
-  # else colnames(Q) <- NULL
 
   ng <- length(grp)
   ngi <- rep(1,ng)

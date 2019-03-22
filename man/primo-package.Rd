@@ -4,17 +4,19 @@
 \name{Primo-package}
 \alias{Primo-package}
 \alias{_PACKAGE}
-\title{Primo: Package in R for Integrating Multi-Omics data}
+\title{Primo: Package in R for Integrative Multi-Omics association analysis}
 \description{
 Implements methods to integrate multi-omics data to detect joint associations 
-              and pleiotropy effects across more than 3 QTL and GWAS studies. 
-              It can also be used more broadly to infer multi-way associations 
-              using omics data from more than 2 data types or sources, beyond QTL and GWAS.
+              and pleiotropy effects across multiple GWAS and/or QTL studies, 
+              with possibly overlapping samples. 
+              It can also be used more broadly beyond GWAS and QTL studies
+              to infer multi-way associations using summary statistics 
+              from multiple data types or sources.
 }
 \details{
 To estimate the posterior probabilities of belonging to each association pattern,
 either user the wrapper function \code{\link{Primo}}, or directly call
-\code{\link{Primo_tstat}} (for t-statistics) or \code{\link{Primo_pval}} (for p-values).
+\code{\link{Primo_tstat}} (for \eqn{t}-statistics) or \code{\link{Primo_pval}} (for \eqn{P}-values).
 }
 \author{
 \strong{Maintainer}: Kevin J. Gleason \email{kevin.j.gleason@gmail.com}
