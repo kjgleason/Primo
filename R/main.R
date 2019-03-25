@@ -591,7 +591,7 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
 #'
 #' For each observation (e.g. SNP), estimate the posterior probability for each association pattern.
 #' This function calls either the \eqn{t}-statistic (\code{\link{Primo_tstat}}) or
-#' \eqn{p}-value (\code{\link{Primo_pval}}) version of Primo.
+#' \eqn{P}-value (\code{\link{Primo_pval}}) version of Primo.
 #' Utilizes parallel computing, when available. For package documentation, see \code{\link{Primo-package}}.
 #'
 #' @param betas matrix of coefficient estimates.
@@ -626,7 +626,7 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
 #' \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
 #'  moderated degrees of freedom: df/(df-2).\cr
 #' \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
-#' \code{prior_var} \tab vector of the prior variance estimators for each marginaldistribution.\cr
+#' \code{prior_var} \tab vector of the prior variance estimators for each marginal distribution.\cr
 #' \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
 #' for each marginal distribution.
 #' }
@@ -644,20 +644,32 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
 #' also be of interest.
 #' The remaining elements are returned primarily for use by other functions.
 #'
+#'
 #' @details The following are additional details describing the input arguments
 #'  (for \eqn{m} SNPs/observations measured in \eqn{d} studies):
-#' \tabular{ll}{
-#' \code{betas} \tab  \eqn{m} x \eqn{d} matrix.\cr
-#' \code{sds} \tab \eqn{m} x \eqn{d} matrix.\cr
-#' \code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
-#' \code{pvals} \tab \eqn{m} x \eqn{d} matrix.\cr
-#' \code{alt_props} \tab vector of length \eqn{d}.\cr
-#' \code{mafs} \tab vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.\cr
-#'  \tab If \code{NULL}, standard errors will not be adjusted for MAF.\cr
-#' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
-#'  \tab If \code{NULL}, will be estimated using observations where all \eqn{|t| < 5}
-#'  (or all \eqn{P < 5.7e-7}).\cr
+#'
+#' \itemize{
+#'
+#' \item \code{alt_props} (vector of length \eqn{d}) must be specified whether
+#' \code{use_method}="tstat" or \code{use_method}="pval".
+#'
+#' \item If \code{use_method}="tstat", the following arguments must be specified (not \code{NULL}):
+#'   \tabular{ll}{
+#'     \code{betas} \tab  \eqn{m} x \eqn{d} matrix.\cr
+#'     \code{sds} \tab \eqn{m} x \eqn{d} matrix.\cr
+#'     \code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
+#'   }
+#'
+#'   If the observations are SNPs, \code{mafs} can optionally be specified in order to adjust
+#'   sample variances for minor allele frequencies. \code{mafs} should be either a
+#'   vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.
+#'
+#' \item If \code{use_method}="pval", the following arguments must be specified (not \code{NULL}):
+#'   \tabular{ll}{
+#'     \code{pvals} \tab  \eqn{m} x \eqn{d} matrix.\cr
+#'   }
 #' }
+#'
 #'
 #' @export
 #'
