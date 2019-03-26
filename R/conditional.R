@@ -91,7 +91,7 @@ Primo_conditional <- function(idx_snp,idx_leadsnps,LD_mat,Primo_obj){
 #' that a lead SNP must be in order to be conditioned on. Default value (0)
 #' signifies no consideration of chromosomal distance in conditional analyses.
 #' @param pval_thresh scalar of the \eqn{P}-value threshold a lead SNP must be below
-#' with the phenotype for which it is lead SNP in order to be conditionaed on.
+#' with the phenotype for which it is lead SNP in order to be conditioned on.
 #' Default value (1) signifies no consideration of strength of effect in conditional analyses.
 #' @param suffices character vector of the suffices corresponding to columns in
 #' \code{leadsnps_region}. See Details.
@@ -171,3 +171,107 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
   return(sp_vec)
 }
 
+#' Set up conditional analysis for known complex trait-associated variants.
+#'
+#' For specified, known complex trait-associated (GWAS) variant(s),
+#' set-up and run conditional analysis.
+#' The function identifies lead omics SNPs to consider for conditional analysis,
+#' and determines which SNPs will be conditioned on for each GWAS variant
+#' based on specified criteria. Returns a data.frame with posterior probabilities
+#' for collapsed association patterns and results from conditional analysis,
+#' as well as estimated FDR for each collapsed association pattern at a
+#' specified posterior probability threshold.
+#'
+#' @param Primo_obj list returned by running the \eqn{t}-statistic version
+#' of Primo (i.e. \code{\link{Primo_tstat}})
+#' @param IDs data.frame of the SNP and phenotype IDs corresponding to each row
+#' of the Primo results stored in \code{Primo_obj}.
+#' @param gwas_snps character vector of known trait-associated (GWAS) SNPs.
+#' @param pvals matrix of \eqn{P}-values from test statistics.
+#' @param LD_mat matrix of LD coefficients (\eqn{r^{2}}{r^2}). Row and column names
+#' should be SNP/variant names (i.e matching those present in \code{IDs}).
+#' @param snp_info data.frame reporting the chromosome and position of each SNP.
+#' Columns must include: \code{SNP, CHR, POS}.
+#' @param pp_thresh scalar of the posterior probability threshold used for significance.
+#' @param LD_thresh scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
+#' threshold to be used for conditional analysis. Lead omics SNPs with \eqn{r^{2} <}{r^2 <}
+#' \code{LD_thresh} with the GWAS SNP will be conditioned on.
+#' @param dist_thresh scalar of the minimum number of base pairs away from the GWAS SNP
+#' that a lead SNP must be in order to be conditioned on.
+#' @param pval_thresh scalar of the \eqn{P}-value threshold a lead SNP must be below
+#' with the phenotype for which it is lead SNP in order to be conditioned on.
+#'
+#'
+#' @return A list with two elements, \code{pp_grouped} and \code{fdr}.
+#'
+#' \code{fdr} is a named vector of the estimated false discovery rates (FDR)
+#' for each collapsed association pattern at the posterior probability
+#' threshold, \code{pp_thresh}.
+#'
+#' \code{pp_grouped} is a data.frame with the following information:
+#'
+#' \itemize{
+#'   \item SNP and trait identifiers corresponding to each observation
+#'   \item posterior probabilities of the collapsed association patterns
+#'   ("GWAS + at least x omics trait(s)")
+#'   \item number of omics traits with which the SNP was associated before conditional analysis
+#'   (at posterior probability \code{> pp_thresh})
+#'   \item number of omics traits the SNP is associated with after conditional analysis
+#'   \item the top association pattern after conditional analysis
+#' }
+#'
+#' @export
+#'
+run_conditional_gwas <- function(Primo_obj,IDs,gwas_snps,pvals,LD_mat,snp_info,pp_thresh,LD_thresh=0.9,dist_thresh=5e3,pval_thresh=1e-3){
+
+  snp_col <- colnames(IDs)[1]
+  pheno_cols <- colnames(IDs)[2:ncol(IDs)]
+
+  gwas_idx <- which(IDs[,snp_col] %in% gwas_snps)
+
+  colnames(pvals) <- paste0("pvalue_",1:ncol(pvals))
+
+  ## determine lead omics SNPs
+  ID_pvals <- data.table::data.table(IDs,pvals)
+  leadsnps_region <- Primo::find_leadsnps(data=ID_pvals,snp_col=snp_col,pheno_cols=pheno_cols,
+                                          stat_cols=colnames(ID_pvals)[(ncol(IDs)+1):ncol(ID_pvals)],data_type="pvalue")
+
+  ## determine top pattern after conditional analysis
+  sp_vec <- Primo::run_conditional(Primo_obj,IDs,idx=gwas_idx,leadsnps_region,snp_col,
+                                   pheno_cols,snp_info,LD_mat,LD_thresh,dist_thresh,pval_thresh)
+
+  ## collapsed probabilities
+  PP_grouped <- Primo::collapse_pp_num(Primo_obj$post_prob[gwas_idx,],req_idx=1,prefix="pp_nQTL_ge")
+  PP_grouped <- PP_grouped[,-1] ## drop 0qtl+GWAS since that is not goal of analysis
+
+  ## number of QTLs, per collapsed probabilities
+  PP_grouped <- cbind(PP_grouped,nQTL_orig=0)
+  for(k in 1:(ncol(pvals)-1)){
+    PP_grouped[,"nQTL_orig"] <- PP_grouped[,"nQTL_orig"] + as.numeric(PP_grouped[,paste0("pp_nQTL_ge",k)] > pp_thresh)
+  }
+
+  ## determine the number of QTLs in each corresponding pattern
+  myQ <- Primo::make_qmat(1:ncol(pvals))
+  nQTL_byQrow <- rowSums(myQ[,2:ncol(myQ)])
+  nQTL_final <- nQTL_byQrow[sp_vec]
+
+  ## add in sp_vec and final nQTL
+  PP_grouped <- cbind(PP_grouped,nQTL_final=nQTL_final,top_pattern=sp_vec)
+  PP_grouped[,"nQTL_final"] <- pmin(PP_grouped[,"nQTL_orig"],PP_grouped[,"nQTL_final"])
+
+  ## calculate estimated FDR
+  fdr <- NULL
+  for(i in 1:(ncol(pvals)-1)){
+    pp_col <- paste0("pp_nQTL_ge",i)
+    next_fdr <- Primo::calc_fdr_conditional(PP_grouped[,pp_col],thresh=pp_thresh,
+                                            fail_idx=which(PP_grouped[,"nQTL_orig"]>=i & PP_grouped[,"nQTL_final"] < i))
+    fdr <- c(fdr,next_fdr)
+  }
+  names(fdr) <- paste0("nQTL_ge",1:(ncol(pvals)-1))
+
+  PP_grouped <- data.frame(IDs[gwas_idx,],PP_grouped,stringsAsFactors = F)
+
+  PP_grouped <- cbind(IDs[gwas_idx,], PP_grouped)
+
+  return(list(pp_grouped=PP_grouped,fdr=fdr))
+}

@@ -42,7 +42,7 @@ that a lead SNP must be in order to be conditioned on. Default value (0)
 signifies no consideration of chromosomal distance in conditional analyses.}
 
 \item{pval_thresh}{scalar of the \eqn{P}-value threshold a lead SNP must be below
-with the phenotype for which it is lead SNP in order to be conditionaed on.
+with the phenotype for which it is lead SNP in order to be conditioned on.
 Default value (1) signifies no consideration of strength of effect in conditional analyses.}
 
 \item{suffices}{character vector of the suffices corresponding to columns in
