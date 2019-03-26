@@ -29,6 +29,9 @@ Imports:
     reshape2 (>= 1.4.3),
     Rcpp (>= 0.12.17)
 Suggests:
-    metRology (>= 0.9.26.2)
+    metRology (>= 0.9.26.2),
+    knitr,
+    rmarkdown
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.1.0
+VignetteBuilder: knitr

@@ -1,0 +1,365 @@
+---
+title: "Primo: Package in R for Integrative Multi-Omics association analysis"
+author: "Kevin J. Gleason, Fan Yang and Lin S. Chen"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Primo: Package in R for Integrative Multi-Omics association analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The Primo package can be used to integrate summary statistics to detect joint associations across multiple studies, allowing for the possibility of sample overlap. Here, a "study" refers to associations to a particular trait in a particular condition/cell-type/tissue-type or associations measured in a particular source/sample. 
+
+## General framework {#Primo_general}
+
+Following the method described by Gleason *et al.*^[Gleason et al.: https://www.biorxiv.org/content/10.1101/579581v1], Primo takes as input $m$ sets of summary statistics from each of $J$ studies and then:
+
+1. Estimates null and alternative density functions for each study.
+2. For each of $m$ sets of summary statistics, estimates the posterior probability of coming from each of $2^J$ association patterns representing the binary combinations of association status (null or alternative) between set $i$ and the $J$ studies.
+3. Estimates false discovery rates (FDR) to allow for selection of a posterior probability threshold to make inferences about association patterns.
+
+The inference about association patterns may involve either a particular pattern of interest (e.g. study1+study2, but not study3 or study4) or group of combined patterns (e.g. study1+"at least 1 of studies 2/3/4").
+
+## 1.1 Integrate summary statistics to estimate posterior probabilities {#postprob}
+
+Let's assume we have obtained summary statistics from $J=4$ studies. From each study, these summary statistics include:
+
+- `betas`:coefficient estimates
+- `sds`: standard error estimates (of coefficients)
+- `dfs`: degrees of freedom for each analysis
+- `pvalues`: nominal *P*-values from each study
+
+Here, each of the above sets of summary statistics are [formed into matrices](#creating_input) ($m \times J$), though `dfs` may also be a vector (length $J$) if the degrees of freedom never vary within any study. 
+
+We demonstrate Primo using the *t*-statistics version, which takes as input `betas`, `sds` and `dfs`. For a demonstration of the *P*-value version of Primo, see [Primo for integrating *P*-values](#pvalue).
+
+For each observation, we are interested in identifying its underlying association pattern. That is, we wish to identify the set of studies (e.g. traits) with which it is associated. To quantify the probability of each association pattern for each observation, we run an integrative analysis using Primo:
+
+```{r run_Primo_t, eval = FALSE}
+Primo_results <- Primo(betas=betas,sds=sds,dfs=dfs,alt_props=c(1e-5,rep(1e-3,3)))
+```
+
+In addition to the data previously described, Primo also requires the specification of `alt_props`, the estimated proportion of statistics that comes from the alternative distribution for each study. Here we specified $10^{-5}$ for the first study and $10^{-3}$ for the other 3 studies.
+
+If the observations are SNPs, we may also have obtained minor allele frequencies (MAF) in the form of either a matrix ($m \times J$) or a vector (length $m$). In such cases, MAF may also be passed to the function to further adjust the sample variance of the *t*-statistics:
+
+```{r run_Primo_t_mafs, eval = FALSE}
+Primo_results <- Primo(betas=betas,sds=sds,dfs=dfs,alt_props=c(1e-5,rep(1e-3,3)),mafs=MAF)
+```
+
+#### Results
+
+`Primo_results` now holds a list of 10 items. The primary elements of interest are:
+
+- `Primo_results$post_prob`: the posterior probabilites of each association pattern ($m \times 2^J$ matrix)
+- `Primo_results$pis`: the estimated proportions of all observations belonging to each association pattern
+
+The remaining elements are returned largely for use by other functions.
+
+## 1.2 Combining association patterns into interpretable results {#collapse_pp}
+
+From the results of Primo, we can combine posterior probabilities into interpretable results by summing over association patterns. For example, the following will create a matrix of the posterior probabilities of being associated with: 
+
+- at least one study
+- at least two studies
+- at least three studies 
+- all four studies
+
+```{r combine_atLeast_n, eval = FALSE}
+postprob_atLeastN <- Primo::collapse_pp_num(post_prob=Primo_results$post_prob)
+```
+
+And the following will provide the posterior probability of being associated with the first study and: 
+
+- also the second
+- also the third
+- also the fourth
+
+```{r combine_atLeast_X, eval = FALSE}
+postprob_traitX <- Primo::collapse_pp_trait(post_prob=Primo_results$post_prob,req_idx=1)
+```
+
+
+## 1.3 Estimating the false discovery rate (FDR) {#fdr}
+
+Primo estimates the false discovery rate (FDR) at specified posterior probability threshold(s) to guide selection of a threshold for inference. For probability threshold $\lambda$ and a vector $\hat{P}$ of the estimated probabilities of each variant belonging to the (possibly collapsed) pattern of interest, the estimated FDR is given by
+
+$$
+estFDR(\lambda) = \frac{\sum_i (1-\hat{P}_i) 1(\hat{P}_i \ge \lambda)}{\#\{\hat{P}_i \ge \lambda\}}
+$$
+
+where the index $i$ represents an observation The following would estimate the FDR if we used a threshold of $0.8$
+to identify observations associated with all four studies:
+
+```{r fdr, eval = FALSE}
+Primo::calc_fdr(Primo_results$post_prob[,16],thresh=0.8)
+```
+
+
+We can also estimate the FDR for collapsed probabilities and/or use a grid of possible thresholds to guide selection of an appropriate threshold. For example:
+
+```{r fdr_grid, eval = FALSE}
+sapply(seq(0.95,0.75,-0.05), 
+       function(th) Primo::calc_fdr(postprob_atLeastN[,"PP_ge2"],thresh=th))
+```
+
+
+***
+
+# Primo tailored to provide mechanistic interpretations of trait-associated SNPs {#Primo_snps}
+
+Beyond its use as a general integrative analysis tool, Primo incorporates tailored developments to provide molecular mechanistic interpretations of known complex trait-associated SNPs by integrating summary statistics from GWAS and QTL studies. Primo takes as input $m$ sets of summary statistics from $J$ complex trait and omics studies, and then:
+
+1. Estimates key parameters as described in the [general Primo framework](#Primo_general) (e.g. `post_prob` and `pis`) using all SNPs in the genome across all $J$ complex and omics traits.
+2. Focuses on the $S$ regions harboring GWAS SNPs to obtain the probability of association for SNPs in those regions, and identifies distinct lead omics SNPs.
+3. Performs conditional analysis of GWAS SNPs adjusting for distinct lead omics SNPs in each omics data type.
+4. Reports which GWAS SNPs are still associated with omics traits after adjusting for lead omics SNPs.
+5. Calculates estimated FDR for collapsed patterns of interests (GWAS+at least 1 omics, GWAS+at least 2 omics, etc).
+
+Note that $m$ may be larger than the total number of SNPs if a SNP can be mapped to multiple outcomes (e.g. genes) within the same omics study.
+
+## 2.1 Estimating key parameters
+
+As an illustrative example, let's assume we have obtained $m$ sets of summary statistics from the associations of genetic variants with 1 complex trait and 3 omics traits (for a total of $J=4$ traits). As in the [general version of Primo](#postprob), Primo takes as input matrices ($m \times J$) of summary statistics:
+
+- `betas`:coefficient estimates
+- `sds`: standard error estimates (of coefficients)
+- `dfs`: degrees of freedom for each analysis
+- `mafs`: minor allele frequencies
+
+Note that `dfs` and `mafs` may also be vectors (of length $J$ and $m$, respectively).
+
+We estimate key parameters using all SNPs in the genome by running an integrative analysis using Primo:
+
+```{r run_Primo_t2, eval = FALSE}
+Primo_results <- Primo(betas=betas,sds=sds,dfs=dfs,alt_props=c(1e-5,rep(1e-3,3)),mafs=mafs)
+```
+
+Here, for `alt_props` (the estimated proportion of statistics that come from the alternative distribution), we specified $10^{-5}$ for the complex trait ($j=1$) and $10^{-3}$ for the 3 omics traits ($j \in \{2,3,4\})$.
+
+While not needed by the main Primo function, it is also important to store the associated identifiers for variants and traits forming the $m$ rows of our data. Here, we store them in a data.frame called `myID`:
+
+```{r ID_example_create, echo = FALSE}
+myID <- data.frame(SNP=paste0("SNP",1:12),study1="complex",study2=paste0("gene",rep(1:4,each=3)),study3=paste0("CpG",rep(1:4,each=3)),study4=paste0("protein",rep(1:4,each=3)))
+```
+
+```{r ID_example}
+head(myID,5)
+```
+
+## 2.2 Focus on regions harboring GWAS SNPs
+
+Now we can subset the Primo results to the $S$ regions harboring GWAS SNPs. If `myGenes` holds the names of genes in the GWAS regions, then we subset by: 
+
+```{r run_Primo_subset, eval = FALSE}
+gwas_region_idx <- which(myID$study2 %in% myGenes)
+Primo_gwas <- Primo::subset_Primo_obj(Primo_results,gwas_region_idx)
+myID_gwas <- myID[gwas_region_idx,]
+```
+
+
+## 2.3 Conditional analysis
+
+Primo performs conditional analysis to assess whether the trait-association of a particular variant may be due simply to being in LD with a nearby variant that is a lead SNP for one (or more) of the traits.
+To conduct conditional analysis, Primo needs:
+
+- `Primo_obj`: list of Primo results, possibly subset by `Primo::subset_Primo_obj`
+- `IDs`: data.frame of identifiers for each observation in the Primo results
+- `gwas_snps`: character vector of known trait-associated SNPs
+- `pvals`: matrix of nominal *P*-values for the associations in each study
+- `LD_mat`: matrix of LD $r^2$ for SNPs in GWAS regions
+- `snp_info`: data.frame of chromosome/position information for each SNP
+- `pp_thresh`: a posterior probability threshold at which to calculate FDR
+
+
+The `LD_mat` can be estimated using genotypes from one of the studies or a reference dataset (e.g. 1000 Genomes)^[1000 Genomes Project: http://www.internationalgenome.org/]. Row and column names of `LD_mat` should match the corresponding SNP names in `IDs`.
+
+`snp_info` should be a data.frame with at least three columns:
+
+```{r snp_info, echo = FALSE}
+snp_info <- data.frame(SNP=paste0("SNP",1:12),CHR=rep(1,12),POS=seq(1000,1033,3))
+```
+
+```{r snp_info_print}
+head(snp_info,3)
+```
+
+Note that if `pvals` is from the full results ($m$ rows), then it should be subset to the GWAS regions: 
+
+`pvals <- pvals[gwas_region_idx,]`
+
+
+Now we run conditional analysis for the known complex trait-associated SNPs:
+
+```{r conditional, eval = FALSE}
+conditional_results <- 
+  Primo::run_conditional_gwas(Primo_obj=Primo_gwas,IDs=myID_gwas,
+                              gwas_snps=gwas_snps,pvals=pvals,
+                              LD_mat=LD_mat,snp_info=snp_info,
+                              pp_thresh=0.8, LD_thresh=0.9,
+                              dist_thresh=5e3, pval_thresh=1e-3)
+
+```
+
+For each known trait-associated SNP, the function will condition on any lead SNPs that are $> 5$ Mb away from the trait-associated SNP, provided that those lead SNPs are not in high LD with the trait-associated SNP ($r^2<0.9$) and demonstrate some marginal association with the phenotype for which they are the lead SNP ($p<10^{-3}$). The function will determine omics associations and FDR using posterior probability  $> 0.8$.
+
+`Primo::run_conditional_gwas` returns a list containing two elements: `pp_grouped` and `fdr`, described in the next two sections.
+
+## 2.4 GWAS SNPs still associated with omics traits after conditional analysis
+
+We use the list element `pp_grouped` returned by `Primo::run_conditional_gwas` to determine which trait-associated SNPs are still associated with omics traits after conditional analysis. Note that only results for the SNPs specified in `gwas_snps` are returned. The first $J+1$ columns of `conditional_results$pp_grouped` hold the SNP and trait identifiers:
+
+```{r conditional_fake, eval = TRUE, echo=FALSE}
+conditional_results <- list()
+conditional_results$pp_grouped <- data.frame(SNP=paste0("SNP",1:12),study1="complex",study2=paste0("gene",rep(1:3,each=4)),
+                                             study3=paste0("CpG",rep(1:3,each=4)),study4=paste0("protein",rep(1:3,each=4)),
+                                             pp_nQTL_ge1=0.94,pp_nQTL_ge2=0.81,
+                                             pp_nQTL_ge3=0.73,nQTL_orig=2,
+                                             nQTL_final=2,top_pattern=13)
+
+```
+
+```{r conditional_print, eval = TRUE}
+head(conditional_results$pp_grouped[,1:5],1)
+```
+
+The remaining columns of `pp_grouped` hold:
+
+- posterior probabilities of the collapsed association patterns ("GWAS + at least $x$ omics trait(s)", for $x \in 1:J$)
+- number of omics traits with which the SNP was associated (at posterior probability $>$ `pp_thresh`) before conditional analysis
+- number of omics traits the SNP is associated with after conditional analysis
+- the top association pattern after conditional analysis
+
+```{r conditional_print2, eval = TRUE}
+head(conditional_results$pp_grouped[,6:ncol(conditional_results$pp_grouped)],1)
+```
+
+Note that, because a known trait-associated SNP may be mappable to multiple outcomes (e.g. genes) for the same omics trait, there may be more than one row in `conditional_results$pp_grouped` for a given trait-associated SNP. This allows the user to identify all outcomes (e.g. genes) with which the SNP is associated. Often, a SNP-level summary will be desirable. The following will provide a SNP-level summary of the number of omics associations across all outcomes:
+
+```{r conditional_unique, eval = FALSE}
+pp_grouped_maxN <- conditional_results$pp_grouped %>% 
+                      dplyr::group_by(SNP) %>% 
+                      dplyr::slice(which.max(nQTL_final))
+pp_grouped_maxN <- data.frame(pp_grouped_maxN)[,c("SNP","nQTL_final")]
+```
+
+
+## 2.5 Estimating the false discovery rate (FDR)
+
+In the list element `fdr`, the function `Primo::run_conditional_gwas` returns a named vector of the estimated false discovery rates (FDR) for each of the collapsed association patterns ("GWAS + at least $x$ omics trait(s)", for $x \in 1:J$). 
+
+The false discovery rate (FDR) is estimated in similar fashion to the [general version of Primo](#fdr). However, after conditional analysis, we adjust the numerator to account for SNPs which "failed" conditional analysis since we consider them to be estimated false discoveries. For SNPs which "fail" conditional analysis, their contribution to the numerator of the following equation is corrected to be 1:
+
+$$
+estFDR(\lambda) = \frac{\sum_i (1-\hat{P}_i) 1(\hat{P}_i \ge \lambda)}{\#\{\hat{P}_i \ge \lambda\}}
+$$
+
+***
+
+# Primo for integrating *P*-values {#pvalue}
+
+In addition to integrating effect sizes and standard errors (i.e. *t*-statistics), Primo can also integrate *P*-values or other second-order association statistics. For example, if effect sizes and standard errors are not available, Primo can perform integrative analysis of $m$ sets of *P*-values from $J$ studies as in the following:
+
+```{r run_Primo_p, eval = FALSE}
+Primo_results <- Primo(pvals=pvalues,alt_props=c(1e-5,rep(1e-3,3)),use_method="pval")
+```
+
+Here, `pvals` is a matrix ($m \times J$) of the (marginal) association *P*-values. For `alt_props` (the estimated proportion of statistics that come from the alternative distribution), we specified $10^{-5}$ for the first study and $10^{-3}$ for the other 3 studies (thus $J=4$ in the example). We specified `use_method="pval"` so that Primo did not try to run the default *t*-statistics version.
+
+The *P*-value version of Primo returns a list of 7 elements, the first four of which have the same interpretation as when running `Primo` with effect sizes and standard errors (i.e. the *t*-statistic version). The primary elements of interest are again:
+
+- `Primo_results$post_prob`: the posterior probabilites of each association pattern ($m \times 2^J$ matrix)
+- `Primo_results$pis`: the estimated proportions of all variants belonging to each association pattern
+
+The remaining elements are returned largely for use by other functions.
+
+***
+
+# Tips and tricks {#tips}
+
+## 4.1 Creating input matrices {#creating_input}
+
+In many cases, the summary statistics from different studies or traits will be stored in multiple places. To create the necessary inputs for [Primo](#postprob), we highly recommend utilizing functions from the data.table^[data.table package: https://cran.r-project.org/web/packages/data.table/index.html] package to read and align the data.
+
+For example, lets's say we are interested in integrating complex trait-GWAS summary statistics (stored in a file titled "GWAS_results.txt") with eQTL summary statistics (stored in "expression_results.txt"). We start by reading in the data:
+
+```{r fread1, eval = FALSE}
+library(data.table)
+gwas_stats <- data.table::fread("GWAS_results.txt")
+eqtl_stats <- data.table::fread("expression_results.txt")
+```
+
+```{r fake_summ_stats, echo = FALSE}
+gwas_stats <- data.frame(SNP="SNP1",trait="complex",beta=0.099,sd=0.030,pval=0.001,df=20000,maf=0.17)
+eqtl_stats <- data.frame(SNP="SNP1",gene="gene1",beta=0.515,sd=0.200,pval=0.010,df=500,maf=0.15)
+```
+
+which may contain the following fields:
+
+```{r head_summ_stats, eval = TRUE}
+colnames(gwas_stats)
+colnames(eqtl_stats)
+```
+
+Now we align the data by merging:
+
+```{r merge1, eval = FALSE}
+colnames(gwas_stats)[3:ncol(gwas_stats)] <- 
+  paste(colnames(gwas_stats)[3:ncol(gwas_stats)],"g",sep="_")
+colnames(eqtl_stats)[3:ncol(eqtl_stats)] <- 
+  paste(colnames(eqtl_stats)[3:ncol(eqtl_stats)],"e",sep="_")
+
+data.table::setkey(gwas_stats,SNP)
+data.table::setkey(eqtl_stats,SNP)
+merged_stats <- merge(gwas_stats,eqtl_stats)
+```
+
+While the first two commands aren't necessary, appending identifiers (e.g. "g" for GWAS; "e" for expression) to common variable names can make later processing clearer and easier (rather than letting `merge` append the defaults ".x" and ".y"). From our merged dataset `merged_stats`, it is easy to create the set of input matrices since the data is now properly aligned:
+
+```{r create_inputs, eval = FALSE}
+myID <- subset(merged_stats, select=c(SNP,trait,gene))
+
+betas <- as.matrix(subset(merged_stats, select=paste("beta",c("g","e"),sep="_")))
+sds <- as.matrix(subset(merged_stats, select=paste("sd",c("g","e"),sep="_")))
+pvals <- as.matrix(subset(merged_stats, select=paste("pval",c("g","e"),sep="_")))
+dfs <- as.matrix(subset(merged_stats, select=paste("df",c("g","e"),sep="_")))
+mafs <- as.matrix(subset(merged_stats, select=paste("maf",c("g","e"),sep="_")))
+```
+
+There may be situations where we wish to merge/align the data by more than just SNP. For example, we may wish to match pairs gene expression and protein abundance sets of summary statistics (so that a protein is aligned with the gene it is translated from). After ensuring that the name(s) of the additional matching variable(s) match across the datasets, the merge step can be modified thusly:
+
+```{r merge2, eval = FALSE}
+data.table::setkeyv(eqtl_stats,c("SNP","gene"))
+data.table::setkeyv(pqtl_stats,c("SNP","gene"))
+merged_stats <- merge(eqtl_stats,pqtl_stats)
+```
+
+## 4.2 Providing mechanistic interpretations of trait-associated SNPs
+
+### 4.2.1 Identifying gene regions harboring GWAS loci
+
+If the genes in cis-regions harboring GWAS loci are not provided or known in advance, we can utilize the data to identify such regions. Since the trait-associated SNPs *are* known in advance, we store their identifiers in a vector: `gwas_snps`. Next we identify the indices of our identifier data.frame (`myID`), where the SNP is one of the known trait-associated SNPs, and use that information to identify genes in GWAS regions:
+
+```{r ID_example_2}
+head(myID,4)
+```
+
+```{r myGenes, eval = FALSE}
+gwas_snps_idx <- which(myID$SNP %in% gwas_snps)
+myGenes <- unique(myID$study2[gwas_snps_idx])
+```
+
+Now `myGenes` holds the names of genes in the GWAS regions.
+
+```{r, echo=FALSE, results='asis',eval=F}
+## kable is great for displaying tables
+knitr::kable(head(mtcars, 10))
+```
