@@ -227,7 +227,9 @@ run_conditional_gwas <- function(Primo_obj,IDs,gwas_snps,pvals,LD_mat,snp_info,p
   snp_col <- colnames(IDs)[1]
   pheno_cols <- colnames(IDs)[2:ncol(IDs)]
 
-  gwas_idx <- which(IDs[,snp_col] %in% gwas_snps)
+  # gwas_idx <- which(IDs[,snp_col] %in% gwas_snps)
+  ## use subset command to allow IDs to be either data.table or data.frame
+  gwas_idx <- which(subset(IDs, select=snp_col)[[1]] %in% gwas_snps)
 
   colnames(pvals) <- paste0("pvalue_",1:ncol(pvals))
 
