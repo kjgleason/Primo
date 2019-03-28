@@ -153,7 +153,9 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
     idx_snp <- which(subset(IDs_copy,select=snp_col)[[1]]==curr.SNP)
 
     if(length(leadSNPs)==0){
-      sp_vec <- c(sp_vec,which.max(Primo_obj_sub$post_prob[idx_snp,]))
+      if(is.matrix(Primo_obj_sub$post_prob)){
+        sp_vec <- c(sp_vec,which.max(Primo_obj_sub$post_prob[idx_snp,]))
+      } else sp_vec <- c(sp_vec,which.max(Primo_obj_sub$post_prob))
     } else{
 
       ## get snp_indices for other snps to adjust for
