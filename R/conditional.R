@@ -128,7 +128,7 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
     IDs_copy$ObsNum <- 1:nrow(IDs_copy)
     IDs_copy <- merge(IDs_copy,curr.IDs,by=pheno_cols)
     curr_Region.idx <- IDs_copy$ObsNum
-    Primo_obj_sub <- subset_Primo_obj(Primo_obj,curr_Region.idx)
+    Primo_obj_sub <- Primo::subset_Primo_obj(Primo_obj,curr_Region.idx)
     IDs_copy <- IDs[curr_Region.idx,]
 
     ## melt data so each lead SNP is its own row
