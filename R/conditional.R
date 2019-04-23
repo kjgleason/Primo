@@ -141,7 +141,7 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
     data.table::setkeyv(curr.Region_long,snp_col)
     data.table::setkeyv(snp_info,snp_col)
     curr.Region_long <- merge(curr.Region_long,snp_info)
-    curr.Region_long$dist <- abs(snp_info$POS[which(snp_info$SNP==curr.SNP)] - curr.Region_long$POS)
+    curr.Region_long$dist <- abs(snp_info$POS[which(subset(snp_info, select=snp_col)[[1]]==curr.SNP)] - curr.Region_long$POS)
     ## merge in LD coefficients
     curr.Region_long$LD_r2 <- LD_mat[curr.SNP,subset(curr.Region_long,select=snp_col)[[1]]]
 
