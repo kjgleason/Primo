@@ -112,8 +112,8 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
   base::requireNamespace("data.table")
 
   if(!data.table::is.data.table(IDs)) IDs <- data.table::data.table(IDs)
-  if(!data.table::is.data.table(leadsnps_region)) IDs <- data.table::data.table(leadsnps_region)
-  if(!data.table::is.data.table(snp_info)) IDs <- data.table::data.table(snp_info)
+  if(!data.table::is.data.table(leadsnps_region)) leadsnps_region <- data.table::data.table(leadsnps_region)
+  if(!data.table::is.data.table(snp_info)) snp_info <- data.table::data.table(snp_info)
 
   sp_vec <- NULL
 
