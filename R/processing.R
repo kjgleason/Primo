@@ -502,3 +502,54 @@ collapse_pp_trait <- function(post_prob,req_idx=NULL,prefix="pp_"){
   return(pp_X)
 }
 
+
+#' Collapse posterior probabilities of association for combinations of individual traits.
+#'
+#' Combine the posterior probabilities for combinations of individual traits according to the
+#' association patterns from which those traits all come from the alternative distribution.
+#' Provides the posterior probability of being associated with "at least traits X, Y and Z",
+#' for example.
+#' Can also require non-null association with one or more traits and combine
+#' over patterns where that/those trait(s) also come from the alternative distribution.
+#'
+#' @inheritParams collapse_pp_num
+#' @param combos matrix or integer specifying combinations. When matrix, each row is
+#' a combination, with column indices of traits belonging to the combination specified in
+#' columns of \code{combos}. When integer, all combinations of (total # traits)
+#' taking \code{combos} elements at a time will be tested.
+#'
+#' @inherit collapse_pp_num return
+#'
+#' @examples
+#' myCombos <- t(combn(4,2))
+#' collapsed_pp <- collapse_pp_combin(post_prob,myCombos)
+#'
+#' @export
+#'
+collapse_pp_combin <- function(post_prob,combos,req_idx=NULL,prefix="pp"){
+
+  ## total number of traits
+  d <- log(ncol(post_prob),2)
+  ## pattern matrix
+  Q <- Primo::make_qmat(1:d)
+
+  if(!is.matrix(combos)) combos <- t(utils::combn(d,combos))
+
+  ## columns in PP for "at least X"
+  if(is.null(req_idx)){
+    cols_X <- lapply(1:nrow(combos), function(i) which(rowSums(Q[,combos[i,]]) == ncol(combos)))
+  } else {
+    cols_X <- lapply(1:nrow(combos), function(i)
+      which(rowSums(Q[,c(req_idx,combos[i,])]) == length(req_idx)+ncol(combos)))
+  }
+
+  ## sum over columns denoting "at least X" to obtain combined posterior probability
+  pp_X <- lapply(cols_X, function(idx){
+    return(rowSums(post_prob[,idx]))
+  })
+
+  pp_X <- do.call("cbind",pp_X)
+  colnames(pp_X) <- paste(prefix,req_idx,apply(combos,1, function(x) paste(x,collapse="_")),sep="_")
+
+  return(pp_X)
+}

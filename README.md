@@ -1,4 +1,4 @@
-# Primo: Package in R for Integrative Multi-Omics analysis
+# Primo: Package in R for Integrative Multi-Omics association analysis
 
 The goal of `Primo` is to provide computationally efficient tools to integrate data across phenotypes, cell/tissue types, populations or sources when performing joint analysis of multi-omics data.
 
