@@ -555,4 +555,3 @@ collapse_pp_combin <- function(post_prob,combos,req_idx=NULL,prefix="pp"){
 
   return(pp_X)
 }
-
