@@ -549,12 +549,9 @@ collapse_pp_combin <- function(post_prob,combos,req_idx=NULL,prefix="pp"){
   })
 
   pp_X <- do.call("cbind",pp_X)
-<<<<<<< HEAD
+
   # colnames(pp_X) <- paste(prefix,req_idx,apply(combos,1, function(x) paste(x,collapse="_")),sep="_")
   colnames(pp_X) <- paste0(prefix,req_idx,apply(combos,1, function(x) paste(x,collapse="_")))
-=======
-  colnames(pp_X) <- paste(prefix,req_idx,apply(combos,1, function(x) paste(x,collapse="_")),sep="_")
->>>>>>> 065d2ed8a66f51d924fa911d7383028ef398ece9
 
   return(pp_X)
 }
