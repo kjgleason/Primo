@@ -7,10 +7,14 @@ The goal of `Primo` is to provide computationally efficient tools to integrate d
 Please note that this package uses functions from the `limma` package, which is downloadable from [Bioconductor](https://www.bioconductor.org), and the `lcmix` package, which is downloadable from [R-Forge](https://r-forge.r-project.org). If you have not yet installed the `limma` or `lcmix` packages, please run the following commands prior to installing `Primo`:
 
   ```R
-  source("https://bioconductor.org/biocLite.R")
-  biocLite("limma")
+  if (!requireNamespace("BiocManager", quietly = TRUE))
+   install.packages("BiocManager")
+  BiocManager::install("limma")
   
-  install.packages("MASS","matrixStats","nnls","R.methodsS3")
+  install.packages("MASS")
+  install.packages("matrixStats")
+  install.packages("nnls")
+  install.packages("R.methodsS3")
   install.packages("lcmix",repos="http://r-forge.r-project.org")
   ```
 
