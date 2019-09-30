@@ -4,7 +4,8 @@
 \alias{estimate_densities_modT}
 \title{Estimate parameters under the null and alternative densities}
 \usage{
-estimate_densities_modT(betas, sds, mafs = NULL, df, alt_prop)
+estimate_densities_modT(betas, sds, mafs = NULL, df, alt_prop,
+  N = NULL)
 }
 \arguments{
 \item{betas}{vector of coefficient estimates.}
@@ -18,6 +19,8 @@ If \code{NULL}, no adjustment will be made for MAF in variance calculations.}
 (usually, \eqn{n-p-1}).}
 
 \item{alt_prop}{proportion of test-statistics used in estimating the alternative density.}
+
+\item{N}{number of subjects}
 }
 \value{
 A list with the following elements:

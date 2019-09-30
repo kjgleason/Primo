@@ -10,6 +10,7 @@
 #' @param df scalar or vector of first degrees of freedom of the F-distribution
 #' (usually, \eqn{n-p-1}).
 #' @param alt_prop proportion of test-statistics used in estimating the alternative density.
+#' @param N number of subjects
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
@@ -25,16 +26,19 @@
 #'
 #' @export
 #'
-estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop){
+estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop, N=NULL){
   m <- length(betas)
+
+  ## if number of subjects is missing, add two to df (would be correct for simple linear regression; otherwise would be underestimate)
+  if(is.null(N)) N <- max(df) + 2
 
   ## account for MAF in variance calculations
   if (is.null(mafs)){
     v1 = rep(1,m)
     sigma2 <- sds^2
   } else{
-    v1 <- 1/(2*mafs*(1-mafs))
-    sigma2 <- sds^2*(2*mafs*(1-mafs))
+    v1 <- 1/(2*mafs*(1-mafs)*N)
+    sigma2 <- sds^2*(2*mafs*(1-mafs)*N)
   }
 
   ## estimate moments of scaled F-distribution using method of Smyth (2004)
