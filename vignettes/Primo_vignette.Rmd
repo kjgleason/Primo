@@ -148,7 +148,7 @@ Here, for `alt_props` (the estimated proportion of statistics that come from the
 While not needed by the main Primo function, it is also important to store the associated identifiers for variants and traits forming the $m$ rows of our data. Here, we store them in a data.frame called `myID`:
 
 ```{r ID_example_create, echo = FALSE}
-myID <- data.frame(SNP=paste0("SNP",1:12),study1="complex",study2=paste0("gene",rep(1:4,each=3)),study3=paste0("CpG",rep(1:4,each=3)),study4=paste0("protein",rep(1:4,each=3)))
+myID <- data.frame(SNP=paste0("SNP",1:12),study1="complex",study2=paste0("gene",rep(LETTERS[1:4],each=3)),study3=paste0("CpG1-for-gene",rep(LETTERS[1:4],each=3)),study4=paste0("protein",rep(LETTERS[1:4],each=3)))
 ```
 
 ```{r ID_example}
@@ -219,8 +219,9 @@ We use the list element `pp_grouped` returned by `Primo::run_conditional_gwas` t
 
 ```{r conditional_fake, eval = TRUE, echo=FALSE}
 conditional_results <- list()
-conditional_results$pp_grouped <- data.frame(SNP=paste0("SNP",1:12),study1="complex",study2=paste0("gene",rep(1:3,each=4)),
-                                             study3=paste0("CpG",rep(1:3,each=4)),study4=paste0("protein",rep(1:3,each=4)),
+conditional_results$pp_grouped <- data.frame(SNP=paste0("SNP",1:12),study1="complex",study2=paste0("gene",rep(LETTERS[1:3],each=4)),
+                                             study3=paste0("CpG1-for-gene",rep(LETTERS[1:3],each=4)),
+                                             study4=paste0("protein",rep(LETTERS[1:3],each=4)),
                                              pp_nQTL_ge1=0.94,pp_nQTL_ge2=0.81,
                                              pp_nQTL_ge3=0.73,nQTL_orig=2,
                                              nQTL_final=2,top_pattern=13)
