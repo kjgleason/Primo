@@ -29,10 +29,10 @@ See Details for format.}
 \item{snp_info}{data.table reporting the chromosome and position of each SNP.
 Columns must include: \code{SNP, CHR, POS}.}
 
-\item{LD_mat}{matrix of LD coefficients (\eqn{r^{2}}{r^2}). Row and column names
+\item{LD_mat}{matrix of LD correlation coefficients (e.g. Pearson \eqn{r}{r}). Row and column names
 should be SNP/variant names (e.g. in \code{snp_col}).}
 
-\item{LD_thresh}{scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
+\item{LD_thresh}{scalar corresponding to the LD \eqn{r^{2}}{r^2}
 threshold to be used for conditional analysis. Lead SNPs with \eqn{r^{2} <}{r^2 <}
 \code{LD_thresh} with the \code{idx} variant will be conditioned on.
 Default value (1) signifies no consideration of LD in conditional analyses.}

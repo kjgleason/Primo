@@ -13,7 +13,7 @@ for which to perform conditional analysis.}
 \item{idx_leadsnps}{vector of indices of the leading snps (e.g. rows of \code{Tstat_mod})
 on which to condition.}
 
-\item{LD_mat}{matrix of LD coefficients (\eqn{r^{2}}{r^2}).
+\item{LD_mat}{matrix of LD correlation coefficients (e.g. Pearson \eqn{r}{r}).
 Rows and columns should match the order of (\code{idx_snp}, \code{idx_leadsnps}).}
 
 \item{Primo_obj}{list returned by running the \eqn{t}-statistic version

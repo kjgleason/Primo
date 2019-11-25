@@ -9,7 +9,7 @@
 #' for which to perform conditional analysis.
 #' @param idx_leadsnps vector of indices of the leading snps (e.g. rows of \code{Tstat_mod})
 #' on which to condition.
-#' @param LD_mat matrix of LD coefficients (\eqn{r^{2}}{r^2}).
+#' @param LD_mat matrix of LD correlation coefficients (e.g. Pearson \eqn{r}{r}).
 #' Rows and columns should match the order of (\code{idx_snp}, \code{idx_leadsnps}).
 #' @param Primo_obj list returned by running the \eqn{t}-statistic version
 #' of Primo (i.e. \code{\link{Primo_tstat}} or \code{\link{Primo_modT}})
@@ -46,7 +46,7 @@ Primo_conditional <- function(idx_snp,idx_leadsnps,LD_mat,Primo_obj){
     cmean<-NULL
     csigma<-NULL
     for(j in 1:d){
-      Var<-(c(v_k[j],v2[,j])%*%t(c(v_k[j],v2[,j])))*sqrt(LD_mat)
+      Var<-(c(v_k[j],v2[,j])%*%t(c(v_k[j],v2[,j])))*LD_mat
       cmean<-c(cmean,Var[1,(2:(1+n_leadsnps))]%*%solve(Var[(2:(1+n_leadsnps)),(2:(1+n_leadsnps))])%*%zi[(2:(1+n_leadsnps)),j])
       csigma<-c(csigma,Var[1,1] - Var[1,(2:(1+n_leadsnps))]%*%solve(Var[(2:(1+n_leadsnps)),(2:(1+n_leadsnps))])%*%as.matrix(Var[1,(2:(1+n_leadsnps))]))
     }
@@ -81,9 +81,9 @@ Primo_conditional <- function(idx_snp,idx_leadsnps,LD_mat,Primo_obj){
 #' @param pheno_cols character vector of the column names of the phenotype ID columns.
 #' @param snp_info data.table reporting the chromosome and position of each SNP.
 #' Columns must include: \code{SNP, CHR, POS}.
-#' @param LD_mat matrix of LD coefficients (\eqn{r^{2}}{r^2}). Row and column names
+#' @param LD_mat matrix of LD correlation coefficients (e.g. Pearson \eqn{r}{r}). Row and column names
 #' should be SNP/variant names (e.g. in \code{snp_col}).
-#' @param LD_thresh scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
+#' @param LD_thresh scalar corresponding to the LD \eqn{r^{2}}{r^2}
 #' threshold to be used for conditional analysis. Lead SNPs with \eqn{r^{2} <}{r^2 <}
 #' \code{LD_thresh} with the \code{idx} variant will be conditioned on.
 #' Default value (1) signifies no consideration of LD in conditional analyses.
@@ -143,7 +143,7 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
     curr.Region_long <- merge(curr.Region_long,snp_info)
     curr.Region_long$dist <- abs(snp_info$POS[which(subset(snp_info, select=snp_col)[[1]]==curr.SNP)] - curr.Region_long$POS)
     ## merge in LD coefficients
-    curr.Region_long$LD_r2 <- LD_mat[curr.SNP,subset(curr.Region_long,select=snp_col)[[1]]]
+    curr.Region_long$LD_r2 <- LD_mat[curr.SNP,subset(curr.Region_long,select=snp_col)[[1]]]^2
 
     ## determine which lead SNPs meet criteria
     keep_idx <- which(curr.Region_long$dist > dist_thresh & curr.Region_long$pval <= pval_thresh & curr.Region_long$LD_r2 < LD_thresh)
@@ -190,12 +190,12 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
 #' of the Primo results stored in \code{Primo_obj}.
 #' @param gwas_snps character vector of known trait-associated (GWAS) SNPs.
 #' @param pvals matrix of \eqn{P}-values from test statistics.
-#' @param LD_mat matrix of LD coefficients (\eqn{r^{2}}{r^2}). Row and column names
+#' @param LD_mat matrix of LD correlation coefficients (e.g. Pearson \eqn{r}{r}). Row and column names
 #' should be SNP/variant names (i.e matching those present in \code{IDs}).
 #' @param snp_info data.frame reporting the chromosome and position of each SNP.
 #' Columns must include: \code{SNP, CHR, POS}.
 #' @param pp_thresh scalar of the posterior probability threshold used for significance.
-#' @param LD_thresh scalar corresponding to the LD coefficient (\eqn{r^{2}}{r^2})
+#' @param LD_thresh scalar corresponding to the LD \eqn{r^{2}}{r^2}
 #' threshold to be used for conditional analysis. Lead omics SNPs with \eqn{r^{2} <}{r^2 <}
 #' \code{LD_thresh} with the GWAS SNP will be conditioned on.
 #' @param dist_thresh scalar of the minimum number of base pairs away from the GWAS SNP
@@ -229,7 +229,6 @@ run_conditional_gwas <- function(Primo_obj,IDs,gwas_snps,pvals,LD_mat,snp_info,p
   snp_col <- colnames(IDs)[1]
   pheno_cols <- colnames(IDs)[2:ncol(IDs)]
 
-  # gwas_idx <- which(IDs[,snp_col] %in% gwas_snps)
   ## use subset command to allow IDs to be either data.table or data.frame
   gwas_idx <- which(subset(IDs, select=snp_col)[[1]] %in% gwas_snps)
 
