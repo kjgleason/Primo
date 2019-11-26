@@ -359,8 +359,3 @@ myGenes <- unique(myID$study2[gwas_snps_idx])
 ```
 
 Now `myGenes` holds the names of genes in the GWAS regions.
-
-```{r, echo=FALSE, results='asis',eval=F}
-## kable is great for displaying tables
-knitr::kable(head(mtcars, 10))
-```
