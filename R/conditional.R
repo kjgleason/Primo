@@ -202,6 +202,8 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
 #' that a lead SNP must be in order to be conditioned on.
 #' @param pval_thresh scalar of the \eqn{P}-value threshold a lead SNP must be below
 #' with the phenotype for which it is lead SNP in order to be conditioned on.
+#' @param gwas_col integer of the data column (e.g. in \code{Primo_obj$Tstat_mod}) of the
+#' GWAS study. Default is the first data column.
 #'
 #'
 #' @return A list with two elements, \code{pp_grouped} and \code{fdr}.
@@ -224,7 +226,7 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
 #'
 #' @export
 #'
-run_conditional_gwas <- function(Primo_obj,IDs,gwas_snps,pvals,LD_mat,snp_info,pp_thresh,LD_thresh=0.9,dist_thresh=5e3,pval_thresh=1e-3){
+run_conditional_gwas <- function(Primo_obj,IDs,gwas_snps,pvals,LD_mat,snp_info,pp_thresh,LD_thresh=0.9,dist_thresh=5e3,pval_thresh=1e-3,gwas_col=1){
 
   snp_col <- colnames(IDs)[1]
   pheno_cols <- colnames(IDs)[2:ncol(IDs)]
@@ -244,7 +246,7 @@ run_conditional_gwas <- function(Primo_obj,IDs,gwas_snps,pvals,LD_mat,snp_info,p
                                    pheno_cols,snp_info,LD_mat,LD_thresh,dist_thresh,pval_thresh)
 
   ## collapsed probabilities
-  PP_grouped <- Primo::collapse_pp_num(Primo_obj$post_prob[gwas_idx,],req_idx=1,prefix="pp_nQTL_ge")
+  PP_grouped <- Primo::collapse_pp_num(Primo_obj$post_prob[gwas_idx,],req_idx=gwas_col,prefix="pp_nQTL_ge")
   PP_grouped <- PP_grouped[,-1] ## drop 0qtl+GWAS since that is not goal of analysis
 
   ## number of QTLs, per collapsed probabilities
@@ -255,8 +257,14 @@ run_conditional_gwas <- function(Primo_obj,IDs,gwas_snps,pvals,LD_mat,snp_info,p
 
   ## determine the number of QTLs in each corresponding pattern
   myQ <- Primo::make_qmat(1:ncol(pvals))
-  nQTL_byQrow <- rowSums(myQ[,2:ncol(myQ)])
-  nQTL_final <- nQTL_byQrow[sp_vec]
+  QTL_cols <- 1:ncol(pvals)
+  QTL_cols <- QTL_cols[-gwas_col]
+
+  ## determine original pattern with maximum probability
+  PP_gwas <- Primo_obj$post_prob[gwas_idx,]
+  orig_max <- apply(PP_gwas,1,which.max)
+  QTL_status_byObs <- myQ[orig_max,QTL_cols] * myQ[sp_vec,QTL_cols]
+  nQTL_final <- rowSums(QTL_status_byObs)
 
   ## add in sp_vec and final nQTL
   PP_grouped <- cbind(PP_grouped,nQTL_final=nQTL_final,top_pattern=sp_vec)

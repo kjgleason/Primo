@@ -6,7 +6,7 @@
 \usage{
 run_conditional_gwas(Primo_obj, IDs, gwas_snps, pvals, LD_mat, snp_info,
   pp_thresh, LD_thresh = 0.9, dist_thresh = 5000,
-  pval_thresh = 0.001)
+  pval_thresh = 0.001, gwas_col = 1)
 }
 \arguments{
 \item{Primo_obj}{list returned by running the \eqn{t}-statistic version
@@ -36,6 +36,9 @@ that a lead SNP must be in order to be conditioned on.}
 
 \item{pval_thresh}{scalar of the \eqn{P}-value threshold a lead SNP must be below
 with the phenotype for which it is lead SNP in order to be conditioned on.}
+
+\item{gwas_col}{integer of the data column (e.g. in \code{Primo_obj$Tstat_mod}) of the
+GWAS study. Default is the first data column.}
 }
 \value{
 A list with two elements, \code{pp_grouped} and \code{fdr}.
