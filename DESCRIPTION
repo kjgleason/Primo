@@ -1,7 +1,7 @@
 Package: Primo
 Type: Package
 Title: Package in R for Integrative Multi-Omics association analysis
-Version: 0.1.1
+Version: 0.2.0
 Authors@R: c(
     person("Kevin J.", "Gleason", email = "kevin.j.gleason@gmail.com", role=c("aut","cre")),
     person("Fan", "Yang", email = "FAN.3.YANG@ucdenver.edu", role="aut"),
