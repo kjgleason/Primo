@@ -20,7 +20,7 @@ The Primo package can be used to integrate summary statistics to detect joint as
 
 ## General framework {#Primo_general}
 
-Following the method described by Gleason *et al.*^[Gleason et al.: https://www.biorxiv.org/content/10.1101/579581v1], Primo takes as input $m$ sets of summary statistics from each of $J$ studies and then:
+Following the method described by Gleason *et al.*^[Gleason et al.: https://www.biorxiv.org/content/10.1101/579581v3], Primo takes as input $m$ sets of summary statistics from each of $J$ studies and then:
 
 1. Estimates null and alternative density functions for each study.
 2. For each of $m$ sets of summary statistics, estimates the posterior probability of coming from each of $2^J$ association patterns representing the binary combinations of association status (null or alternative) between set $i$ and the $J$ studies.
@@ -96,7 +96,7 @@ $$
 estFDR(\lambda) = \frac{\sum_i (1-\hat{P}_i) 1(\hat{P}_i \ge \lambda)}{\#\{\hat{P}_i \ge \lambda\}}
 $$
 
-where the index $i$ represents an observation The following would estimate the FDR if we used a threshold of $0.8$
+where the index $i$ represents an observation. The following would estimate the FDR if we used a threshold of $0.8$
 to identify observations associated with all four studies:
 
 ```{r fdr, eval = FALSE}
@@ -175,7 +175,7 @@ To conduct conditional analysis, Primo needs:
 - `IDs`: data.frame of identifiers for each observation in the Primo results
 - `gwas_snps`: character vector of known trait-associated SNPs
 - `pvals`: matrix of nominal *P*-values for the associations in each study
-- `LD_mat`: matrix of LD $r^2$ for SNPs in GWAS regions
+- `LD_mat`: matrix of LD correlation coefficients ($r$) for SNPs in GWAS regions
 - `snp_info`: data.frame of chromosome/position information for each SNP
 - `pp_thresh`: a posterior probability threshold at which to calculate FDR
 
@@ -257,7 +257,7 @@ pp_grouped_maxN <- data.frame(pp_grouped_maxN)[,c("SNP","nQTL_final")]
 
 In the list element `fdr`, the function `Primo::run_conditional_gwas` returns a named vector of the estimated false discovery rates (FDR) for each of the collapsed association patterns ("GWAS + at least $x$ omics trait(s)", for $x \in 1:J$). 
 
-The false discovery rate (FDR) is estimated in similar fashion to the [general version of Primo](#fdr). However, after conditional analysis, we adjust the numerator to account for SNPs which "failed" conditional analysis since we consider them to be estimated false discoveries. For SNPs which "fail" conditional analysis, their contribution to the numerator of the following equation is corrected to be 1:
+The false discovery rate (FDR) is estimated in similar fashion to the [general version of Primo](#fdr). However, after conditional analysis, we adjust the numerator to account for SNPs which change pattern after conditional analysis and no longer match the collapsed pattern description since we consider them to be estimated false discoveries. For SNPs which change pattern after conditional analysis such that they no longer match the collapsed association pattern (e.g. "GWAS + at least $x$ omics trait(s)"), their contribution to the numerator of the following equation is corrected to be 1:
 
 $$
 estFDR(\lambda) = \frac{\sum_i (1-\hat{P}_i) 1(\hat{P}_i \ge \lambda)}{\#\{\hat{P}_i \ge \lambda\}}
@@ -335,7 +335,7 @@ dfs <- as.matrix(subset(merged_stats, select=paste("df",c("g","e"),sep="_")))
 mafs <- as.matrix(subset(merged_stats, select=paste("maf",c("g","e"),sep="_")))
 ```
 
-There may be situations where we wish to merge/align the data by more than just SNP. For example, we may wish to match pairs gene expression and protein abundance sets of summary statistics (so that a protein is aligned with the gene it is translated from). After ensuring that the name(s) of the additional matching variable(s) match across the datasets, the merge step can be modified thusly:
+There may be situations where we wish to merge/align the data by more than just SNP. For example, we may wish to match pairs gene expression and protein abundance sets of summary statistics (so that a protein is aligned with the gene from which it is translated). After ensuring that the name(s) of the additional matching variable(s) match across the datasets, the merge step can be modified thusly:
 
 ```{r merge2, eval = FALSE}
 data.table::setkeyv(eqtl_stats,c("SNP","gene"))
