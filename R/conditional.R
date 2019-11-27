@@ -282,7 +282,5 @@ run_conditional_gwas <- function(Primo_obj,IDs,gwas_snps,pvals,LD_mat,snp_info,p
 
   PP_grouped <- data.frame(IDs[gwas_idx,],PP_grouped,stringsAsFactors = F)
 
-  PP_grouped <- cbind(IDs[gwas_idx,], PP_grouped)
-
   return(list(pp_grouped=PP_grouped,fdr=fdr))
 }
