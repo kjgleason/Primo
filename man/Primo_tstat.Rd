@@ -5,7 +5,7 @@
 \title{Estimate posterior probabilities of association patterns, using t-statistics.}
 \usage{
 Primo_tstat(betas, sds, dfs, alt_props, mafs = NULL, Gamma = NULL,
-  tol = 0.001, par_size = 1)
+  tol = 0.001, par_size = 1, N = NULL)
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}
@@ -25,6 +25,8 @@ alternative densities.}
 
 \item{par_size}{numeric value specifying the number of workers for
 parallel computing (1 for sequential processing).}
+
+\item{N}{vector or matrix of number of subjects}
 }
 \value{
 A list with the following elements:
@@ -65,5 +67,6 @@ The following are additional details describing the input arguments
  \tab If \code{NULL}, standard errors will not be adjusted for MAF.\cr
 \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
  \tab If \code{NULL}, will be estimated using observations where all \eqn{|t| < 5}.\cr
+ \code{N} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
 }
 }

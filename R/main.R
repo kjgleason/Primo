@@ -13,6 +13,7 @@
 #' @param tol numeric value specifying tolerance threshold for convergence.
 #' @param par_size numeric value specifying the number of workers for
 #' parallel computing (1 for sequential processing).
+#' @param N vector or matrix of number of subjects
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
@@ -47,11 +48,12 @@
 #'  \tab If \code{NULL}, standard errors will not be adjusted for MAF.\cr
 #' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
 #'  \tab If \code{NULL}, will be estimated using observations where all \eqn{|t| < 5}.\cr
+#'  \code{N} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
 #' }
 #'
 #' @export
 #'
-Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=0.001,par_size=1){
+Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=0.001,par_size=1,N=NULL){
   m <- nrow(betas)
   d <- ncol(betas)
 
@@ -64,10 +66,13 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
   ## estimate marginal density functions in limma framework
   density_list <- lapply(1:d, function(j){
     if(is.matrix(mafs)) mafs <- mafs[,j]
+    if(is.matrix(N)){
+      N <- N[,j]
+    } else if(!is.null(N)) N <- rep(N[j],m)
     if(is.matrix(dfs)) {
       dfs <- dfs[,j]
     } else dfs <- rep(dfs[j],m)
-    Primo::estimate_densities_modT(betas=betas[,j],sds=sds[,j],mafs=mafs,df=dfs,alt_prop=alt_props[j])
+    Primo::estimate_densities_modT(betas=betas[,j],sds=sds[,j],mafs=mafs,df=dfs,alt_prop=alt_props[j],N=N)
   } )
 
   ## extract parameters for pattern-specific density estimation
