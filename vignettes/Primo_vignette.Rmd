@@ -49,10 +49,10 @@ Primo_results <- Primo(betas=betas,sds=sds,dfs=dfs,alt_props=c(1e-5,rep(1e-3,3))
 
 In addition to the data previously described, Primo also requires the specification of `alt_props`, the estimated proportion of statistics that comes from the alternative distribution for each study. Here we specified $10^{-5}$ for the first study and $10^{-3}$ for the other 3 studies.
 
-If the observations are SNPs, we may also have obtained minor allele frequencies (MAF) in the form of either a matrix ($m \times J$) or a vector (length $m$). In such cases, MAF may also be passed to the function to further adjust the sample variance of the *t*-statistics:
+If the observations are SNPs, we may also have obtained minor allele frequencies (MAF) in the form of either a matrix ($m \times J$) or a vector (length $m$). In such cases, MAF and the number of subjects (N) may also be passed to the function to further adjust the error variance of the moderated *t*-statistics:
 
 ```{r run_Primo_t_mafs, eval = FALSE}
-Primo_results <- Primo(betas=betas,sds=sds,dfs=dfs,alt_props=c(1e-5,rep(1e-3,3)),mafs=MAF)
+Primo_results <- Primo(betas=betas,sds=sds,dfs=dfs,alt_props=c(1e-5,rep(1e-3,3)),mafs=MAF,N=N)
 ```
 
 #### Results
@@ -134,13 +134,14 @@ As an illustrative example, let's assume we have obtained $m$ sets of summary st
 - `sds`: standard error estimates (of coefficients)
 - `dfs`: degrees of freedom for each analysis
 - `mafs`: minor allele frequencies
+- `N`: number of subjects
 
-Note that `dfs` and `mafs` may also be vectors (of length $J$ and $m$, respectively).
+Note that `dfs`, `mafs`, and `N` may also be vectors (of length $J$, $m$ and $J$, respectively).
 
 We estimate key parameters using all SNPs in the genome by running an integrative analysis using Primo:
 
 ```{r run_Primo_t2, eval = FALSE}
-Primo_results <- Primo(betas=betas,sds=sds,dfs=dfs,alt_props=c(1e-5,rep(1e-3,3)),mafs=mafs)
+Primo_results <- Primo(betas=betas,sds=sds,dfs=dfs,alt_props=c(1e-5,rep(1e-3,3)),mafs=mafs,N=N)
 ```
 
 Here, for `alt_props` (the estimated proportion of statistics that come from the alternative distribution), we specified $10^{-5}$ for the complex trait ($j=1$) and $10^{-3}$ for the 3 omics traits ($j \in \{2,3,4\})$.
@@ -335,7 +336,7 @@ dfs <- as.matrix(subset(merged_stats, select=paste("df",c("g","e"),sep="_")))
 mafs <- as.matrix(subset(merged_stats, select=paste("maf",c("g","e"),sep="_")))
 ```
 
-There may be situations where we wish to merge/align the data by more than just SNP. For example, we may wish to match pairs gene expression and protein abundance sets of summary statistics (so that a protein is aligned with the gene from which it is translated). After ensuring that the name(s) of the additional matching variable(s) match across the datasets, the merge step can be modified thusly:
+There may be situations where we wish to merge/align the data by more than just SNP. For example, we may wish to match pairs of gene expression and protein abundance sets of summary statistics (so that a protein is aligned with the gene from which it is translated). After ensuring that the name(s) of the additional matching variable(s) match across the datasets, the merge step can be modified thusly:
 
 ```{r merge2, eval = FALSE}
 data.table::setkeyv(eqtl_stats,c("SNP","gene"))
