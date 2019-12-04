@@ -17,7 +17,7 @@ calc_fdr <- function(post_prob,threshold){
 }
 
 
-#' Calculate the empirical false discovery rate (FDR) after fine-mapping.
+#' Calculate the empirical false discovery rate (FDR) after conditional analysis.
 #'
 #' Calculate the empirical false discovery rate (FDR) given
 #' a vector of posterior probabilities and a specified threshold,
@@ -45,10 +45,10 @@ calc_fdr <- function(post_prob,threshold){
 #'
 calc_fdr_conditional <- function(post_prob,threshold,fail_idx){
 
-  ## store indices for observations that would have been fine-mapped according to threshold
+  ## store indices for observations that would have undergone conditional analysis according to threshold
   conditioned_idx <- which(post_prob > threshold)
 
-  ## set PP=0 for those that failed fine-mapping (considered false positives)
+  ## set PP=0 for those that failed conditional analysis (considered false positives)
   post_prob[fail_idx] <- 0
 
   post_prob <- post_prob[conditioned_idx]

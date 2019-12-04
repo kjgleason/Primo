@@ -2,7 +2,7 @@
 % Please edit documentation in R/fdr.R
 \name{calc_fdr_conditional}
 \alias{calc_fdr_conditional}
-\title{Calculate the empirical false discovery rate (FDR) after fine-mapping.}
+\title{Calculate the empirical false discovery rate (FDR) after conditional analysis.}
 \usage{
 calc_fdr_conditional(post_prob, threshold, fail_idx)
 }
