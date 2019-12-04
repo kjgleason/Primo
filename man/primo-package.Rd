@@ -7,7 +7,7 @@
 \title{Primo: Package in R for Integrative Multi-Omics association analysis}
 \description{
 Implements methods to integrate multi-omics data to detect joint associations 
-              and pleiotropy effects across multiple GWAS and/or QTL studies, 
+              and/or pleiotropy effects across multiple GWAS and/or QTL studies, 
               with possibly overlapping samples. 
               It can also be used more broadly beyond GWAS and QTL studies
               to infer multi-way associations using summary statistics 
