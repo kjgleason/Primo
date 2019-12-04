@@ -39,7 +39,7 @@ calc_fdr <- function(post_prob,threshold){
 #' with at least 1 trait," an observation that changes from "associated with 2"
 #' to "associated with 1" may not be considered failure. In such cases, the user
 #' may wish \code{fail_idx} to represent cases where the highest
-#' association pattern no longer fits the description of the collapsed category).
+#' association pattern no longer fits the description of the collapsed category.
 #'
 #' @export
 #'
