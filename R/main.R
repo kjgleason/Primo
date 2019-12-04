@@ -6,14 +6,14 @@
 #' @param betas matrix of coefficient estimates.
 #' @param sds matrix of standard errors (for coefficient estimates).
 #' @param dfs vector or matrix of degrees of freedom.
-#' @param alt_props vector of the proportions of test-statistics used in estimating
+#' @param alt_props vector of the proportions of test statistics from
 #' alternative densities.
 #' @param mafs vector or matrix of minor allele frequencies (MAFs).
+#' @param N vector or matrix of number of subjects.
 #' @param Gamma correlation matrix.
 #' @param tol numeric value specifying tolerance threshold for convergence.
 #' @param par_size numeric value specifying the number of workers for
 #' parallel computing (1 for sequential processing).
-#' @param N vector or matrix of number of subjects
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
@@ -26,7 +26,7 @@
 #' \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
 #' \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
 #' \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
-#'  moderated degrees of freedom: df/(df-2).\cr
+#'  moderated degrees of freedom:\code{sqrt(df/(df-2))}.\cr
 #' \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
 #' \code{prior_var} \tab vector of the prior variance estimators for each marginal distribution.\cr
 #' \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
@@ -45,15 +45,16 @@
 #' \code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
 #' \code{alt_props} \tab vector of length \eqn{d}.\cr
 #' \code{mafs} \tab vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.\cr
-#'  \tab If \code{NULL}, standard errors will not be adjusted for MAF.\cr
+#'  \tab If \code{NULL}, error variances will not be adjusted for MAF.\cr
+#' \code{N} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
+#'  \tab Must be specified if \code{mafs!=NULL}.\cr
 #' \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
 #'  \tab If \code{NULL}, will be estimated using observations where all \eqn{|t| < 5}.\cr
-#'  \code{N} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
 #' }
 #'
 #' @export
 #'
-Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=0.001,par_size=1,N=NULL){
+Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, N=NULL, Gamma=NULL, tol=0.001,par_size=1){
   m <- nrow(betas)
   d <- ncol(betas)
 
@@ -72,7 +73,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
     if(is.matrix(dfs)) {
       dfs <- dfs[,j]
     } else dfs <- rep(dfs[j],m)
-    Primo::estimate_densities_modT(betas=betas[,j],sds=sds[,j],mafs=mafs,df=dfs,alt_prop=alt_props[j],N=N)
+    Primo::estimate_densities_modT(betas=betas[,j],sds=sds[,j],df=dfs,alt_prop=alt_props[j],mafs=mafs,N=N)
   } )
 
   ## extract parameters for pattern-specific density estimation
@@ -126,14 +127,12 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
   ## process large matrices in chunks
   if(m*as.double(n_pattern) <= 2^31-1){
     while(diff>tol){
-      start_time <- Sys.time()
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       ## one iteration of EM
       curpi <- Primo::em_iter(curpi,D_mat)
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
-      Sys.time() - start_time
     }
 
     PP<- Primo::e_step(curpi, Dmat=D_mat)
@@ -144,7 +143,6 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
     Drow_chunks <- split(1:m, ceiling(seq_along(1:m)/(m/num_chunks)))
 
     while(diff>tol){
-      start_time <- Sys.time()
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       # e-step, in chunks
@@ -158,7 +156,6 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, Gamma=NULL, tol=
       curpi<-curb_colsums/m
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
-      Sys.time() - start_time
     }
 
     ## obtain posterior probabilities
@@ -277,14 +274,12 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
   ## process large matrices in chunks
   if(m*as.double(n_pattern) <= 2^31-1){
     while(diff>tol){
-      start_time <- Sys.time()
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       ## one iteration of EM
       curpi <- Primo::em_iter(curpi,D_mat)
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
-      Sys.time() - start_time
     }
 
     PP<- Primo::e_step(curpi, Dmat=D_mat)
@@ -295,7 +290,6 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
     Drow_chunks <- split(1:m, ceiling(seq_along(1:m)/(m/num_chunks)))
 
     while(diff>tol){
-      start_time <- Sys.time()
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       # e-step, in chunks
@@ -309,7 +303,6 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
       curpi<-curb_colsums/m
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
-      Sys.time() - start_time
     }
 
     ## obtain posterior probabilities
@@ -423,13 +416,11 @@ Primo_modT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
   ## for now, process large matrices in chunks (may eventually utilize bigmemory package)
   if(m*as.double(n_pattern) <= 2^31-1){
     while(diff>tol){
-      start_time <- Sys.time()
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       curpi <- Primo::em_iter(curpi,D_mat)
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
-      Sys.time() - start_time
     }
 
     PP<- Primo::e_step(curpi, Dmat=D_mat)
@@ -440,7 +431,6 @@ Primo_modT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
     Drow_chunks <- split(1:m, ceiling(seq_along(1:m)/(m/num_chunks)))
 
     while(diff>tol){
-      start_time <- Sys.time()
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       # e-step, in chunks
@@ -453,7 +443,6 @@ Primo_modT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
       curpi<-curb_colsums/m
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
-      Sys.time() - start_time
     }
 
     ## obtain posterior probabilities
@@ -544,14 +533,12 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
   ## process large matrices in chunks
   if(m*as.double(n_pattern) <= 2^31-1){
     while(diff>tol){
-      start_time <- Sys.time()
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       ## one iteration of EM
       curpi <- Primo::em_iter(curpi,D_mat)
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
-      Sys.time() - start_time
     }
 
     PP<- Primo::e_step(curpi, Dmat=D_mat)
@@ -562,7 +549,6 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
     Drow_chunks <- split(1:m, ceiling(seq_along(1:m)/(m/num_chunks)))
 
     while(diff>tol){
-      start_time <- Sys.time()
       cat("\nIteration:",numiters)
       numiters<-numiters+1
       # e-step, in chunks
@@ -576,7 +562,6 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
       curpi<-curb_colsums/m
       itermat<-rbind(itermat,curpi)
       diff<-sum(abs(itermat[numiters,]-itermat[numiters-1,]))/sum(itermat[numiters-1,])
-      Sys.time() - start_time
     }
 
     ## obtain posterior probabilities
@@ -602,10 +587,11 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
 #' @param betas matrix of coefficient estimates.
 #' @param sds matrix of standard errors (for coefficient estimates).
 #' @param dfs vector or matrix of degrees of freedom.
-#' @param pvals matrix of p-values.
-#' @param alt_props vector of the proportions of test-statistics used in estimating
+#' @param pvals matrix of \eqn{P}-values.
+#' @param alt_props vector of the proportions of test statistics from the
 #' alternative densities.
 #' @param mafs vector or matrix of minor allele frequencies (MAFs).
+#' @param N vector or matrix of number of subjects.
 #' @param Gamma correlation matrix.
 #' @param tol numeric value specifying the tolerance threshold for convergence.
 #' @param par_size numeric value specifying the number of workers for
@@ -629,7 +615,7 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
 #' \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
 #' \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
 #' \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
-#'  moderated degrees of freedom: df/(df-2).\cr
+#'  moderated degrees of freedom: \code{sqrt(df/(df-2))}.\cr
 #' \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
 #' \code{prior_var} \tab vector of the prior variance estimators for each marginal distribution.\cr
 #' \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
@@ -665,9 +651,10 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
 #'     \code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
 #'   }
 #'
-#'   If the observations are SNPs, \code{mafs} can optionally be specified in order to adjust
-#'   sample variances for minor allele frequencies. \code{mafs} should be either a
-#'   vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.
+#'   If the observations are SNPs, \code{mafs} and \code{N} can optionally be specified in order to adjust
+#'   error variances for minor allele frequencies.
+#'   \code{mafs} should be either a vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.
+#'   \code{N} should be either a vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.
 #'
 #' \item If \code{use_method}="pval", the following arguments must be specified (not \code{NULL}):
 #'   \tabular{ll}{
@@ -678,23 +665,23 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
 #'
 #' @export
 #'
-Primo <- function(betas=NULL, sds=NULL, dfs=NULL, pvals=NULL, alt_props, mafs=NULL, Gamma=NULL, tol=1e-3, par_size=1, use_method="tstat"){
+Primo <- function(betas=NULL, sds=NULL, dfs=NULL, pvals=NULL, alt_props, mafs=NULL, N=NULL, Gamma=NULL, tol=1e-3, par_size=1, use_method="tstat"){
 
   if(use_method=="tstat"){
 
     if(is.null(betas) | is.null(sds) | is.null(dfs)) stop("When use_method='tstat', arguments betas, sds and dfs must all be non-NULL.")
 
-    return(Primo_tstat(betas, sds,  dfs, alt_props, mafs, Gamma, tol,par_size))
+    return(Primo_tstat(betas=betas, sds=sds, dfs=dfs, alt_props=alt_props, mafs=mafs, N=N, Gamma=Gamma, tol=tol, par_size=par_size))
 
   } else if(use_method=="pval"){
 
     if(is.null(pvals)) stop("When use_method='pval', argument pvals cannot be NULL.")
 
-    return(Primo_pval(pvals, alt_props, Gamma, tol))
+    return(Primo_pval(pvals=pvals, alt_props=alt_props, Gamma=Gamma, tol=tol, par_size=par_size))
 
   } else{
 
-    stop("use_method must be either 'tstat' or 'pvalue'.")
+    stop("use_method must be either 'tstat' or 'pval'.")
 
   }
 

@@ -4,8 +4,8 @@
 \alias{Primo_tstat}
 \title{Estimate posterior probabilities of association patterns, using t-statistics.}
 \usage{
-Primo_tstat(betas, sds, dfs, alt_props, mafs = NULL, Gamma = NULL,
-  tol = 0.001, par_size = 1, N = NULL)
+Primo_tstat(betas, sds, dfs, alt_props, mafs = NULL, N = NULL,
+  Gamma = NULL, tol = 0.001, par_size = 1)
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}
@@ -14,10 +14,12 @@ Primo_tstat(betas, sds, dfs, alt_props, mafs = NULL, Gamma = NULL,
 
 \item{dfs}{vector or matrix of degrees of freedom.}
 
-\item{alt_props}{vector of the proportions of test-statistics used in estimating
+\item{alt_props}{vector of the proportions of test statistics from
 alternative densities.}
 
 \item{mafs}{vector or matrix of minor allele frequencies (MAFs).}
+
+\item{N}{vector or matrix of number of subjects.}
 
 \item{Gamma}{correlation matrix.}
 
@@ -25,8 +27,6 @@ alternative densities.}
 
 \item{par_size}{numeric value specifying the number of workers for
 parallel computing (1 for sequential processing).}
-
-\item{N}{vector or matrix of number of subjects}
 }
 \value{
 A list with the following elements:
@@ -40,7 +40,7 @@ belonging to each association pattern.\cr
 \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
 \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
 \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
- moderated degrees of freedom: df/(df-2).\cr
+ moderated degrees of freedom:\code{sqrt(df/(df-2))}.\cr
 \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
 \code{prior_var} \tab vector of the prior variance estimators for each marginal distribution.\cr
 \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
@@ -64,9 +64,10 @@ The following are additional details describing the input arguments
 \code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
 \code{alt_props} \tab vector of length \eqn{d}.\cr
 \code{mafs} \tab vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.\cr
- \tab If \code{NULL}, standard errors will not be adjusted for MAF.\cr
+ \tab If \code{NULL}, error variances will not be adjusted for MAF.\cr
+\code{N} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
+ \tab Must be specified if \code{mafs!=NULL}.\cr
 \code{Gamma} \tab  \eqn{d} x \eqn{d} matrix.\cr
  \tab If \code{NULL}, will be estimated using observations where all \eqn{|t| < 5}.\cr
- \code{N} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
 }
 }

@@ -5,8 +5,8 @@
 \title{Estimate posterior probabilities of association patterns.}
 \usage{
 Primo(betas = NULL, sds = NULL, dfs = NULL, pvals = NULL,
-  alt_props, mafs = NULL, Gamma = NULL, tol = 0.001, par_size = 1,
-  use_method = "tstat")
+  alt_props, mafs = NULL, N = NULL, Gamma = NULL, tol = 0.001,
+  par_size = 1, use_method = "tstat")
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}
@@ -15,12 +15,14 @@ Primo(betas = NULL, sds = NULL, dfs = NULL, pvals = NULL,
 
 \item{dfs}{vector or matrix of degrees of freedom.}
 
-\item{pvals}{matrix of p-values.}
+\item{pvals}{matrix of \eqn{P}-values.}
 
-\item{alt_props}{vector of the proportions of test-statistics used in estimating
+\item{alt_props}{vector of the proportions of test statistics from the
 alternative densities.}
 
 \item{mafs}{vector or matrix of minor allele frequencies (MAFs).}
+
+\item{N}{vector or matrix of number of subjects.}
 
 \item{Gamma}{correlation matrix.}
 
@@ -49,7 +51,7 @@ belonging to each association pattern.\cr
 \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
 \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
 \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
- moderated degrees of freedom: df/(df-2).\cr
+ moderated degrees of freedom: \code{sqrt(df/(df-2))}.\cr
 \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
 \code{prior_var} \tab vector of the prior variance estimators for each marginal distribution.\cr
 \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients
@@ -91,9 +93,10 @@ The following are additional details describing the input arguments
     \code{dfs} \tab vector of length \eqn{d} or an \eqn{m} x \eqn{d} matrix.\cr
   }
 
-  If the observations are SNPs, \code{mafs} can optionally be specified in order to adjust
-  sample variances for minor allele frequencies. \code{mafs} should be either a
-  vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.
+  If the observations are SNPs, \code{mafs} and \code{N} can optionally be specified in order to adjust
+  error variances for minor allele frequencies.
+  \code{mafs} should be either a vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.
+  \code{N} should be either a vector of length \eqn{m} or an \eqn{m} x \eqn{d} matrix.
 
 \item If \code{use_method}="pval", the following arguments must be specified (not \code{NULL}):
   \tabular{ll}{

@@ -189,7 +189,9 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
 #' @param dfs vector or matrix of degrees of freedom.
 #' @param trait_idx integer vector of the columns corresponding to non-missing phenotypes/studies.
 #' @param mafs vector or matrix of minor allele frequencies (MAFs).
-#' If \code{NULL}, standard errors will not be adjusted for MAF.
+#' If \code{NULL}, error variances will not be adjusted for MAF.
+#' @param N vector or matrix of number of subjects.
+#' Should be specified if \code{mafs!=NULL}.
 #' @param pis matrix (one-row) of the estimated proportion of observations
 #' belonging to each association pattern.
 #' @param Gamma correlation matrix.
@@ -205,7 +207,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
 #'
 #' @export
 #'
-Primo_missdata_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,prior_df,prior_var,unscaled_var,par_size=1){
+Primo_missdata_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,N=NULL,pis,Gamma,prior_df,prior_var,unscaled_var,par_size=1){
   m <- nrow(betas)
   d <- ncol(betas)
   # orig_d <- log(length(pis),2)
@@ -232,6 +234,9 @@ Primo_missdata_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,pri
   ## estimate marginal density functions in limma framework
   density_list <- lapply(1:d, function(j){
     if(is.matrix(mafs)) mafs <- mafs[,j]
+    if(is.matrix(N)){
+      N <- N[,j]
+    } else if(!is.null(N)) N <- rep(N[j],m)
     if(is.matrix(dfs)) {
       d1 <- dfs[,j]
     } else d1 <- rep(dfs[j],m)
@@ -241,8 +246,8 @@ Primo_missdata_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,pis,Gamma,pri
       v1 = rep(1,m)
       sigma2 <- sds[,j]^2
     } else{
-      v1 <- 1/(2*mafs*(1-mafs))
-      sigma2 <- sds[,j]^2*(2*mafs*(1-mafs))
+      v1 <- 1/(2*mafs*(1-mafs)*N)
+      sigma2 <- sds[,j]^2*(2*mafs*(1-mafs)*N)
     }
 
     ## rescale t-statistic (see Smyth, 2004)

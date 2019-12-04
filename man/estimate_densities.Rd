@@ -5,7 +5,7 @@
 \title{Estimate parameters under the null and alternative densities}
 \usage{
 estimate_densities(betas = NULL, sds = NULL, df = NULL,
-  pvals = NULL, alt_prop, mafs = NULL, use_tstats = TRUE)
+  pvals = NULL, alt_prop, mafs = NULL, N = NULL, use_tstats = TRUE)
 }
 \arguments{
 \item{betas}{vector of coefficient estimates.}
@@ -16,9 +16,11 @@ estimate_densities(betas = NULL, sds = NULL, df = NULL,
 
 \item{pvals}{vector of \eqn{P}-values.}
 
-\item{alt_prop}{proportion of test-statistics used in estimating alternative densities.}
+\item{alt_prop}{proportion of test statistics from the alternative density.}
 
 \item{mafs}{vector of minor allele frequencies (MAFs).}
+
+\item{N}{scalar or vector of number of subjects.}
 
 \item{use_tstats}{logical indicating whether to use moderated \eqn{t}-statistics (\code{TRUE})
 or \eqn{P}-values (\code{FALSE}).}

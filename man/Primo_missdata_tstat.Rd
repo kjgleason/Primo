@@ -4,8 +4,8 @@
 \alias{Primo_missdata_tstat}
 \title{Estimate posterior probabilities for observations missing from original Primo analysis.}
 \usage{
-Primo_missdata_tstat(betas, sds, dfs, trait_idx, mafs = NULL, pis, Gamma,
-  prior_df, prior_var, unscaled_var, par_size = 1)
+Primo_missdata_tstat(betas, sds, dfs, trait_idx, mafs = NULL, N = NULL,
+  pis, Gamma, prior_df, prior_var, unscaled_var, par_size = 1)
 }
 \arguments{
 \item{betas}{matrix of coefficient estimates.}
@@ -17,7 +17,10 @@ Primo_missdata_tstat(betas, sds, dfs, trait_idx, mafs = NULL, pis, Gamma,
 \item{trait_idx}{integer vector of the columns corresponding to non-missing phenotypes/studies.}
 
 \item{mafs}{vector or matrix of minor allele frequencies (MAFs).
-If \code{NULL}, standard errors will not be adjusted for MAF.}
+If \code{NULL}, error variances will not be adjusted for MAF.}
+
+\item{N}{vector or matrix of number of subjects.
+Should be specified if \code{mafs!=NULL}.}
 
 \item{pis}{matrix (one-row) of the estimated proportion of observations
 belonging to each association pattern.}
@@ -46,7 +49,7 @@ belonging to each association pattern.\cr
 \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
 \code{V_mat} \tab matrix of scaling factors under the alternative distribution.\cr
 \code{mdf_sd_mat} \tab matrix of standard deviation adjustment according to
- moderated degrees of freedom: df/(df-2).\cr
+ moderated degrees of freedom:\code{sqrt(df/(df-2))}.\cr
 \code{prior_df} \tab vector of the prior degrees of freedom for each marginal distribution.\cr
 \code{prior_var} \tab vector of the prior variance estimators for each marginal distribution.\cr
 \code{unscaled_var} \tab vector of the unscaled variance priors on non-zero coefficients

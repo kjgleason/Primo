@@ -5,18 +5,22 @@
 #'
 #' @param betas vector of coefficient estimates.
 #' @param sds vector of standard errors (for coefficient estimates).
+#' @param df scalar or vector of first degrees of freedom of the F-distribution
+#' (usually, \eqn{N-p-1}).
+#' @param alt_prop proportion of test statistics from the alternative density.
 #' @param mafs vector of minor allele frequencies (MAFs) (optional).
 #' If \code{NULL}, no adjustment will be made for MAF in variance calculations.
-#' @param df scalar or vector of first degrees of freedom of the F-distribution
-#' (usually, \eqn{n-p-1}).
-#' @param alt_prop proportion of test-statistics used in estimating the alternative density.
-#' @param N number of subjects
+#' @param N scalar or vector of number of subjects (optional).
+#' Should be specified if \code{mafs!=NULL}.
 #'
 #' @return A list with the following elements:
 #' \tabular{ll}{
-#' \code{Tstat_mod} \tab matrix of moderated t-statistics\cr
-#' \code{df_mod} \tab vector of the moderated degrees of freedom\cr
-#' \code{scaler} \tab vector of the scaling factors for the moderated t-statistics under the alternative\cr
+#' \code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
+#' \code{df_mod} \tab vector of the moderated degrees of freedom.\cr
+#' \code{scaler} \tab vector of the scaling factors for the moderated t-statistics under the alternative.\cr
+#' \code{prior_df} \tab scalar of the prior degrees of freedom.\cr
+#' \code{prior_var} \tab scalar of the prior variance estimator.\cr
+#' \code{unscaled_var} \tab scalar of the unscaled variance prior on non-zero coefficients.
 #' }
 #'
 #' @details Following Smyth (2004), the function calculates moderated \eqn{t}-statistics using
@@ -26,11 +30,11 @@
 #'
 #' @export
 #'
-estimate_densities_modT <- function(betas, sds, mafs=NULL, df, alt_prop, N=NULL){
+estimate_densities_modT <- function(betas, sds, df, alt_prop, mafs=NULL, N=NULL){
   m <- length(betas)
 
   ## if number of subjects is missing, add two to df (would be correct for simple linear regression; otherwise would be underestimate)
-  if(is.null(N)) N <- max(df) + 2
+  if(is.null(N)) N <- df + 2
 
   ## account for MAF in variance calculations
   if (is.null(mafs)){
@@ -209,8 +213,9 @@ chiMix_pDiff <- function(par, data, sorted=F){
 #' @param sds vector of standard errors (for coefficient estimates).
 #' @param df scalar or vector of first degrees of freedom of the F-distribution.
 #' @param pvals vector of \eqn{P}-values.
-#' @param alt_prop proportion of test-statistics used in estimating alternative densities.
+#' @param alt_prop proportion of test statistics from the alternative density.
 #' @param mafs vector of minor allele frequencies (MAFs).
+#' @param N scalar or vector of number of subjects.
 #' @param use_tstats logical indicating whether to use moderated \eqn{t}-statistics (\code{TRUE})
 #' or \eqn{P}-values (\code{FALSE}).
 #'
@@ -219,17 +224,17 @@ chiMix_pDiff <- function(par, data, sorted=F){
 #' @export
 #'
 #'
-estimate_densities <- function(betas=NULL, sds=NULL, df=NULL, pvals=NULL, alt_prop, mafs=NULL, use_tstats=TRUE){
+estimate_densities <- function(betas=NULL, sds=NULL, df=NULL, pvals=NULL, alt_prop, mafs=NULL, N=NULL, use_tstats=TRUE){
 
   if(use_tstats){
-    if(is.null(betas) | is.null(sds) | is.null(mafs) | is.null(df)){
+    if(is.null(betas) | is.null(sds) | is.null(df)){
       if(!is.null(pvals)) {
           warning("use_tstats=TRUE requires non-null values for betas, sds, mafs and df; using p-values for density estimation.")
-          myDens <- estimate_densities_pval(pvals, alt_prop)
-      } else stop("use_tstats=TRUE requires non-null values for betas, sds, mafs and df.")
-    } else myDens <- estimate_densities_modT(betas, sds, mafs, df, alt_prop)
+          myDens <- estimate_densities_pval(pvals=pvals, alt_prop=alt_prop)
+      } else stop("use_tstats=TRUE requires non-null values for betas, sds, and df.")
+    } else myDens <- estimate_densities_modT(betas=betas, sds=sds, df=df, alt_prop=alt_prop, mafs=mafs, N=N)
   } else{
-    myDens <- estimate_densities_pval(pvals, alt_prop)
+    myDens <- estimate_densities_pval(pvals=pvals, alt_prop=alt_prop)
   }
   return(myDens)
 }

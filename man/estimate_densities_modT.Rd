@@ -4,7 +4,7 @@
 \alias{estimate_densities_modT}
 \title{Estimate parameters under the null and alternative densities}
 \usage{
-estimate_densities_modT(betas, sds, mafs = NULL, df, alt_prop,
+estimate_densities_modT(betas, sds, df, alt_prop, mafs = NULL,
   N = NULL)
 }
 \arguments{
@@ -12,22 +12,26 @@ estimate_densities_modT(betas, sds, mafs = NULL, df, alt_prop,
 
 \item{sds}{vector of standard errors (for coefficient estimates).}
 
+\item{df}{scalar or vector of first degrees of freedom of the F-distribution
+(usually, \eqn{N-p-1}).}
+
+\item{alt_prop}{proportion of test statistics from the alternative density.}
+
 \item{mafs}{vector of minor allele frequencies (MAFs) (optional).
 If \code{NULL}, no adjustment will be made for MAF in variance calculations.}
 
-\item{df}{scalar or vector of first degrees of freedom of the F-distribution
-(usually, \eqn{n-p-1}).}
-
-\item{alt_prop}{proportion of test-statistics used in estimating the alternative density.}
-
-\item{N}{number of subjects}
+\item{N}{scalar or vector of number of subjects (optional).
+Should be specified if \code{mafs!=NULL}.}
 }
 \value{
 A list with the following elements:
 \tabular{ll}{
-\code{Tstat_mod} \tab matrix of moderated t-statistics\cr
-\code{df_mod} \tab vector of the moderated degrees of freedom\cr
-\code{scaler} \tab vector of the scaling factors for the moderated t-statistics under the alternative\cr
+\code{Tstat_mod} \tab matrix of moderated t-statistics.\cr
+\code{df_mod} \tab vector of the moderated degrees of freedom.\cr
+\code{scaler} \tab vector of the scaling factors for the moderated t-statistics under the alternative.\cr
+\code{prior_df} \tab scalar of the prior degrees of freedom.\cr
+\code{prior_var} \tab scalar of the prior variance estimator.\cr
+\code{unscaled_var} \tab scalar of the unscaled variance prior on non-zero coefficients.
 }
 }
 \description{
