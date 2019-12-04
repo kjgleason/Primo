@@ -34,6 +34,8 @@ Primo_conditional <- function(idx_snp,idx_leadsnps,LD_mat,Primo_obj){
   pis<-Primo_obj$pis
   v2<-NULL
   Gamma<-Primo_obj$Gamma
+
+  ## variance of t-statistic for each lead SNP under most plausible association pattern
   for(i in 1:n_leadsnps){
     q2<-Q[which.max(post_prob[idx_leadsnps[i],]),]
     v2<-rbind(v2,(V[(i+1),]%*%diag(q2)+ matrix(1, nrow=1,ncol=d)%*%diag( 1-q2))*matrix(mdf_sd[(i+1),],ncol=d))
@@ -41,6 +43,7 @@ Primo_conditional <- function(idx_snp,idx_leadsnps,LD_mat,Primo_obj){
 
   CD_mat=matrix(NA, nrow=1, ncol=2^d)
 
+  ## joint conditional densities under each pattern for index SNP
   for(k in 1:2^d){
     v_k <-  (V[1,]%*%diag(Q[k,]) + matrix(1, nrow=1,ncol=d)%*%diag( 1-Q[k,]))*matrix(mdf_sd[1,],ncol=d)
     cmean<-NULL
@@ -73,7 +76,7 @@ Primo_conditional <- function(idx_snp,idx_leadsnps,LD_mat,Primo_obj){
 #' @param IDs data.table of the SNP and phenotype IDs corresponding to each row
 #' of the Primo results stored in \code{Primo_obj}.
 #' @param idx integer of the index of the genetic variant (e.g. row of \code{Tstat_mod})
-#' on which one wants to perform fine-mapping
+#' on which one wants to perform conditional analysis.
 #' @param leadsnps_region data.table that stores the lead SNP of each phenotype
 #' in each region of the Primo results. Also includes p-values for the lead SNPs.
 #' See Details for format.

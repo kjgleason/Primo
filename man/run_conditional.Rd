@@ -16,7 +16,7 @@ of Primo (i.e. \code{\link{Primo_tstat}})}
 of the Primo results stored in \code{Primo_obj}.}
 
 \item{idx}{integer of the index of the genetic variant (e.g. row of \code{Tstat_mod})
-on which one wants to perform fine-mapping}
+on which one wants to perform conditional analysis.}
 
 \item{leadsnps_region}{data.table that stores the lead SNP of each phenotype
 in each region of the Primo results. Also includes p-values for the lead SNPs.
