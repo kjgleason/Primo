@@ -9,7 +9,7 @@ estimate_densities_pval(pvals, alt_prop, method_moments = FALSE)
 \arguments{
 \item{pvals}{vector of \eqn{P}-values.}
 
-\item{alt_prop}{proportion of \eqn{P}-values used in estimating alternative densities.}
+\item{alt_prop}{proportion of \eqn{P}-values from the alternative density.}
 
 \item{method_moments}{logical, denoting whether to estimate scale and degree of freedom
 parameters using Method of Moments (\code{TRUE}) or optimization (\code{FALSE}).}

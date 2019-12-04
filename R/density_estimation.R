@@ -72,7 +72,7 @@ estimate_densities_modT <- function(betas, sds, df, alt_prop, mafs=NULL, N=NULL)
 #' \eqn{-2\log(P)}{-2*log(P)}-values.
 #'
 #' @param pvals vector of \eqn{P}-values.
-#' @param alt_prop proportion of \eqn{P}-values used in estimating alternative densities.
+#' @param alt_prop proportion of \eqn{P}-values from the alternative density.
 #' @param method_moments logical, denoting whether to estimate scale and degree of freedom
 #' parameters using Method of Moments (\code{TRUE}) or optimization (\code{FALSE}).
 #'
@@ -158,8 +158,8 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=FALSE){
 #' @param data list with two elements: \code{chi_mix} (vector) and \code{alt_prop} (scalar).
 #' @param sorted logical, denoting whether \code{data$chi_mix} is sorted in decreasing order.
 #'
-#' @return A numeric value of the total (absolute) difference between observed p-values
-#' (given the parameters) and nominal p-values.
+#' @return A numeric value of the total (absolute) difference between observed \eqn{P}-values
+#' (given the parameters) and nominal \eqn{P}-values.
 #'
 #' @details The argument \code{data} should be a two-element list. The first element, named \code{chi_mix}, is
 #' a vector of the observed values from the chi-squared mixture. The second element, named \code{alt_prop},

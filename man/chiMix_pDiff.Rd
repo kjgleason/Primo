@@ -15,8 +15,8 @@ scale parameter [1] and degrees of freedom [2].}
 \item{sorted}{logical, denoting whether \code{data$chi_mix} is sorted in decreasing order.}
 }
 \value{
-A numeric value of the total (absolute) difference between observed p-values
-(given the parameters) and nominal p-values.
+A numeric value of the total (absolute) difference between observed \eqn{P}-values
+(given the parameters) and nominal \eqn{P}-values.
 }
 \description{
 Match observed \eqn{P}-values to nominal \eqn{P}-values by rank and calculate total difference. Objective
