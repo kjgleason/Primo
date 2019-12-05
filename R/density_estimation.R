@@ -106,6 +106,9 @@ estimate_densities_modT <- function(betas, sds, df, alt_prop, mafs=NULL, N=NULL)
 #'
 estimate_densities_pval <- function(pvals, alt_prop, method_moments=FALSE){
 
+  ## warn users when some p-values == 0
+  if(any(pvals==0)) warning("Some P-values evaluated as exactly 0, resulting in -2*log(P) == Infinite.")
+
   ## transform to chi-squared mixture (df=2 under null; scaled with unknown df under alternative)
   chi_mix<-(-2)*log(pvals)
 
