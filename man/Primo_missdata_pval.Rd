@@ -12,7 +12,7 @@ Primo_missdata_pval(pvals, trait_idx, pis, Gamma, A, df_alt,
 
 \item{trait_idx}{integer vector of the columns corresponding to non-missing phenotypes/studies.}
 
-\item{pis}{matrix (one-row) of the estimated proportion of observations
+\item{pis}{vector of the estimated proportion of observations
 belonging to each association pattern}
 
 \item{Gamma}{correlation matrix.}

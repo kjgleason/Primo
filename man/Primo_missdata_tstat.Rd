@@ -22,7 +22,7 @@ If \code{NULL}, error variances will not be adjusted for MAF.}
 \item{N}{vector or matrix of number of subjects.
 Should be specified if \code{mafs!=NULL}.}
 
-\item{pis}{matrix (one-row) of the estimated proportion of observations
+\item{pis}{vector of the estimated proportion of observations
 belonging to each association pattern.}
 
 \item{Gamma}{correlation matrix.}

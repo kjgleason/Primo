@@ -193,7 +193,7 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
 #' If \code{NULL}, error variances will not be adjusted for MAF.
 #' @param N vector or matrix of number of subjects.
 #' Should be specified if \code{mafs!=NULL}.
-#' @param pis matrix (one-row) of the estimated proportion of observations
+#' @param pis vector of the estimated proportion of observations
 #' belonging to each association pattern.
 #' @param Gamma correlation matrix.
 #' @param prior_df vector of the prior degrees of freedom for each marginal distribution.
@@ -211,8 +211,10 @@ find_leadsnps <- function(data,snp_col,pheno_cols,stat_cols,data_type="pvalue",s
 Primo_missdata_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,N=NULL,pis,Gamma,prior_df,prior_var,unscaled_var,par_size=1){
   m <- nrow(betas)
   d <- ncol(betas)
-  # orig_d <- log(length(pis),2)
-  orig_d <- log(ncol(pis),2)
+
+  if(is.matrix(pis)){
+    orig_d <- log(ncol(pis),2)
+  } else orig_d <- log(length(pis),2)
 
   miss_idx <- (1:orig_d)[-trait_idx]
 
@@ -228,8 +230,10 @@ Primo_missdata_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,N=NULL,pis,Ga
   } else{
     keep_patterns <- which(rowSums(orig_Q[,miss_idx])==0)
   }
-  # pis <- pis[keep_patterns]
-  pis <- pis[,keep_patterns]
+
+  if(is.matrix(pis)){
+    pis <- pis[,keep_patterns]
+  } else pis <- pis[keep_patterns]
 
 
   ## estimate marginal density functions in limma framework
@@ -327,7 +331,7 @@ Primo_missdata_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,N=NULL,pis,Ga
 #'
 #' @param pvals matrix of \eqn{P}-values from test statistics.
 #' @param trait_idx integer vector of the columns corresponding to non-missing phenotypes/studies.
-#' @param pis matrix (one-row) of the estimated proportion of observations
+#' @param pis vector of the estimated proportion of observations
 #' belonging to each association pattern
 #' @param Gamma correlation matrix.
 #' @param A vector of scaling factors under the alternative distributions.
@@ -343,8 +347,10 @@ Primo_missdata_tstat <- function(betas,sds,dfs,trait_idx,mafs=NULL,N=NULL,pis,Ga
 Primo_missdata_pval <- function(pvals,trait_idx,pis,Gamma,A,df_alt,par_size=1){
   m <- nrow(pvals)
   d <- ncol(pvals)
-  # orig_d <- log(length(pis),2)
-  orig_d <- log(ncol(pis),2)
+
+  if(is.matrix(pis)){
+    orig_d <- log(ncol(pis),2)
+  } else orig_d <- log(length(pis),2)
 
   miss_idx <- (1:orig_d)[-trait_idx]
 
@@ -363,8 +369,10 @@ Primo_missdata_pval <- function(pvals,trait_idx,pis,Gamma,A,df_alt,par_size=1){
   } else{
     keep_patterns <- which(rowSums(orig_Q[,miss_idx])==0)
   }
-  # pis <- pis[keep_patterns]
-  pis <- pis[,keep_patterns]
+
+  if(is.matrix(pis)){
+    pis <- pis[,keep_patterns]
+  } else pis <- pis[keep_patterns]
 
   ## computation of D_mat (densities under each pattern)
   Q<-Primo::make_qmat(1:d)
