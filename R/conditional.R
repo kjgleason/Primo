@@ -176,16 +176,16 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
   return(sp_vec)
 }
 
-#' Set up conditional analysis for known complex trait-associated variants.
+#' Conditional analysis for known complex trait-associated variants.
 #'
 #' For specified, known complex trait-associated (GWAS) variant(s),
 #' set-up and run conditional analysis.
 #' The function identifies lead omics SNPs to consider for conditional analysis,
 #' and determines which SNPs will be conditioned on for each GWAS variant
 #' based on specified criteria. Returns a data.frame with posterior probabilities
-#' for collapsed association patterns and results from conditional analysis,
-#' as well as estimated FDR for each collapsed association pattern at a
-#' specified posterior probability threshold.
+#' for collapsed association patterns and results from conditional analysis.
+#' Also returns a vector of estimated FDR for each collapsed association pattern
+#' at a specified posterior probability threshold.
 #'
 #' @param Primo_obj list returned by running the \eqn{t}-statistic version
 #' of Primo (i.e. \code{\link{Primo_tstat}})
@@ -207,6 +207,10 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
 #' with the phenotype for which it is lead SNP in order to be conditioned on.
 #' @param gwas_col integer of the data column (e.g. in \code{Primo_obj$Tstat_mod}) of the
 #' GWAS study. Default is the first data column.
+#' @param use_ID_labels logical of whether or not phenotype column names in \code{IDs}
+#' should be used as labels for identifying possible omics associations. If \code{FALSE},
+#' labels will append \eqn{j} to 'study', where \eqn{j} is the corresponding data column
+#' of the omics phenotype.
 #'
 #'
 #' @return A list with two elements, \code{pp_grouped} and \code{fdr}.
@@ -223,13 +227,16 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
 #'   ("GWAS + at least x omics trait(s)")
 #'   \item number of omics traits with which the SNP was associated before conditional analysis
 #'   (at posterior probability \code{> pp_thresh})
-#'   \item number of omics traits the SNP is associated with after conditional analysis
-#'   \item the top association pattern after conditional analysis
+#'   \item number of omics traits with which the SNP is associated after conditional analysis
+#'   \item top association pattern before conditional analysis
+#'   \item top association pattern after conditional analysis
+#'   \item omics traits with which SNP may be associated based on top patterns
+#'   before and after conditional analysis
 #' }
 #'
 #' @export
 #'
-run_conditional_gwas <- function(Primo_obj,IDs,gwas_snps,pvals,LD_mat,snp_info,pp_thresh,LD_thresh=0.9,dist_thresh=5e3,pval_thresh=1e-3,gwas_col=1){
+run_conditional_gwas <- function(Primo_obj,IDs,gwas_snps,pvals,LD_mat,snp_info,pp_thresh,LD_thresh=0.9,dist_thresh=5e3,pval_thresh=1e-3,gwas_col=1,use_ID_labels=TRUE){
 
   snp_col <- colnames(IDs)[1]
   pheno_cols <- colnames(IDs)[2:ncol(IDs)]
@@ -243,6 +250,14 @@ run_conditional_gwas <- function(Primo_obj,IDs,gwas_snps,pvals,LD_mat,snp_info,p
   ID_pvals <- data.table::data.table(IDs,pvals)
   leadsnps_region <- Primo::find_leadsnps(data=ID_pvals,snp_col=snp_col,pheno_cols=pheno_cols,
                                           stat_cols=colnames(ID_pvals)[(ncol(IDs)+1):ncol(ID_pvals)],data_type="pvalue")
+
+  ##determine top pattern before conditional analysis
+  PP_gwas <- Primo_obj$post_prob[gwas_idx,]
+  if(length(gwas_idx)==1){
+    orig_max <- which.max(PP_gwas)
+  } else{
+    orig_max <- max.col(PP_gwas)
+  }
 
   ## determine top pattern after conditional analysis
   sp_vec <- Primo::run_conditional(Primo_obj,IDs,idx=gwas_idx,leadsnps_region,snp_col,
@@ -263,14 +278,19 @@ run_conditional_gwas <- function(Primo_obj,IDs,gwas_snps,pvals,LD_mat,snp_info,p
   QTL_cols <- 1:ncol(pvals)
   QTL_cols <- QTL_cols[-gwas_col]
 
-  ## determine original pattern with maximum probability
-  PP_gwas <- Primo_obj$post_prob[gwas_idx,]
-  orig_max <- apply(PP_gwas,1,which.max)
+  ## determine final nQTL based on pre- and post-conditional patterns with max. probability
   QTL_status_byObs <- myQ[orig_max,QTL_cols] * myQ[sp_vec,QTL_cols]
   nQTL_final <- rowSums(QTL_status_byObs)
 
-  ## add in sp_vec and final nQTL
-  PP_grouped <- cbind(PP_grouped,nQTL_final=nQTL_final,top_pattern=sp_vec)
+  ## create character string of possible omics QTL associations
+  if(use_ID_labels){
+    study_names <- pheno_cols[QTL_cols]
+  } else study_names <- paste0("study",QTL_cols)
+  poss_assoc <- sapply(apply(QTL_status_byObs, 1, function(x) study_names[as.logical(x)]),function(y) paste(y,collapse=";"))
+
+  ## add in final nQTL and patterns with max probability
+  PP_grouped <- data.frame(PP_grouped,nQTL_final=nQTL_final,top_pattern_precond=orig_max,top_pattern_postcond=sp_vec,
+                           poss_QTL_assoc=poss_assoc,stringsAsFactors = F)
   PP_grouped[,"nQTL_final"] <- pmin(PP_grouped[,"nQTL_orig"],PP_grouped[,"nQTL_final"])
 
   ## calculate estimated FDR

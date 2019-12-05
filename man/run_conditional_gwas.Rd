@@ -2,11 +2,11 @@
 % Please edit documentation in R/conditional.R
 \name{run_conditional_gwas}
 \alias{run_conditional_gwas}
-\title{Set up conditional analysis for known complex trait-associated variants.}
+\title{Conditional analysis for known complex trait-associated variants.}
 \usage{
 run_conditional_gwas(Primo_obj, IDs, gwas_snps, pvals, LD_mat, snp_info,
   pp_thresh, LD_thresh = 0.9, dist_thresh = 5000,
-  pval_thresh = 0.001, gwas_col = 1)
+  pval_thresh = 0.001, gwas_col = 1, use_ID_labels = TRUE)
 }
 \arguments{
 \item{Primo_obj}{list returned by running the \eqn{t}-statistic version
@@ -39,6 +39,11 @@ with the phenotype for which it is lead SNP in order to be conditioned on.}
 
 \item{gwas_col}{integer of the data column (e.g. in \code{Primo_obj$Tstat_mod}) of the
 GWAS study. Default is the first data column.}
+
+\item{use_ID_labels}{logical of whether or not phenotype column names in \code{IDs}
+should be used as labels for identifying possible omics associations. If \code{FALSE},
+labels will append \eqn{j} to 'study', where \eqn{j} is the corresponding data column
+of the omics phenotype.}
 }
 \value{
 A list with two elements, \code{pp_grouped} and \code{fdr}.
@@ -55,8 +60,11 @@ threshold, \code{pp_thresh}.
   ("GWAS + at least x omics trait(s)")
   \item number of omics traits with which the SNP was associated before conditional analysis
   (at posterior probability \code{> pp_thresh})
-  \item number of omics traits the SNP is associated with after conditional analysis
-  \item the top association pattern after conditional analysis
+  \item number of omics traits with which the SNP is associated after conditional analysis
+  \item top association pattern before conditional analysis
+  \item top association pattern after conditional analysis
+  \item omics traits with which SNP may be associated based on top patterns
+  before and after conditional analysis
 }
 }
 \description{
@@ -65,7 +73,7 @@ set-up and run conditional analysis.
 The function identifies lead omics SNPs to consider for conditional analysis,
 and determines which SNPs will be conditioned on for each GWAS variant
 based on specified criteria. Returns a data.frame with posterior probabilities
-for collapsed association patterns and results from conditional analysis,
-as well as estimated FDR for each collapsed association pattern at a
-specified posterior probability threshold.
+for collapsed association patterns and results from conditional analysis.
+Also returns a vector of estimated FDR for each collapsed association pattern
+at a specified posterior probability threshold.
 }
