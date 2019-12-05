@@ -168,7 +168,9 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, N=NULL, Gamma=NU
 
   }
 
-  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, Tstat_mod=Tstat_mod, V_mat = V, mdf_sd_mat = mdf_sd_mat,
+  pis <- as.numeric(curpi)
+
+  return(list(post_prob=PP, pis=pis, D_mat=D_mat, Gamma=Gamma, Tstat_mod=Tstat_mod, V_mat = V, mdf_sd_mat = mdf_sd_mat,
               prior_df=prior_df,prior_var=prior_var,unscaled_var=unscaled_var))
 }
 
@@ -315,7 +317,9 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
 
   }
 
-  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
+  pis <- as.numeric(curpi)
+
+  return(list(post_prob=PP, pis=pis, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
 }
 
 
@@ -455,7 +459,9 @@ Primo_modT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
 
   }
 
-  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, Tstat_mod=Tstat_mod, V_mat = V_mat, mdf_sd_mat = mdf_sd_mat))
+  pis <- as.numeric(curpi)
+
+  return(list(post_prob=PP, pis=pis, D_mat=D_mat, Gamma=Gamma, Tstat_mod=Tstat_mod, V_mat = V_mat, mdf_sd_mat = mdf_sd_mat))
 }
 
 #' Estimate posterior probabilities of association patterns, using mixture of chi-squared statistics.
@@ -574,7 +580,9 @@ Primo_chiMix <- function(chi_mix, A, df_alt, Gamma, tol=0.001, par_size=1){
 
   }
 
-  return(list(post_prob=PP, pis=curpi, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
+  pis <- as.numeric(curpi)
+
+  return(list(post_prob=PP, pis=pis, D_mat=D_mat, Gamma=Gamma, chi_mix=chi_mix, A=A, df_alt=df_alt))
 }
 
 #' Estimate posterior probabilities of association patterns.
