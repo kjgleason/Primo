@@ -4,7 +4,7 @@
 \alias{chiMix_pDiff}
 \title{Difference from nominal \eqn{P}-values of a chi-squared mixture.}
 \usage{
-chiMix_pDiff(par, data, sorted = F)
+chiMix_pDiff(par, data, sorted = FALSE)
 }
 \arguments{
 \item{par}{vector of two parameters for the alternative distribution:
@@ -16,7 +16,7 @@ scale parameter [1] and degrees of freedom [2].}
 }
 \value{
 A numeric value of the total (absolute) difference between observed \eqn{P}-values
-(given the parameters) and nominal \eqn{P}-values.
+(given the parameters) and nominal \eqn{P}-values (given their ranks).
 }
 \description{
 Match observed \eqn{P}-values to nominal \eqn{P}-values by rank and calculate total difference. Objective

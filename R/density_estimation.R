@@ -162,7 +162,7 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=FALSE){
 #' @param sorted logical, denoting whether \code{data$chi_mix} is sorted in decreasing order.
 #'
 #' @return A numeric value of the total (absolute) difference between observed \eqn{P}-values
-#' (given the parameters) and nominal \eqn{P}-values.
+#' (given the parameters) and nominal \eqn{P}-values (given their ranks).
 #'
 #' @details The argument \code{data} should be a two-element list. The first element, named \code{chi_mix}, is
 #' a vector of the observed values from the chi-squared mixture. The second element, named \code{alt_prop},
@@ -173,7 +173,7 @@ estimate_densities_pval <- function(pvals, alt_prop, method_moments=FALSE){
 #'
 #' @export
 #'
-chiMix_pDiff <- function(par, data, sorted=F){
+chiMix_pDiff <- function(par, data, sorted=FALSE){
   chi_mix <- data$chi_mix
   alt_prop <- data$alt_prop
 
