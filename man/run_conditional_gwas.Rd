@@ -19,8 +19,8 @@ of the Primo results stored in \code{Primo_obj}.}
 
 \item{pvals}{matrix of \eqn{P}-values from test statistics.}
 
-\item{LD_mat}{matrix of LD correlation coefficients (e.g. Pearson \eqn{r}{r}). Row and column names
-should be SNP/variant names (i.e matching those present in \code{IDs}).}
+\item{LD_mat}{matrix of genotype correlation coefficients (e.g. Pearson \eqn{r}{r}). Row and column names
+should be SNP/variant names (i.e matching variant names in \code{IDs}).}
 
 \item{snp_info}{data.frame reporting the chromosome and position of each SNP.
 Columns must include: \code{SNP, CHR, POS}.}
@@ -57,7 +57,7 @@ threshold, \code{pp_thresh}.
 \itemize{
   \item SNP and trait identifiers corresponding to each observation
   \item posterior probabilities of the collapsed association patterns
-  ("GWAS + at least x omics trait(s)")
+  ("GWAS + at least \eqn{n} omics trait(s)")
   \item number of omics traits with which the SNP was associated before conditional analysis
   (at posterior probability \code{> pp_thresh})
   \item number of omics traits with which the SNP is associated after conditional analysis

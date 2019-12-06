@@ -10,7 +10,8 @@ collapse_pp_trait(post_prob, req_idx = NULL, prefix = "pp_")
 \item{post_prob}{matrix of posterior probabilities.}
 
 \item{req_idx}{(optional) scalar or integer vector of trait(s) where a non-null
-association is required. If \code{NULL}, no traits will be required.}
+association is required (i.e. from the alternative distribution).
+If \code{NULL}, no traits will be required.}
 
 \item{prefix}{character string denoting prefix of column names for the results matrix.}
 }
@@ -18,9 +19,9 @@ association is required. If \code{NULL}, no traits will be required.}
 A numeric matrix of combined posterior probabilities.
 }
 \description{
-Combine the posterior probabilities for each individual trait according to the
+Combine the posterior probabilities for each individual trait/study according to the
 association patterns from which that trait comes from the alternative distribution.
-Provides the posterior probability of being associated with "at least trait x".
+Provides the posterior probability of being associated with "at least trait \eqn{X}".
 Can also require non-null association with one or more traits and combine
-over patterns where both "x" and that/those trait(s) are from the alternative distribution.
+over patterns where both \eqn{X} and that/those trait(s) are from the alternative distribution.
 }

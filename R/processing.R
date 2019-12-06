@@ -35,8 +35,8 @@
 #' the list will additionally contain:
 #' \tabular{ll}{
 #' \code{chi_mix} \tab matrix of \eqn{-2\log(P)}{-2*log(P)}-values.\cr
-#' \code{A} \tab vector of scaling factors under the alternative distributions.\cr
-#' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
+#' \code{A} \tab vector of scaling factors under the alternative densities.\cr
+#' \code{df_alt} \tab vector of degrees of freedom approximated for the alternative densities.\cr
 #'  }
 #'  }
 #'
@@ -420,14 +420,15 @@ Primo_missdata_pval <- function(pvals,trait_idx,pis,Gamma,A,df_alt,par_size=1){
 #' Combine the posterior probabilities of association patterns
 #' according to the number of traits with non-null associations in each pattern.
 #' Provides the posterior probability of
-#' being associated with "at least n" number of traits under analysis
-#' by summing over association patterns with at least "n" studies
+#' being associated with "at least \eqn{n}" number of traits/studies
+#' by summing over association patterns with at least \eqn{n} studies
 #' coming from the alternative distribution. Can also require non-null
 #' association with one or more traits and combine over other traits.
 #'
 #' @param post_prob matrix of posterior probabilities.
 #' @param req_idx (optional) scalar or integer vector of trait(s) where a non-null
-#' association is required. If \code{NULL}, no traits will be required.
+#' association is required (i.e. from the alternative distribution).
+#' If \code{NULL}, no traits will be required.
 #' @param prefix character string denoting prefix of column names for the results matrix.
 #'
 #' @return A numeric matrix of combined posterior probabilities.
@@ -470,11 +471,11 @@ collapse_pp_num <- function(post_prob,req_idx=NULL,prefix="pp_ge_"){
 
 #' Collapse posterior probabilities of association for each individual trait.
 #'
-#' Combine the posterior probabilities for each individual trait according to the
+#' Combine the posterior probabilities for each individual trait/study according to the
 #' association patterns from which that trait comes from the alternative distribution.
-#' Provides the posterior probability of being associated with "at least trait x".
+#' Provides the posterior probability of being associated with "at least trait \eqn{X}".
 #' Can also require non-null association with one or more traits and combine
-#' over patterns where both "x" and that/those trait(s) are from the alternative distribution.
+#' over patterns where both \eqn{X} and that/those trait(s) are from the alternative distribution.
 #'
 #' @inheritParams collapse_pp_num
 #'
@@ -519,11 +520,11 @@ collapse_pp_trait <- function(post_prob,req_idx=NULL,prefix="pp_"){
 
 #' Collapse posterior probabilities of association for combinations of individual traits.
 #'
-#' Combine the posterior probabilities for combinations of individual traits according to the
-#' association patterns from which those traits all come from the alternative distribution.
-#' Provides the posterior probability of being associated with "at least traits X, Y and Z",
-#' for example.
-#' Can also require non-null association with one or more traits and combine
+#' Combine the posterior probabilities for combinations of individual traits/studies according to the
+#' association patterns from which those traits/studies all come from the alternative distribution.
+#' Provides the posterior probability of being associated with "at least traits
+#' \eqn{X}, \eqn{Y} and \eqn{Z}", for example.
+#' Can also require non-null association with one or more traits/studies and combine
 #' over patterns where that/those trait(s) also come from the alternative distribution.
 #'
 #' @inheritParams collapse_pp_num
@@ -535,6 +536,7 @@ collapse_pp_trait <- function(post_prob,req_idx=NULL,prefix="pp_"){
 #' @inherit collapse_pp_num return
 #'
 #' @examples
+#' ## all pairs of traits
 #' myCombos <- t(combn(4,2))
 #' collapsed_pp <- collapse_pp_combin(post_prob,myCombos)
 #'

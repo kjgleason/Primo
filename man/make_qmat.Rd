@@ -7,9 +7,9 @@
 make_qmat(grp, name_cols = FALSE)
 }
 \arguments{
-\item{grp}{vector of group identifiers (common to use \code{seq(1,d)}, for \eqn{d} groups).}
+\item{grp}{vector of group/study identifiers (common to use \code{seq(1,d)}, for \eqn{d} groups/studies).}
 
-\item{name_cols}{logical indicating whether to name columns using group identifiers.}
+\item{name_cols}{logical indicating whether to name columns using group/study identifiers.}
 }
 \value{
 A matrix with all binary combinations of the groups. The value in row \eqn{k}

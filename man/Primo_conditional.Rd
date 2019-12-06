@@ -7,13 +7,13 @@
 Primo_conditional(idx_snp, idx_leadsnps, LD_mat, Primo_obj)
 }
 \arguments{
-\item{idx_snp}{integer matching the index of the genetic variant (e.g. row of \code{Tstat_mod})
+\item{idx_snp}{integer matching the index (e.g. row of \code{Tstat_mod}) of the genetic variant
 for which to perform conditional analysis.}
 
-\item{idx_leadsnps}{vector of indices of the leading snps (e.g. rows of \code{Tstat_mod})
+\item{idx_leadsnps}{vector of indices (e.g. rows of \code{Tstat_mod}) of the leading snps
 on which to condition.}
 
-\item{LD_mat}{matrix of LD correlation coefficients (e.g. Pearson \eqn{r}{r}).
+\item{LD_mat}{matrix of genotype correlation coefficients (e.g. Pearson \eqn{r}{r}).
 Rows and columns should match the order of (\code{idx_snp}, \code{idx_leadsnps}).}
 
 \item{Primo_obj}{list returned by running the \eqn{t}-statistic version
@@ -22,13 +22,13 @@ of Primo (i.e. \code{\link{Primo_tstat}} or \code{\link{Primo_modT}})}
 \value{
 The integer corresponding to the association pattern
 with the highest posterior probability following conditional analysis.
-The value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
+The value returned, \eqn{k}, corresponds to the \eqn{k}-th index of \code{pis}
 from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
 by \code{\link{make_qmat}}.
 }
 \description{
 For a specified variant, re-estimate the posterior probabilities of association
-patterns, conditioning on other specified variants (e.g. lead SNPs for phenotypes
-being studied). Returns the association pattern with the highest
+patterns, conditioning on other specified variants (e.g. lead SNPs for omics
+traits). Returns the association pattern with the highest
 posterior probability after conditional analysis.
 }

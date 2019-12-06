@@ -42,8 +42,8 @@ for each marginal distribution.
 the list will additionally contain:
 \tabular{ll}{
 \code{chi_mix} \tab matrix of \eqn{-2\log(P)}{-2*log(P)}-values.\cr
-\code{A} \tab vector of scaling factors under the alternative distributions.\cr
-\code{df_alt} \tab vector of degrees of freedom approximated for the alternative distributions.\cr
+\code{A} \tab vector of scaling factors under the alternative densities.\cr
+\code{df_alt} \tab vector of degrees of freedom approximated for the alternative densities.\cr
  }
  }
 }

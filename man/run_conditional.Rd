@@ -19,7 +19,7 @@ of the Primo results stored in \code{Primo_obj}.}
 on which one wants to perform conditional analysis.}
 
 \item{leadsnps_region}{data.table that stores the lead SNP of each phenotype
-in each region of the Primo results. Also includes p-values for the lead SNPs.
+in each region of the Primo results. Also includes \eqn{P}-values for the lead SNPs.
 See Details for format.}
 
 \item{snp_col}{string of the column name of SNPs/variants.}
@@ -29,7 +29,7 @@ See Details for format.}
 \item{snp_info}{data.table reporting the chromosome and position of each SNP.
 Columns must include: \code{SNP, CHR, POS}.}
 
-\item{LD_mat}{matrix of LD correlation coefficients (e.g. Pearson \eqn{r}{r}). Row and column names
+\item{LD_mat}{matrix of genotype correlation coefficients (e.g. Pearson \eqn{r}{r}). Row and column names
 should be SNP/variant names (e.g. in \code{snp_col}).}
 
 \item{LD_thresh}{scalar corresponding to the LD \eqn{r^{2}}{r^2}
@@ -37,7 +37,7 @@ threshold to be used for conditional analysis. Lead SNPs with \eqn{r^{2} <}{r^2 
 \code{LD_thresh} with the \code{idx} variant will be conditioned on.
 Default value (1) signifies no consideration of LD in conditional analyses.}
 
-\item{dist_thresh}{scalar of the minimum number of base pairs away from the \code{idx} SNP
+\item{dist_thresh}{scalar of the minimum number of base pairs away from the \code{idx} variant
 that a lead SNP must be in order to be conditioned on. Default value (0)
 signifies no consideration of chromosomal distance in conditional analyses.}
 
@@ -46,11 +46,11 @@ with the phenotype for which it is lead SNP in order to be conditioned on.
 Default value (1) signifies no consideration of strength of effect in conditional analyses.}
 
 \item{suffices}{character vector of the suffices corresponding to columns in
-\code{leadsnps_region}. See Details.}
+\code{leadsnps_region}.}
 }
 \value{
 An integer vector corresponding to the association pattern
-with the highest posterior probabilities for each SNP variant
+with the highest posterior probabilities for each variant
 represented by \code{idx}, following conditional analysis.
 Each value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
 from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced

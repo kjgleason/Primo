@@ -247,8 +247,8 @@ estimate_densities <- function(betas=NULL, sds=NULL, df=NULL, pvals=NULL, alt_pr
 #' Make matrix denoting association patterns (\eqn{Q}) that indicates null/alternative densities
 #' in the association patterns.
 #'
-#' @param grp vector of group identifiers (common to use \code{seq(1,d)}, for \eqn{d} groups).
-#' @param name_cols logical indicating whether to name columns using group identifiers.
+#' @param grp vector of group/study identifiers (common to use \code{seq(1,d)}, for \eqn{d} groups/studies).
+#' @param name_cols logical indicating whether to name columns using group/study identifiers.
 #'
 #' @return A matrix with all binary combinations of the groups. The value in row \eqn{k}
 #' and column \eqn{j} denotes whether statistics from study \eqn{j} come from

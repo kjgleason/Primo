@@ -15,7 +15,8 @@ columns of \code{combos}. When integer, all combinations of (total # traits)
 taking \code{combos} elements at a time will be tested.}
 
 \item{req_idx}{(optional) scalar or integer vector of trait(s) where a non-null
-association is required. If \code{NULL}, no traits will be required.}
+association is required (i.e. from the alternative distribution).
+If \code{NULL}, no traits will be required.}
 
 \item{prefix}{character string denoting prefix of column names for the results matrix.}
 }
@@ -23,14 +24,15 @@ association is required. If \code{NULL}, no traits will be required.}
 A numeric matrix of combined posterior probabilities.
 }
 \description{
-Combine the posterior probabilities for combinations of individual traits according to the
-association patterns from which those traits all come from the alternative distribution.
-Provides the posterior probability of being associated with "at least traits X, Y and Z",
-for example.
-Can also require non-null association with one or more traits and combine
+Combine the posterior probabilities for combinations of individual traits/studies according to the
+association patterns from which those traits/studies all come from the alternative distribution.
+Provides the posterior probability of being associated with "at least traits
+\eqn{X}, \eqn{Y} and \eqn{Z}", for example.
+Can also require non-null association with one or more traits/studies and combine
 over patterns where that/those trait(s) also come from the alternative distribution.
 }
 \examples{
+## all pairs of traits
 myCombos <- t(combn(4,2))
 collapsed_pp <- collapse_pp_combin(post_prob,myCombos)
 

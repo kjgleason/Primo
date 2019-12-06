@@ -1,22 +1,22 @@
 #' Perform conditional analysis for a specified variant.
 #'
 #' For a specified variant, re-estimate the posterior probabilities of association
-#' patterns, conditioning on other specified variants (e.g. lead SNPs for phenotypes
-#' being studied). Returns the association pattern with the highest
+#' patterns, conditioning on other specified variants (e.g. lead SNPs for omics
+#' traits). Returns the association pattern with the highest
 #' posterior probability after conditional analysis.
 #'
-#' @param idx_snp integer matching the index of the genetic variant (e.g. row of \code{Tstat_mod})
+#' @param idx_snp integer matching the index (e.g. row of \code{Tstat_mod}) of the genetic variant
 #' for which to perform conditional analysis.
-#' @param idx_leadsnps vector of indices of the leading snps (e.g. rows of \code{Tstat_mod})
+#' @param idx_leadsnps vector of indices (e.g. rows of \code{Tstat_mod}) of the leading snps
 #' on which to condition.
-#' @param LD_mat matrix of LD correlation coefficients (e.g. Pearson \eqn{r}{r}).
+#' @param LD_mat matrix of genotype correlation coefficients (e.g. Pearson \eqn{r}{r}).
 #' Rows and columns should match the order of (\code{idx_snp}, \code{idx_leadsnps}).
 #' @param Primo_obj list returned by running the \eqn{t}-statistic version
 #' of Primo (i.e. \code{\link{Primo_tstat}} or \code{\link{Primo_modT}})
 #'
 #' @return The integer corresponding to the association pattern
 #' with the highest posterior probability following conditional analysis.
-#' The value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
+#' The value returned, \eqn{k}, corresponds to the \eqn{k}-th index of \code{pis}
 #' from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
 #' by \code{\link{make_qmat}}.
 #'
@@ -78,31 +78,31 @@ Primo_conditional <- function(idx_snp,idx_leadsnps,LD_mat,Primo_obj){
 #' @param idx integer of the index of the genetic variant (e.g. row of \code{Tstat_mod})
 #' on which one wants to perform conditional analysis.
 #' @param leadsnps_region data.table that stores the lead SNP of each phenotype
-#' in each region of the Primo results. Also includes p-values for the lead SNPs.
+#' in each region of the Primo results. Also includes \eqn{P}-values for the lead SNPs.
 #' See Details for format.
 #' @param snp_col string of the column name of SNPs/variants.
 #' @param pheno_cols character vector of the column names of the phenotype ID columns.
 #' @param snp_info data.table reporting the chromosome and position of each SNP.
 #' Columns must include: \code{SNP, CHR, POS}.
-#' @param LD_mat matrix of LD correlation coefficients (e.g. Pearson \eqn{r}{r}). Row and column names
+#' @param LD_mat matrix of genotype correlation coefficients (e.g. Pearson \eqn{r}{r}). Row and column names
 #' should be SNP/variant names (e.g. in \code{snp_col}).
 #' @param LD_thresh scalar corresponding to the LD \eqn{r^{2}}{r^2}
 #' threshold to be used for conditional analysis. Lead SNPs with \eqn{r^{2} <}{r^2 <}
 #' \code{LD_thresh} with the \code{idx} variant will be conditioned on.
 #' Default value (1) signifies no consideration of LD in conditional analyses.
-#' @param dist_thresh scalar of the minimum number of base pairs away from the \code{idx} SNP
+#' @param dist_thresh scalar of the minimum number of base pairs away from the \code{idx} variant
 #' that a lead SNP must be in order to be conditioned on. Default value (0)
 #' signifies no consideration of chromosomal distance in conditional analyses.
 #' @param pval_thresh scalar of the \eqn{P}-value threshold a lead SNP must be below
 #' with the phenotype for which it is lead SNP in order to be conditioned on.
 #' Default value (1) signifies no consideration of strength of effect in conditional analyses.
 #' @param suffices character vector of the suffices corresponding to columns in
-#' \code{leadsnps_region}. See Details.
+#' \code{leadsnps_region}.
 #'
 #' @inherit Primo_conditional return
 #'
 #' @return An integer vector corresponding to the association pattern
-#' with the highest posterior probabilities for each SNP variant
+#' with the highest posterior probabilities for each variant
 #' represented by \code{idx}, following conditional analysis.
 #' Each value returned, \eqn{k}, corresponds to the \eqn{k}-th column of \code{pis}
 #' from the Primo output, and the \eqn{k}-th row of the \eqn{Q} matrix produced
@@ -193,8 +193,8 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
 #' of the Primo results stored in \code{Primo_obj}.
 #' @param gwas_snps character vector of known trait-associated (GWAS) SNPs.
 #' @param pvals matrix of \eqn{P}-values from test statistics.
-#' @param LD_mat matrix of LD correlation coefficients (e.g. Pearson \eqn{r}{r}). Row and column names
-#' should be SNP/variant names (i.e matching those present in \code{IDs}).
+#' @param LD_mat matrix of genotype correlation coefficients (e.g. Pearson \eqn{r}{r}). Row and column names
+#' should be SNP/variant names (i.e matching variant names in \code{IDs}).
 #' @param snp_info data.frame reporting the chromosome and position of each SNP.
 #' Columns must include: \code{SNP, CHR, POS}.
 #' @param pp_thresh scalar of the posterior probability threshold used for significance.
@@ -224,7 +224,7 @@ run_conditional <- function(Primo_obj,IDs,idx,leadsnps_region,snp_col="SNP",phen
 #' \itemize{
 #'   \item SNP and trait identifiers corresponding to each observation
 #'   \item posterior probabilities of the collapsed association patterns
-#'   ("GWAS + at least x omics trait(s)")
+#'   ("GWAS + at least \eqn{n} omics trait(s)")
 #'   \item number of omics traits with which the SNP was associated before conditional analysis
 #'   (at posterior probability \code{> pp_thresh})
 #'   \item number of omics traits with which the SNP is associated after conditional analysis
