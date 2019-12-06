@@ -33,6 +33,8 @@ Suggests:
     metRology (>= 0.9.26.2),
     knitr,
     rmarkdown
+Remotes:
+    github::rforge/lcmix/pkg
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
