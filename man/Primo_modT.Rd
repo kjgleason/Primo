@@ -40,13 +40,13 @@ The estimated proportion of observations belonging to each association pattern, 
 also be of interest. The remaining elements are returned primarily for use by other functions.
 }
 \description{
-This version of the main \code{Primo} function uses moderated \eqn{t}-statistics
-and parameters previously calculated under the limma framework
+For each observation (e.g. SNP), estimates the posterior probability of
+each association pattern. This version of the main \code{Primo} function uses moderated
+\eqn{t}-statistics and parameters previously calculated under the 'limma' framework
 (i.e. using \code{\link{estimate_densities_modT}}).
 It is useful for cases where the same statistic from one study
 (e.g. gene-SNP pair) may be mapped to multiple statistics from
-another study (e.g. multiple gene-CpG pairings). For each observation
-(e.g. SNP), it estimates the posterior probability for each association pattern.
+another study (e.g. multiple gene-CpG pairings).
 Utilizes parallel computing, when available.
 }
 \details{

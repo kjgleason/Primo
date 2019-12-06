@@ -7,7 +7,7 @@
 Primo_chiMix(chi_mix, A, df_alt, Gamma, tol = 0.001, par_size = 1)
 }
 \arguments{
-\item{chi_mix}{matrix of \eqn{-2*\log(P)}{-2*log(P)}-values from test statistics.}
+\item{chi_mix}{matrix of \eqn{-2}log(\eqn{P})-values from test statistics.}
 
 \item{A}{vector of scaling factors under the alternative distributions.\cr}
 
@@ -39,12 +39,12 @@ The estimated proportion of observations belonging to each association pattern, 
 also be of interest. The remaining elements are returned primarily for use by other functions.
 }
 \description{
-This version of the function uses a mixture of chi-squared statistics,
+For each observation (e.g. SNP), estimates the posterior probability of
+each association pattern. This version of the function uses a mixture of chi-squared statistics
 and the parameters of the alternative distributions which were previously calculated
 (i.e. using \code{\link{estimate_densities_pval}}). It is useful for cases where
 the same statistic from one study (e.g. gene-SNP pair) may be mapped to
 multiple statistics from another study (e.g. multiple gene-CpG pairings).
-For each SNP, estimates the posterior probability for each association pattern.
 Utilizes parallel computing, when available.
 }
 \details{

@@ -180,7 +180,7 @@ Primo_tstat <- function(betas, sds,  dfs, alt_props, mafs=NULL, N=NULL, Gamma=NU
 #' @inherit Primo_tstat description
 #'
 #' @param pvals matrix of \eqn{P}-values from test statistics.
-#' @param alt_props vector of the proportions of test-statistics used in estimating
+#' @param alt_props vector of the proportions of test statistics from
 #' alternative densities.
 #' @param Gamma correlation matrix.
 #' @param tol numeric value specifying the tolerance threshold for convergence.
@@ -325,13 +325,13 @@ Primo_pval <- function(pvals, alt_props, Gamma=NULL, tol=0.001, par_size=1){
 
 #' Estimate posterior probabilities of association patterns, using moderated t-statistics.
 #'
-#' This version of the main \code{Primo} function uses moderated \eqn{t}-statistics
-#' and parameters previously calculated under the limma framework
+#' For each observation (e.g. SNP), estimates the posterior probability of
+#' each association pattern. This version of the main \code{Primo} function uses moderated
+#' \eqn{t}-statistics and parameters previously calculated under the 'limma' framework
 #' (i.e. using \code{\link{estimate_densities_modT}}).
 #' It is useful for cases where the same statistic from one study
 #' (e.g. gene-SNP pair) may be mapped to multiple statistics from
-#' another study (e.g. multiple gene-CpG pairings). For each observation
-#' (e.g. SNP), it estimates the posterior probability for each association pattern.
+#' another study (e.g. multiple gene-CpG pairings).
 #' Utilizes parallel computing, when available.
 #'
 #' @param Tstat_mod matrix of moderated t-statistics.
@@ -466,15 +466,15 @@ Primo_modT <- function(Tstat_mod, mdfs, V_mat, Gamma, tol=0.001,par_size=1){
 
 #' Estimate posterior probabilities of association patterns, using mixture of chi-squared statistics.
 #'
-#' This version of the function uses a mixture of chi-squared statistics,
+#' For each observation (e.g. SNP), estimates the posterior probability of
+#' each association pattern. This version of the function uses a mixture of chi-squared statistics
 #' and the parameters of the alternative distributions which were previously calculated
 #' (i.e. using \code{\link{estimate_densities_pval}}). It is useful for cases where
 #' the same statistic from one study (e.g. gene-SNP pair) may be mapped to
 #' multiple statistics from another study (e.g. multiple gene-CpG pairings).
-#' For each SNP, estimates the posterior probability for each association pattern.
 #' Utilizes parallel computing, when available.
 #'
-#' @param chi_mix matrix of \eqn{-2*\log(P)}{-2*log(P)}-values from test statistics.
+#' @param chi_mix matrix of \eqn{-2}log(\eqn{P})-values from test statistics.
 #' @param A vector of scaling factors under the alternative distributions.\cr
 #' @param df_alt vector of degrees of freedom approximated for the alternative distributions.\cr
 #' @param Gamma correlation matrix.

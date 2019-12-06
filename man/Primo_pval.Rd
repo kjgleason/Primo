@@ -9,7 +9,7 @@ Primo_pval(pvals, alt_props, Gamma = NULL, tol = 0.001, par_size = 1)
 \arguments{
 \item{pvals}{matrix of \eqn{P}-values from test statistics.}
 
-\item{alt_props}{vector of the proportions of test-statistics used in estimating
+\item{alt_props}{vector of the proportions of test statistics from
 alternative densities.}
 
 \item{Gamma}{correlation matrix.}
