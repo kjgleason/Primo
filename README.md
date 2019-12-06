@@ -4,7 +4,7 @@ The goal of `Primo` is to provide computationally efficient tools to integrate d
 
 ## Setup
 
-Please note that this package uses functions from the `limma` package, which is downloadable from [Bioconductor](https://www.bioconductor.org), and the `lcmix` package, which is downloadable from [R-Forge](https://r-forge.r-project.org). If you have not yet installed the `limma` or `lcmix` packages, please run the following commands prior to installing `Primo`:
+Please note that this package uses functions from the `limma` package, which is downloadable from [Bioconductor](https://www.bioconductor.org), and the `lcmix` package, which is downloadable from [R-Forge](https://r-forge.r-project.org). If installation of `Primo` fails and you have not yet installed the `limma` or `lcmix` packages, please try running the following commands:
 
   ```R
   if (!requireNamespace("BiocManager", quietly = TRUE))
