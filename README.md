@@ -29,7 +29,7 @@ Once you have installed `limma` and `lcmix`, you can install and load functions 
 
 To cite `Primo` in publications, please use:
 
-Kevin J. Gleason, Fan Yang, Brandon L. Pierce, Xin He, and Lin S. Chen. Primo: integration of multiple GWAS and omics QTL summary statistics for elucidation of molecular mechanisms of trait-associated SNPs and detection of pleiotropy in complex traits. bioRxiv (2019), doi:10.1101/579581.
+Kevin J. Gleason, Fan Yang, Brandon L. Pierce, Xin He, and Lin S. Chen. Primo: integration of multiple GWAS and omics QTL summary statistics for elucidation of molecular mechanisms of trait-associated SNPs and detection of pleiotropy in complex traits. Genome Biol (2020); 21(1):236. doi:10.1186/s13059-020-02125-w.
 
 ## Licenses
 The code is released under [GNU General Public License (GPL)](https://opensource.org/licenses/gpl-license).

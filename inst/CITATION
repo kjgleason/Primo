@@ -3,11 +3,13 @@ citHeader("To cite Primo in publications, please use:")
 citEntry(entry = "article",
   author = "Kevin J. Gleason and Fan Yang and Brandon L. Pierce and Xin He and Lin S. Chen",
   title = "Primo: integration of multiple GWAS and omics QTL summary statistics for elucidation of molecular mechanisms of trait-associated SNPs and detection of pleiotropy in complex traits.",
-  year = 2019,
-  journal="bioRxiv",
-  doi="10.1101/579581",
-  url = "https://www.biorxiv.org/content/10.1101/579581v1",
+  year = 2020,
+  journal="Genome Biol",
+  volume = "21(1)",
+  pages = 236,
+  doi="10.1186/s13059-020-02125-w",
+  url = "https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02125-w",
   textVersion = paste("K.J. Gleason, F. Yang, B.L. Pierce, X. He, and L.S. Chen.",
                       "Primo: integration of multiple GWAS and omics QTL summary statistics for elucidation of molecular mechanisms of trait-associated SNPs and detection of pleiotropy in complex traits.",
-                      "bioRxiv (2019), doi:10.1101/579581.")
+                      "Genome Biol (2020); 21(1):236. doi:10.1186/s13059-020-02125-w.")
 )
